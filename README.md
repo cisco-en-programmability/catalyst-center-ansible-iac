@@ -171,6 +171,16 @@ Pull the latest master from the repo if you have already cloned.
     git pull origin master
 ```
 
+## Raising an issue or enhanceent request
+- Visit the Catalyst Center Ansible repository: https://github.com/cisco-en-programmability/dnacenter-ansible/issues
+- Click the "New Issue" button.
+- Carefully follow the provided issue template, ensuring you include:
+- - A clear and concise description of the problem
+- - Steps to reproduce the issue.
+- - Relevant code snippets or configurations, playbook, variable files.
+- - Expected behavior vs. actual behavior.
+- - Catalyst Center and Ansible versions you're using.
+
 ## Contributing
 Contributions are welcome! To contribute to this project, follow these steps:
 
