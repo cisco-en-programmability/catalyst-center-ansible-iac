@@ -105,7 +105,7 @@ How to Generate your hosts inventory from Cisco Catalyst Center using inventory_
 
 For brownfield Catalyst Center (Network already discovered in Catalyst Center) with devices are in inventory, then automated inventory generation can be performed through inventory_gen playbook. Following the below Steps:
 
-i. Create a basic inventory file with Cisco Catalyst Center Inputs in inventory folder. for example demo_inv.yml
+Create a basic inventory file with Cisco Catalyst Center Inputs in inventory folder. for example demo_inv.yml
   ---
     ```bash
         #Inventory file for demo_lab
