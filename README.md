@@ -32,7 +32,7 @@ Before using these Ansible workflows, ensure that you have the following prerequ
     Create your python virtual environment using commend:
     ```bash
         python3 -m venv python3env --prompt "AnsiblePython3 VENV"
-        source python3env
+        source python3env/bin/activate
    ```
 
 
@@ -42,11 +42,10 @@ Before using these Ansible workflows, ensure that you have the following prerequ
    git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
    ```
 
-
 1. Navigate to the project directory:
     
     ```bash
-    cd dnac_ansible_workflows
+    cd catalyst-center-ansible-iac
     ```
 2. Install the required dependencies:
    ```bash
@@ -54,7 +53,7 @@ Before using these Ansible workflows, ensure that you have the following prerequ
     ```
 3. Install the collection (Galaxy link):
     ```bash
-    ansible-galaxy collection install cisco.dnac:6.11.0 --force
+    ansible-galaxy collection install cisco.dnac --force
     ```
 4.  Create your inventory
     a. Inventory:
@@ -76,14 +75,22 @@ Before using these Ansible workflows, ensure that you have the following prerequ
             workflows/swim
             playbooks/
                 swim_workflow_playbook.yml
+            schema/
+                swim_schema.yml
             vars/
                 vars_swim.yml
 
 6. Var files:
-            Update var file with your  details and parameter to control playbook
+        Update var file with your  details and parameter to control playbook
+    
 7. Playbook: 
         The playbooks can be directly used without any change when inventory and var files created in the above templates.
 
+Schema files:
+        Validate the var_file user input against playbook schema. Using the validate tool
+        ```bash
+            ./validate.sh -s <schema fle> -d <Vars files>
+        ```
 8. Executing playbook (Sample):
 
 How to Generate your hosts inventory from Cisco Catalyst Center using inventory_gen playbook:
@@ -104,6 +111,9 @@ i. Create a basic inventory file with Cisco Catalyst Center Inputs in inventory 
             dnac_username: <Cisco Catalyst Center UI admin username> #(Mandatory) 
             dnac_verify: false #(Mandatory) 
             dnac_version: <Cisco Catalyst Center Release version> #(Mandatory)  Example: 2.3.5.3
+            dnac_debug: true
+            dnac_log_level: INFO
+            dnac_log: true
     ```
 
 
@@ -118,7 +128,7 @@ Example 1: Swim upgrade, this include uploading the images, golden tagging the i
 Example 2: Create Sites, buildings floors using playbook : workflows/sites/playbook/site_hierarchy_playbook.yml
     
 ```bash
- ansible-playbook -i ./inventory_dnaccluster ./workflows/sites/playbook/site_hierarchy_playbook.yml --extra-vars VARS_FILES_PATH=./../vars/site_hierarchy_design_vars_.yml
+ ansible-playbook -i ./inventory_dnaccluster ./workflows/site_hierarchy/playbook/site_hierarchy_playbook.yml --extra-vars VARS_FILES_PATH=< Vars File PATH (Full Path or relative path from playbook)> -vvvv
 ```
     
 Feel free to explore the playbooks/ directory for more examples and use cases.
@@ -138,9 +148,9 @@ If that's the case try setting this environment variable:
 ## Update
 Getting the latest/nightly collection build
 
-Clone the dnacenter-ansible repository.
+Clone the dnacenter-ansible repository if not already cloned.
 ```bash
- git clone git@github.com:DNACENSolutions/dnac_ansible_workflows.git
+ git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
 ```
     
 Go to the dnacenter-ansible directory
@@ -148,11 +158,11 @@ Go to the dnacenter-ansible directory
  cd dnac_ansible_workflows
 ```
     
-Pull the latest master from the repo
+Pull the latest master from the repo if you have already cloned.
 ```bash
     git pull origin master
 ```
-    
+
 ## Contributing
 Contributions are welcome! To contribute to this project, follow these steps:
 
