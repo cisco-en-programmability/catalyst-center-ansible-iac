@@ -1,0 +1,15 @@
+---
+passwords_details:
+- key: testuser1password
+  value: 'testuser1@123'
+- key: testuser2password
+  value: 'testuser2@123'
+- key: testuser3password
+  value: 'testuser3@123'
+- key: testuser4password
+  value: 'testuser4@123'
+- key: testuser5password
+  value: 'testuser5@123'
+- key: testuser6password
+  value: 'testuser6@123'
+
