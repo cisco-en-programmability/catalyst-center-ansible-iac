@@ -29,7 +29,8 @@ Complete version control: Track every change and easily revert to previous state
 Increased collaboration: Simplify teamwork with a centralized and transparent platform.
 Improved reliability: Reduce errors and ensure consistent configurations across your network.
 Simplified deployments: Automate updates and rollbacks with confidence.
-
+# Enterprise Usecases
+![Alt text](./images/enterpriseUsecases.png)
 
 # Table of Contents
 - [Prerequisites](#prerequisites)
@@ -193,7 +194,7 @@ If that's the case try setting this environment variable:
 # Update
 Getting the latest/nightly collection build
 
-Clone the dnacenter-ansible repository if not already cloned.
+Clone the Catalyst Center ansible IaC repository if not already cloned.
 ```bash
  git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
 ```
@@ -209,7 +210,7 @@ Pull the latest master from the repo
 ```
 
 # Raising an issue or enhanceent request
-- Visit the Catalyst Center Ansible repository: https://github.com/cisco-en-programmability/dnacenter-ansible/issues
+- Visit the Catalyst Center Ansible repository: https://github.com/cisco-en-programmability/catalyst-center-ansible-iac/issues
 - Click the "New Issue" button.
 - Carefully follow the provided issue template, ensuring you include:
 - - A clear and concise description of the problem
