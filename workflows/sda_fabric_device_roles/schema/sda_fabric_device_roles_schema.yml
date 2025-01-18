@@ -461,3 +461,57 @@
 # false
 # Flag for Cisco Catalyst Center SDK to enable the validation of request bodies against a JSON schema.
 
+catalyst_center_version: str(required=False)
+fabric_devices_details: list(include('fabric_devices_type'), min=1, max=100, required=True)
+
+---
+fabric_devices_type:
+  fabric_devices:
+    fabric_name: str(required=True)
+    device_config: list(include('device_config_type'), min=1, max=100, required=True)
+
+device_config_type:
+  device_ip: str(required=True)
+  device_roles:
+    list(enum('CONTROL_PLANE_NODE', 'EDGE_NODE', 'BORDER_NODE', 'WIRELESS_CONTROLLER_NODE'), 
+         min=1, max=4, required=True)
+  route_distribution_protocol: enum('LISP_BGP', 'LISP_PUB_SUB', required=False, default='LISP_BGP')
+  borders_settings: include('borders_settings_type', required=False)
+
+borders_settings_type:
+  layer3_settings: 
+    include ('layer3_settings_type', required=False)
+  layer2_handoff:
+    list(include('layer2_handoff_type'), min=0, max=100, required=False)
+  layer3_handoff_ip_transit:
+    list(include('layer3_handoff_ip_transit_type'), min=0, max=100, required=False)
+  layer3_handoff_sda_transit: include('layer3_handoff_sda_transit_type', required=False)
+
+layer3_settings_type:
+    local_autonomous_system_number: int(min=1, max=4294967295, required=True)
+    is_default_exit: bool(required=False, default=False)
+    import_external_routes: bool(required=False, default=False)
+    border_priority: int(min=1, max=9, required=False, default=10)
+    prepend_autonomous_system_count: int(min=0, max=10, required=False, default=0)
+
+layer2_handoff_type:
+  interface_name: str(required=True)
+  internal_vlan_id:
+    int(min=2, max=4093, required=True)
+  external_vlan_id:
+    int(min=2, max=4093, required=True)
+
+layer3_handoff_ip_transit_type:
+  transit_network_name: str(required=True)
+  interface_name: str(required=True)
+  external_connectivity_ip_pool_name: str(required=False)
+  virtual_network_name: str(required=False)
+  vlan_id: int(min=1, max=4094, required=False)
+  tcp_mss_adjustment: int(min=500, max=1440, required=False)
+
+layer3_handoff_sda_transit_type:
+  transit_network_name: str(required=True)
+  affinity_id_prime: int(min=0, max=2147483647, required=False)
+  affinity_id_decider: int(min=0, max=2147483647, required=False)
+  connected_to_internet: bool(required=False, default=False)
+  is_multicast_over_transit_enabled: bool(required=False, default=False)
