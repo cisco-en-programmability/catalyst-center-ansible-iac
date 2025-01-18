@@ -47,7 +47,7 @@ Simplified deployments: Automate updates and rollbacks with confidence.
 - [Catalyst Center ISE and AAA Servers Integration](./workflows/ise_radius_integration/#readme)
 
 ## Day1 Configurations (Design and Discovery)
-- [Catalyst Center Site Hierarchy and Floor Maps design](./workflows/sites/#readme)
+- [Catalyst Center Site Hierarchy and Floor Maps design](./workflows/site_hierarchy/#readme)
 - [Catalyst Center Device Credentials configurations and assignment](./workflows/device_credentials/#readme)
 - [Catalyst Center Network Settings (Servers, Banners, TZ, SNMP, Logging, Telemetry Management](./workflows/network_settings/#readme)
 - [Catalyst Center Network Settings Global Ip Pools and Site Pools reservation Management](./workflows/network_settings/#readme)
