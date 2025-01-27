@@ -8,7 +8,7 @@ catalyst_center_log_file_path: str(required=False, default='dnac.log')
 catalyst_center_log_level: enum("CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", required=False)
 template_details: list(include('configuration_templates_type'), required=False)
 deploy_device_details: list(include('deploy_device_details_type'), required=False)
-
+catalyst_center_config_verify: bool(required=False)
 ---
 configuration_templates_type:
   configuration_templates:
