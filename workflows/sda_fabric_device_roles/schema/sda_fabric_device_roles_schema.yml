@@ -495,7 +495,7 @@ borders_settings_type:
   layer3_handoff_sda_transit: include('layer3_handoff_sda_transit_type', required=False)
 
 layer3_settings_type:
-    local_autonomous_system_number: int(min=1, max=4294967295, required=True)
+    local_autonomous_system_number: num(min=1, max=4294967295, required=True)
     is_default_exit: bool(required=False, default=False)
     import_external_routes: bool(required=False, default=False)
     border_priority: int(min=1, max=9, required=False, default=10)
@@ -515,6 +515,12 @@ layer3_handoff_ip_transit_type:
   virtual_network_name: str(required=False)
   vlan_id: int(min=1, max=4094, required=False)
   tcp_mss_adjustment: int(min=500, max=1440, required=False)
+  local_ip_address: str(required=False)
+  local_ipv6_address: str(required=False)
+  remote_ip_address: str(required=False)
+  remote_ipv6_address: str(required=False)
+
+
 
 layer3_handoff_sda_transit_type:
   transit_network_name: str(required=True)
