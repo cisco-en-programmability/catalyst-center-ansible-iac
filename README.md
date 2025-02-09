@@ -91,21 +91,21 @@ Before using these Ansible workflows, ensure that you have the following prerequ
 - Install  cisco.dnac collection including Python requirements.
 - Modify ansible.cfg file to support additional jinja2 extensions
 
-Python 3.7+ is required to install iac-validate. Don't have Python 3.7 or later? 
-See Python 3 Installation & Setup Guide https://realpython.com/installing-python/
-Create your python virtual environment using commend:
+## Python
+    Python 3.9+ is required to install iac-validate. Don't have Python 3.9 or later? 
+    See Python 3 Installation & Setup Guide https://realpython.com/installing-python/
+    Create your python virtual environment using commend:
 ```bash
     python3 -m venv python3env --prompt "AnsiblePython3 VENV"
-    source python3env
+    source python3env/bin/activate
 ```
 
-
+## Ansible Requirements
 1. Clone this repository to your local machine:
 
    ```bash
    git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
    ```
-
 
 ## Navigate to the project directory:    
 ```bash
@@ -116,8 +116,8 @@ Create your python virtual environment using commend:
 ```bash
     pip install -r requirements.txt
 ```
-2. For installing or upgrading the cisco.dnac ansible collection follow steps:
 ## Install the collection (Galaxy link):
+For installing or upgrading the cisco.dnac ansible collection follow steps:
     Install Collection from Ansible Galaxy
     These instructions are for regular users to install via Ansible Galaxy. The instructions also include installation of all Python requirements for a given version. 
     The cisco.dnac collection is available on the Ansible Galaxy server and can be automatically installed on your system using following command
@@ -148,6 +148,27 @@ Build and install a collection from source
 ```bash
     ansible-galaxy collection build --force
     ansible-galaxy collection install cisco-dnac-* --force
+```
+
+## Install or Update the dnacentersdk:
+For installing or upgrading the dnacentersdk follow steps:
+
+### Install via pip or pip3
+To get the Python Catalyst Center SDK latest in a fresh development environment:
+
+```bash
+    pip install dnacentersdk
+```
+
+### Upgrading to the latest Version
+Use --upgrade opton to upgrde to latest version available.
+```bash
+    pip install dnacentersdk --upgrade
+```
+### Install a specific version
+To install a specific version like 2.8.3
+```bash
+    pip install dnacentersdk:2.8.3
 ```
 
 ## Create your inventory
