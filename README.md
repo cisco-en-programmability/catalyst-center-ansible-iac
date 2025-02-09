@@ -85,7 +85,12 @@ Before using these Ansible workflows, ensure that you have the following prerequ
 - Proper network connectivity to interact with the Catalyst Center APIs
 
 
-# Installation
+# Installation of Cisco Validated Playbooks, Schema and Sample Inputs Vars
+
+- Install Python 3.9 or later
+- Install  cisco.dnac collection including Python requirements.
+- Modify ansible.cfg file to support additional jinja2 extensions
+
 Python 3.7+ is required to install iac-validate. Don't have Python 3.7 or later? 
 See Python 3 Installation & Setup Guide https://realpython.com/installing-python/
 Create your python virtual environment using commend:
@@ -111,10 +116,40 @@ Create your python virtual environment using commend:
 ```bash
     pip install -r requirements.txt
 ```
+2. For installing or upgrading the cisco.dnac ansible collection follow steps:
 ## Install the collection (Galaxy link):
+    Install Collection from Ansible Galaxy
+    These instructions are for regular users to install via Ansible Galaxy. The instructions also include installation of all Python requirements for a given version. 
+    The cisco.dnac collection is available on the Ansible Galaxy server and can be automatically installed on your system using following command
+
+### Latest version
+Clone the dnacenter-ansible repository.
 ```bash
     ansible-galaxy collection install cisco.dnac --force
 ```
+### Sppecific version
+```bash
+    ansible-galaxy collection install cisco.dnac:==6.29.0 --force
+```
+
+### Install latest devel version from  GitHub abd build
+```bash
+    git clone https://github.com/cisco-en-programmability/dnacenter-ansible.git
+```
+Go to the dnacenter-ansible directory
+```bash
+    cd dnacenter-ansible
+```
+Pull the latest master from the repo
+```bash
+    git pull origin master
+```
+Build and install a collection from source
+```bash
+    ansible-galaxy collection build --force
+    ansible-galaxy collection install cisco-dnac-* --force
+```
+
 ## Create your inventory
 ### Inventory:
 This folder contains inventory file for your dev, lab, sandbox or production env which will be utilised by swim playbooks.
