@@ -171,8 +171,18 @@ To install a specific version like 2.8.3
 pip install dnacentersdk:2.8.3
 ```
 
-## Create your inventory
-### Inventory:
+## Ansible configuration file
+Enable Jinja2 extensions: loopcontrols and do
+[Jinja2 Extensions Documentation](https://jinja.palletsprojects.com/en/stable/extensions/)
+
+By default, Ansible will issue a warning when a duplicate dict key is encountered in YAML. We recommend to change to error instead and stop playbook execution when a duplicate key is detected.
+```bash
+jinja2_extensions=jinja2.ext.loopcontrols,jinja2.ext.do
+duplicate_dict_key=error
+```
+
+# Create your inventory
+## Inventory:
 This folder contains inventory file for your dev, lab, sandbox or production env which will be utilised by swim playbooks.
 
 Create your inventory file in below template format to utilize the swim playbooks.
