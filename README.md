@@ -103,18 +103,18 @@ Before using these Ansible workflows, ensure that you have the following prerequ
 ## Ansible Requirements
 1. Clone this repository to your local machine:
 
-   ```bash
-   git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
-   ```
+```bash
+git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
+```
 
 ## Navigate to the project directory:    
 ```bash
-    cd dnac_ansible_workflows
+cd dnac_ansible_workflows
 ```
 
 ## Install the required dependencies:
 ```bash
-    pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 ## Install the collection (Galaxy link):
 For installing or upgrading the cisco.dnac ansible collection follow steps:
@@ -125,29 +125,29 @@ For installing or upgrading the cisco.dnac ansible collection follow steps:
 ### Latest version
 Clone the dnacenter-ansible repository.
 ```bash
-    ansible-galaxy collection install cisco.dnac --force
+ansible-galaxy collection install cisco.dnac --force
 ```
 ### Sppecific version
 ```bash
-    ansible-galaxy collection install cisco.dnac:==6.29.0 --force
+ansible-galaxy collection install cisco.dnac:==6.29.0 --force
 ```
 
 ### Install latest devel version from  GitHub abd build
 ```bash
-    git clone https://github.com/cisco-en-programmability/dnacenter-ansible.git
+git clone https://github.com/cisco-en-programmability/dnacenter-ansible.git
 ```
 Go to the dnacenter-ansible directory
 ```bash
-    cd dnacenter-ansible
+cd dnacenter-ansible
 ```
 Pull the latest master from the repo
 ```bash
-    git pull origin master
+git pull origin master
 ```
 Build and install a collection from source
 ```bash
-    ansible-galaxy collection build --force
-    ansible-galaxy collection install cisco-dnac-* --force
+ansible-galaxy collection build --force
+ansible-galaxy collection install cisco-dnac-* --force
 ```
 
 ## Install or Update the dnacentersdk:
@@ -157,18 +157,18 @@ For installing or upgrading the dnacentersdk follow steps:
 To get the Python Catalyst Center SDK latest in a fresh development environment:
 
 ```bash
-    pip install dnacentersdk
+pip install dnacentersdk
 ```
 
 ### Upgrading to the latest Version
 Use --upgrade opton to upgrde to latest version available.
 ```bash
-    pip install dnacentersdk --upgrade
+pip install dnacentersdk --upgrade
 ```
 ### Install a specific version
 To install a specific version like 2.8.3
 ```bash
-    pip install dnacentersdk:2.8.3
+pip install dnacentersdk:2.8.3
 ```
 
 ## Create your inventory
@@ -179,7 +179,7 @@ Create your inventory file in below template format to utilize the swim playbook
 
 The template for the inventory file is:
 ```bash
-    cat inventory/demo_lab/001-dnac_inventory_template.yml
+cat inventory/demo_lab/001-dnac_inventory_template.yml
 ```
 
 Setup up your ansible python interpretor following suitable method for your environment : https://docs.ansible.com/ansible/latest/reference_appendices/interpreter_discovery.html
@@ -189,11 +189,11 @@ Setup up your ansible python interpretor following suitable method for your envi
 The second folder of the workflows contains playbook and var files for workflows.
 Example:
 ```bash
-    workflows/swim
-    playbooks/
-        swim_workflow_playbook.yml
-    vars/
-        vars_swim.yml
+workflows/swim
+playbooks/
+    swim_workflow_playbook.yml
+vars/
+    vars_swim.yml
 ```
 ### Var files:
     Update var file with your  details and parameter to control playbook
@@ -224,7 +224,7 @@ Here are a few examples of Cisco Validated Playbooks in the repo. For details do
 ## Example 1: 
 Swim upgrade, this include uploading the images, golden tagging the image filtered location and device family and distributed and activating images on the networkk devices.
 ```bash
-    ansible-playbook -i ./inventory_dnaccluster ./workflows/swim/playbook/swim_workflow_playbook.yml --extra-vars VARS_FILE_PATH=< Vars File PATH (Full Path or relative path from playbook)> -vvvv
+ansible-playbook -i ./inventory_dnaccluster ./workflows/swim/playbook/swim_workflow_playbook.yml --extra-vars VARS_FILE_PATH=< Vars File PATH (Full Path or relative path from playbook)> -vvvv
 ```
     
 ## Example 2: 
@@ -247,7 +247,7 @@ ERROR! A worker was found in a dead state
 
 If that's the case try setting this environment variable:
 ```bash
-    export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 ```
 
 # Update
@@ -255,17 +255,17 @@ Getting the latest/nightly collection build
 
 Clone the Catalyst Center ansible IaC repository if not already cloned.
 ```bash
- git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
+git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
 ```
     
 Go to the dnacenter-ansible directory
 ```bash
- cd dnac_ansible_workflows
+cd dnac_ansible_workflows
 ```
     
 Pull the latest master from the repo
 ```bash
-    git pull origin master
+git pull origin master
 ```
 
 # Raising an issue or enhanceent request
