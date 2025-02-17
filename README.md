@@ -77,6 +77,12 @@ Simplified deployments: Automate updates and rollbacks with confidence.
 ## Demo Videos
 [IaC Demo Videos](http://3.136.0.140/index.html)
 
+# Compatibility Matrix
+| Deployed Catalyst Center Version   | Catalyst Center Version in Input   | Ansible Galaxy Version    | Python SDK Version    |
+| :--------------------------------: | :--------------------------------: | :-----------------------: | :-------------------: |
+| 2.3.7.6 | 2.3.7.6   | latest   | latest |
+| 2.3.7.7 | 2.3.7.6   | latest   | latest |
+
 # Prerequisites
 Before using these Ansible workflows, ensure that you have the following prerequisites:
 
