@@ -78,7 +78,7 @@ Simplified deployments: Automate updates and rollbacks with confidence.
 [IaC Demo Videos](http://3.136.0.140/index.html)
 
 # Compatibility Matrix
-| Deployed Catalyst Center Version   | Catalyst Center Version in Input   | Ansible Galaxy Version    | Python SDK Version    |
+| Deployed Catalyst Center Version   | Catalyst Center Version in Input   | Ansible Galaxy collection (cisco.dnac)Version    | Python SDK (dnacentersdk) Version    |
 | :--------------------------------: | :--------------------------------: | :-----------------------: | :-------------------: |
 | 2.3.5.3 | 2.3.5.3   | latest   | latest |
 | 2.3.5.5 | 2.3.5.3   | latest   | latest |
@@ -279,7 +279,7 @@ git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-ia
     
 Go to the dnacenter-ansible directory
 ```bash
-cd dnac_ansible_workflows
+cd catalyst-center-ansible-iac
 ```
     
 Pull the latest master from the repo
