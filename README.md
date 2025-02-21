@@ -86,6 +86,10 @@ Simplified deployments: Automate updates and rollbacks with confidence.
 | 2.3.7.6 | 2.3.7.6   | latest   | latest |
 | 2.3.7.7 | 2.3.7.6   | latest   | latest |
 
+# Released Versions
+v2.3.7.6.1
+
+
 # Prerequisites
 Before using these Ansible workflows, ensure that you have the following prerequisites:
 
@@ -114,6 +118,10 @@ Before using these Ansible workflows, ensure that you have the following prerequ
 
 ```bash
 git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
+```
+Cloning a released version:
+```bash
+git clone --depth 1 --branch v2.3.7.6.1 https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
 ```
 
 ## Navigate to the project directory:    
