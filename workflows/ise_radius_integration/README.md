@@ -41,7 +41,7 @@ Validation success! 👍
 
 # Execution Reference Logs
 ```bash
-
+ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/ise_radius_integration/playbook/ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_input.yml -vvvv
 ```
 
 # Understanding the Configs for ISE and AAA Integration Tasks
