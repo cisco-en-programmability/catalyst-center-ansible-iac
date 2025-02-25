@@ -1,82 +1,95 @@
-# Workflow Playbook for Device Configuration Backup
+# Workflow Playbook for Device Config Backup
+### Overview
 
-## 1. Introduction
+This Ansible playbook automates the process of backing up device configurations in your network inventory. It is designed to work with Catalyst Center Release version 2.3.7.6 or later.
 
-This document provides a comprehensive guide to using the Ansible playbook for automating device configuration backups within Cisco Catalyst Center. This playbook is compatible with Catalyst Center Release 2.3.7.6 and later.
+The device configuration backup workflow in Cisco Catalyst Center focuses on creating backups of device configurations. The primary function of this workflow is to ensure that device configurations are backed up and stored securely for future reference or restoration.
 
-### 1.1. Purpose
+### Features
 
-The primary purpose of this workflow is to ensure the secure and reliable backup of network device configurations for future reference or restoration.
+- Backup device configurations using hostnames.
+- Backup device configurations without requiring passwords.
+- Backup device configurations for all devices.
+- Backup device configurations using site names.
 
-### 1.2. Key Features
+### Important Notes:
+1. Ensure the Catalyst Center version is compatible.
+2. Carefully configure inventory and input variables.
+3. Validate input using yamale to prevent errors.
+4. Review execution logs for troubleshooting.
 
-* **Flexible Backup Options:**
-    * Backup devices by hostname.
-    * Backup devices by IP address.
-    * Backup devices by MAC address.
-    * Backup devices by serial number.
-    * Backup devices by site name.
-    * Backup devices by collection status.
-    * Backup devices by family.
-    * Backup devices by series.
-    * Backup all devices.
-* **Password Management:** Supports backups with or without password encryption.
-* **Automated Workflow:** Streamlines the backup process using Ansible.
-* **Input Validation:** Integrates with Yamale for schema validation.
 
-### 1.3. Important Considerations
+## 
+## I. Key Points:
+### 1. Supported Catalyst Center Version: 
+2.3.7.6 and above
+### 2. Workflow Definition: 
+device_configs_backup_details specifies the devices and their details to include in the backup.
+### 3. Full Workflow Specification: 
+Refer to the official documentation for detailed information on defining workflows: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/device_configs_backup_workflow_manager
 
-* **Catalyst Center Compatibility:** Ensure your Catalyst Center version is 2.3.7.6 or later.
-* **Inventory and Variables:** Accurate configuration of inventory and input variables is crucial.
-* **Input Validation:** Validate input using Yamale to prevent errors.
-* **Log Review:** Regularly review execution logs for troubleshooting.
+## II. Procedure
+### 1. Prepare your Ansible environment:
+Install Ansible if you haven't already
+Ensure you have network connectivity to your Catalyst Center instance.
+Checkout the project and playbooks: git@github.com:cisco-en-programmability/catalyst-center-ansible-iac.git
 
-## 2. Prerequisites
-
-### 2.1. Ansible Environment
-
-* Install Ansible (version 9.9.0 or later recommended).
-* Ensure network connectivity to your Catalyst Center instance.
-* Clone the project and playbooks: `git@github.com:cisco-en-programmability/catalyst-center-ansible-iac.git`
-
-### 2.2. Catalyst Center Host Inventory
-
-* Configure the `host_inventory_dnac1/hosts.yml` file with your Catalyst Center connection details (IP address, credentials, etc.).
-* Verify that the `dnac_version` in the file matches your Catalyst Center version.
-
-#### 2.2.1. Sample `host_inventory_dnac1/hosts.yml`
-
-```yaml
+### 2. Configure Host Inventory:
+The host_inventory_dnac1/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
+Make sure the dnac_version in this file matches your actual Catalyst Center version.
+#### **The Sample host_inventory_dnac1/hosts.yml**
+```bash
 catalyst_center_hosts:
-  hosts:
-    catalyst_center220:
-      dnac_host: xx.xx.xx.xx
-      dnac_password: XXXXXXXX
-      dnac_port: 443
-      dnac_timeout: 60
-      dnac_username: admin
-      dnac_verify: false
-      dnac_version: 2.3.7.6
-      dnac_debug: true
-      dnac_log_level: INFO
-      dnac_log: true
+    hosts:
+        catalyst_center220:
+            dnac_host: xx.xx.xx.xx.
+            dnac_password: XXXXXXXX
+            dnac_port: 443
+            dnac_timeout: 60
+            dnac_username: admin
+            dnac_verify: false
+            dnac_version: 2.3.7.6
+            dnac_debug: true
+            dnac_log_level: INFO
+            dnac_log: true
 ```
-## 3. Workflow Execution
 
-### 3.1. Input Configuration
+### 3. Define Schema:
+The workflows/device_config_backup/vars device_config_backup_workflow_input.yml file stores the sites details you want to configure
 
-* Configure the `workflows/device_config_backup/vars/device_config_backup_workflow_input.yml` file with your specific device backup requirements.
-* Refer to the official documentation for detailed information: [https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/device_configs_backup_workflow_manager](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/device_configs_backup_workflow_manager)
+```bash
+catalyst_center_version: 2.3.7.6
+catalyst_center_task_timeout: 1200
+catalyst_center_task_poll_interval: 60
 
-### 4. Input Validation (Recommended)
+# Network Settings an IP Pools design.
+device_configs_backup_details_type:
+  collection_status: str(required=False)
+  family: str(required=False)
+  file_password: str(required=False)
+  file_path: str(required=False)
+  hostname_list: str(required=False)
+  ip_address_list: str(required=False)
+  mac_address_list: str(required=False)
+  serial_number_list: str(required=False)
+  series: str(required=False)
+  site_list: str(required=False)
+  type: str(required=False)
+  unzip_backup: bool(required=False)
+```
 
-* Validate the input against the schema using Yamale:
+### 4. Generate your Input:
+The workflows/device_config_backup/vars/device_config_backup_workflow_input.yml file should be configured with device details
+Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/device_configs_backup_workflow_manager
 
+
+### 5. Validate Input (Recommended):
+Validate the input with schema using yamale
 ```bash
 yamale -s workflows/device_config_backup/schema/device_config_backup_workflow_schema.yml workflows/device_config_backup/vars/device_config_backup_workflow_input.yml
 ```
 
-### 5. Running the Playbook:
+### 6. Run playbook:
 #### **Collect device running configurations through Catalyst Center APIs.**
 ```bash
 ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/device_config_backup/playbook/device_config_backup_workflow_playbook.yml \
@@ -224,10 +237,10 @@ device_configs_backup_details:
 - serial_number_list: A list of serial number for which the device configurations will be backed up.
 - file_path: The directory path where the backup files will be stored.
 
-### 8. Device Configurations Backup Using Series
+### 8. Take Backup with series_list
 #### **Mapping config to UI Actions**
 
-- UI Mapping: Provision > Inventory > Actions > Export Inventory
+- The config parameter within this task corresponds to the Provision > Inventory > Actions > Export Inventory" action in the Cisco Catalyst Center UI.
 
 ![alt text](./images/series.png)
 
@@ -266,8 +279,7 @@ device_configs_backup_details:
 
 
 
-### 4. Backup using multiple parameters
-Take Backup Using collection_status, ip_address_list and hostname_list
+### 4. Take Backup Using collection_status, ip_address_list and hostname_list
 
 #### **Example Input **
 - The config parameter within this task corresponds to the Provision > Inventory > Actions > Export Inventory" action in the Cisco Catalyst Center UI.
@@ -279,8 +291,8 @@ Take Backup Using collection_status, ip_address_list and hostname_list
 ![alt text](./images/password.png)
 ```
 device_configs_backup_details:
-  - ip_address_list: ['204.1192.3.40']
-    hostname_list: ['DC-FR-9300.cisco.local']
+  - ip_address_list: [204.1192.3.40]
+    hostname_list:["DC-FR-9300.cisco.local"]
     collection_status: Managed
     file_path: "./"
     unzip_backup: false
