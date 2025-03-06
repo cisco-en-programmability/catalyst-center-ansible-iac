@@ -116,9 +116,9 @@ template_details:
 ```
 - Deploy templates
 ```bash
-deploy_device_details:
+template_details:
   - deploy_template:
-    - project_name: Onboarding Configuration
+      project_name: Onboarding Configuration
       template_name: PnP-Upstream-SW
       force_push: true
       template_parameters:
@@ -128,7 +128,7 @@ deploy_device_details:
         - site_name: "Global/Bangalore/Building14/Floor1"
           device_family: "Switches and Hubs"
   - deploy_template:
-    - project_name: Onboarding Configuration
+      project_name: Onboarding Configuration
       template_name: PnP-Upstream-SW
       force_push: true
       template_parameters:
