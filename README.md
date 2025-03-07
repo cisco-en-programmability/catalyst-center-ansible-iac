@@ -55,6 +55,7 @@ Simplified deployments: Automate updates and rollbacks with confidence.
 - [Catalyst Center Device Inventory and device management](./workflows/inventory#readme)
 - [Catalyst Center Plug and Play Device Onboarding](./workflows/plug_and_play/README.md)
 - [Catalyst Center Device Provisioning and Re-Provisioning Management](./workflows/provision/README.md)
+- [Catalyst Center Design and Deploy Device Templates](./workflows/device_templates/README.md)
 
 ## Day2 Configurations (Underlay automation and SD Access fabric)
 - [Catalyst Cennter Underlay Automation (LAN Automation) Management](./workflows/lan_automation/#readme)
@@ -85,6 +86,7 @@ Simplified deployments: Automate updates and rollbacks with confidence.
 | 2.3.5.6 | 2.3.5.3   | latest   | latest |
 | 2.3.7.6 | 2.3.7.6   | latest   | latest |
 | 2.3.7.7 | 2.3.7.6   | latest   | latest |
+| 2.3.7.9 | 2.3.7.9   | latest   | latest |
 
 # Released Versions
 v2.3.7.6.1
