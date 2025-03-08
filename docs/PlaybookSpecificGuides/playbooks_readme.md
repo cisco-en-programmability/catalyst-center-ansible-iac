@@ -1,5 +1,5 @@
 # Prevalidated Playbooks Guides
-    The cisco-en-programmability/catalyst-center-ansible-iac project provides Ansible playbooks to automate Catalyst Center configurations. It streamlines Catalyst Center provisioning, automates network management tasks, and uses input validation schemas to ensure accuracy. The project includes comprehensive guides and sample inputs to help users manage their network infrastructure, and it supports Jinja-based templates for scalability and flexibility. This allows you to manage your entire Catalyst Center configuration through Git, providing version control, collaboration, and improved reliability.
+The cisco-en-programmability/catalyst-center-ansible-iac project provides Ansible playbooks to automate Catalyst Center configurations. It streamlines Catalyst Center provisioning, automates network management tasks, and uses input validation schemas to ensure accuracy. The project includes comprehensive guides and sample inputs to help users manage their network infrastructure, and it supports Jinja-based templates for scalability and flexibility. This allows you to manage your entire Catalyst Center configuration through Git, providing version control, collaboration, and improved reliability.
 
 # Table of Contents
 
