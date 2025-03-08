@@ -1,36 +1,5 @@
-# catalyst-center-ansible-iac
-[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/DNACENSolutions/dnac_ansible_workflows)
-[![Run in Cisco Cloud IDE](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-runable-icon.svg)](https://developer.cisco.com/codeexchange/devenv/DNACENSolutions/dnac_ansible_workflows/)
-![Catalyst Center Cisco Validated Ansible Playbooks](https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git)
-
-
 # Catalyst Center Cisco Validated Playbooks
 This repository provides Cisco-validated Ansible playbooks to automate Catalyst Center configurations, accelerating your network automation journey. 
-It includes:
-
-## Ready-to-use playbooks: 
-Streamline Catalyst Center provisioning with ready-to-use Ansible playbooks. Automate configurations and simplify network management tasks.
-
-## Input validation schemas: 
-Yamale-based input validation schemas ensure user input accuracy for the playbooks by validating user input before execution. This significantly reduces the potential for human error and ensures consistent, reliable results. Prevent costly mistakes and maintain configuration integrity with automated input checks.
-
-## Comprehensive guides: 
-Comprehensive guides provide detailed instructions and practical examples for various Catalyst Center configuration use cases. Learn how to  deploy, update, and maintain your network infrastructure with step-by-step guidance and best practices.  These resources empower you to effectively manage your network throughout its lifecycle.
-
-## Sample inputs: 
-Jumpstart your automation journey with sample input files that demonstrate proper formatting and supported values. Quickly create your own input configurations by adapting these examples, saving time and reducing errors. Use these pre-populated templates as a foundation for customizing your Catalyst Center deployments.
-
-## Sample Jinja Based template:
-Enhance scalability and flexibility with Jinja-based template support.  These templates empower you to dynamically generate input configurations, adapting to various deployments with ease.  Simplify complex configurations and streamline repetitive tasks by leveraging the power of Jinja templating within your Ansible playbooks.
-
-### Embrace infrastructure as code and manage your entire Catalyst Center configuration through Git. This repository provides the tools and guidance to make Git your single source of truth, ensuring:
-
-Complete version control: Track every change and easily revert to previous states.
-Increased collaboration: Simplify teamwork with a centralized and transparent platform.
-Improved reliability: Reduce errors and ensure consistent configurations across your network.
-Simplified deployments: Automate updates and rollbacks with confidence.
-# Enterprise Usecases
-![Alt text](./images/enterpriseUsecases.png)
 
 # Table of Contents
 - [Prerequisites](#prerequisites)
@@ -39,45 +8,6 @@ Simplified deployments: Automate updates and rollbacks with confidence.
 - [Usage](#usage)
 - [Examples](#examples)
 - [Update](#update)
-- [Contributing](#contributing)
-- [License](#license)
-- Cisco Validated Playbooks usage guides
-
-## Day0 Configurations (Access and Integrations)
-- [Catalyst Center Role Based Access Control and Users Management](./workflows/users_and_roles/README.md)
-- [Catalyst Center ISE and AAA Servers Integration](./workflows/ise_radius_integration/#readme)
-
-## Day1 Configurations (Design and Discovery)
-- [Catalyst Center Site Hierarchy and Floor Maps design](./workflows/site_hierarchy/#readme)
-- [Catalyst Center Device Credentials configurations and assignment](./workflows/device_credentials/#readme)
-- [Catalyst Center Network Settings (Servers, Banners, TZ, SNMP, Logging, Telemetry Management](./workflows/network_settings/#readme)
-- [Catalyst Center Network Settings Global Ip Pools and Site Pools reservation Management](./workflows/network_settings/#readme)
-- [Catalyst Center Devces Discovery](./workflows/device_discovery/#readme)
-- [Catalyst Center Device Inventory and device management](./workflows/inventory#readme)
-- [Catalyst Center Plug and Play Device Onboarding](./workflows/plug_and_play/README.md)
-- [Catalyst Center Device Provisioning and Re-Provisioning Management](./workflows/provision/README.md)
-- [Catalyst Center Design and Deploy Device Templates](./workflows/device_templates/README.md)
-
-## Day2 Configurations (Underlay automation and SD Access fabric)
-- [Catalyst Cennter Underlay Automation (LAN Automation) Management](./workflows/lan_automation/#readme)
-- [Catalyst Center SDA Fabric Site and Fabric Zones](./workflows/sda_fabric_sites_zones/README.md)
-- [Catalyst Center SDA Fabric Transits (IP and SDA) Management](./workflows/sda_fabric_transits/README.md)
-- [Catalyst Center Virtual Networks and L3 Anycast Gateways and L2 Vlans](./workflows/sda_virtual_networks_l2l3_gateways/README.md)
-- [Catalyst Center SDA Fabric Device assignment to fabric sites and zones](./workflows/sda_fabric_device_roles/README.md)
-- [Catalyst Center SDA Fabric Devices and Host Onboarding](./workflows/sda_hostonboarding/README.md)
-- [Catalyst Center SDA Extranet Policies Management](./workflows/sda_fabric_extranet_policy/README.md)
-
-## DayN Operation (Software Upgrade, Compliance, Events, Provisioning, backups and Assurance)
-- [Catalyst Center Devces Software image management (SWIM)](./workflows/swim/README.md)
-- [Catalyst Center Device compliance and remidiation](./workflows/network_compliance/README.md)
-- [Catalyst Center Notification Destination and Events Subscription](./workflows/events_and_notifications/README.md)
-- [Catalyst Center Devices Replacement Management](./workflows/device_replacement_rma/README.md)
-- [Catalyst Center Access Point Provisioning and Access Point Configuration Management](./workflows/accesspoints_configuration_provisioning/README.md)
-- [Device Configuration Customization using Catalyst Center Templates](./workflows/device_templates/README.md)
-- [Catalyst Center managed network devices configurations backup management](./workflows/device_config_backup/README.md)
-
-## Demo Videos
-[IaC Demo Videos](http://3.136.0.140/index.html)
 
 # CompatibilityMatrix
 | Deployed Catalyst Center Version   | Catalyst Center Version in Input   | Ansible Galaxy collection (cisco.dnac)Version    | Python SDK (dnacentersdk) Version    |
@@ -91,7 +21,6 @@ Simplified deployments: Automate updates and rollbacks with confidence.
 
 # Released Versions
 v2.3.7.6.1
-
 
 # Prerequisites
 Before using these Ansible workflows, ensure that you have the following prerequisites:
@@ -280,44 +209,5 @@ If that's the case try setting this environment variable:
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 ```
 
-# Update
-Getting the latest/nightly collection build
 
-Clone the Catalyst Center ansible IaC repository if not already cloned.
-```bash
-git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
-```
-    
-Go to the dnacenter-ansible directory
-```bash
-cd catalyst-center-ansible-iac
-```
-    
-Pull the latest master from the repo
-```bash
-git pull origin master
-```
 
-# Raising an issue or enhanceent request
-- Visit the Catalyst Center Ansible repository: https://github.com/cisco-en-programmability/catalyst-center-ansible-iac/issues
-- Click the "New Issue" button.
-- Carefully follow the provided issue template, ensuring you include:
-- - A clear and concise description of the problem
-- - Steps to reproduce the issue.
-- - Relevant code snippets or configurations, playbook, variable files.
-- - Expected behavior vs. actual behavior.
-- - Catalyst Center and Ansible versions you're using.
-
-# Contributing
-Contributions are welcome! To contribute to this project, follow these steps:
-    Fork the repository.
-    Create a new branch for your feature or bug fix.
-    Make your changes and commit them with descriptive commit messages.
-    Push your changes to your fork.
-    Submit a pull request to the main branch of this repository.
-
-# Code of Conduct
-This collection follows the Ansible project's Code of Conduct. Please read and familiarize yourself with this document.
-
-# Releasing, Versioning and Deprecation:
- Version (Beta) : More enhancement might follow based on usage feedback
