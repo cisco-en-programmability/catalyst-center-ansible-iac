@@ -338,7 +338,7 @@ email_destination_type:
   secondary_smtp_config: include('secondary_smtp_config_type', required=False)
   sender_email: str(required=True)
   subject: str(required=True)
-email_event_notification:
+email_event_notification_type:
   description: str(required=True)
   domain: str(required=False)
   event_categories: list(str(), required=False)
