@@ -38,6 +38,17 @@ design_sites:
         name: BayAreaGuest
         parent_name: Global/USA
     type: area
+  # Adding India area
+  - site:
+      area:
+        name: India
+        parent_name: Global
+    type: area
+  - site:
+      area:
+        name: Bangalore
+        parent_name: Global/India
+    type: area
   - site:
       building:
         name: BLD23
@@ -118,6 +129,25 @@ design_sites:
         latitude: 37.415947
         longitude: -121.916327
         country: United States
+    type: building
+  # Adding India buildings
+  - site:
+      building:
+        name: BLG1
+        parent_name: Global/India/Bangalore
+        address: Outer Ring Road, Bangalore, Karnataka 560103, India
+        latitude: 12.9716
+        longitude: 77.5946
+        country: India
+    type: building
+  - site:
+      building:
+        name: BLG2
+        parent_name: Global/India/Bangalore
+        address: Electronic City, Bangalore, Karnataka 560100, India
+        latitude: 12.8458
+        longitude: 77.6612
+        country: India
     type: building
   - site:
       floor:
@@ -285,6 +315,62 @@ design_sites:
       floor:
         name: FLOOR1_LEVEL1
         parent_name: Global/USA/BERKELEY/BLDBERK
+        rfModel: Cubes And Walled Offices
+        width: 100.00
+        length: 100.00
+        height: 10.00
+    type: floor
+  # Adding India BLG1 floors
+  - site:
+      floor:
+        name: FLOOR1
+        parent_name: Global/India/Bangalore/BLG1
+        rfModel: Cubes And Walled Offices
+        width: 100.00
+        length: 100.00
+        height: 10.00
+    type: floor
+  - site:
+      floor:
+        name: FLOOR2
+        parent_name: Global/India/Bangalore/BLG1
+        rfModel: Cubes And Walled Offices
+        width: 100.00
+        length: 100.00
+        height: 10.00
+    type: floor
+  - site:
+      floor:
+        name: FLOOR3
+        parent_name: Global/India/Bangalore/BLG1
+        rfModel: Cubes And Walled Offices
+        width: 100.00
+        length: 100.00
+        height: 10.00
+    type: floor
+  # Adding India BLG2 floors
+  - site:
+      floor:
+        name: FLOOR1
+        parent_name: Global/India/Bangalore/BLG2
+        rfModel: Cubes And Walled Offices
+        width: 100.00
+        length: 100.00
+        height: 10.00
+    type: floor
+  - site:
+      floor:
+        name: FLOOR2
+        parent_name: Global/India/Bangalore/BLG2
+        rfModel: Cubes And Walled Offices
+        width: 100.00
+        length: 100.00
+        height: 10.00
+    type: floor
+  - site:
+      floor:
+        name: FLOOR3
+        parent_name: Global/India/Bangalore/BLG2
         rfModel: Cubes And Walled Offices
         width: 100.00
         length: 100.00
