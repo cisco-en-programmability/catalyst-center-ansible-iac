@@ -54,6 +54,9 @@ Enhance scalability and flexibility with Jinja-based template support. These tem
 - [Catalyst Center Device Credentials configurations and assignment](./workflows/device_credentials/#readme)
 - [Catalyst Center Network Settings (Servers, Banners, TZ, SNMP, Logging, Telemetry Management](./workflows/network_settings/#readme)
 - [Catalyst Center Network Settings Global Ip Pools and Site Pools reservation Management](./workflows/network_settings/#readme)
+- [Catalyst Center Network Settings Wireless Design Management](./workflows/wireless_design/#readme)
+- [Catalyst Center Wireless Network Profile Management](./workflows/network_profile_wireless/#readme) 
+- [Catalyst Center Network Profile Switching Management](./workflows/network_profile_switching/#readme)
 - [Catalyst Center Devces Discovery](./workflows/device_discovery/#readme)
 - [Catalyst Center Device Inventory and device management](./workflows/inventory#readme)
 - [Catalyst Center Plug and Play Device Onboarding](./workflows/plug_and_play/README.md)
@@ -68,6 +71,7 @@ Enhance scalability and flexibility with Jinja-based template support. These tem
 - [Catalyst Center SDA Fabric Device assignment to fabric sites and zones](./workflows/sda_fabric_device_roles/README.md)
 - [Catalyst Center SDA Fabric Devices and Host Onboarding](./workflows/sda_hostonboarding/README.md)
 - [Catalyst Center SDA Extranet Policies Management](./workflows/sda_fabric_extranet_policy/README.md)
+- [Catalyst Center Application Policy Management](./workflows/application_policy/README.md)
 
 ## DayN Operation (Software Upgrade, Compliance, Events, Provisioning, backups and Assurance)
 - [Catalyst Center Devces Software image management (SWIM)](./workflows/swim/README.md)
@@ -77,6 +81,11 @@ Enhance scalability and flexibility with Jinja-based template support. These tem
 - [Catalyst Center Access Point Provisioning and Access Point Configuration Management](./workflows/accesspoints_configuration_provisioning/README.md)
 - [Device Configuration Customization using Catalyst Center Templates](./workflows/device_templates/README.md)
 - [Catalyst Center managed network devices configurations backup management](./workflows/device_config_backup/README.md)
+- [Catalyst Center Assurance Health Score KPIs settings and thresholds management](./workflows/assurance_health_score/README.md)
+- [Catalyst Center Assurance Path Trace Management](./workflows/assurance_pathtrace/README.md)
+- [Catalyst Center Assurance Network Health Management](./workflows/assurance_network_health/README.md)
+- [Catalyst Center Assurance issues and events management](./workflows/assurance_issues_management/README.md)
+- [Catalyst Center Assurance ICAP Management](./workflows/assurance_intelligent_capture/README.md)
 
 ## Demo Videos
 [IaC Demo Videos](http://3.136.0.140/index.html)
