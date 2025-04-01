@@ -56,7 +56,7 @@
       set_fact:
         long_op_start: "{{ now() }}"
     - name: Create the Wireless SSID, Interfaces, Custom RF Profiles, etc.
-      cisco.dnac.network_wireless_profile_workflow_manager:
+      cisco.dnac.network_profile_wireless_workflow_manager:
         <<: *dnac_login
         state: "{{ state }}"
         config: "{{wireless_nw_profiles_details}}"
