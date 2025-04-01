@@ -3,7 +3,6 @@
 [![Run in Cisco Cloud IDE](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-runable-icon.svg)](https://developer.cisco.com/codeexchange/devenv/DNACENSolutions/dnac_ansible_workflows/)
 ![Catalyst Center Cisco Validated Ansible Playbooks Official](https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git)
 
-
 # Catalyst Center Cisco Validated Playbooks
 This repository provides Cisco-validated Ansible playbooks to automate Catalyst Center configurations, accelerating your network automation journey. It includes:
 
@@ -19,8 +18,8 @@ Comprehensive guides provide detailed instructions and practical examples for va
 ## Sample inputs
 Jumpstart your automation journey with sample input files that demonstrate proper formatting and supported values. Quickly create your own input configurations by adapting these examples, saving time and reducing errors. Use these pre-populated templates as a foundation for customizing your Catalyst Center deployments.
 
-## Sample Jinja Based template
-Enhance scalability and flexibility with Jinja-based template support. These templates empower you to dynamically generate input configurations, adapting to various deployments with ease. Simplify complex configurations and streamline repetitive tasks by leveraging the power of Jinja templating within your Ansible playbooks.
+## Sample Jinja-based templates
+Enhance scalability and flexibility with Jinja-based templates support. These templates empower you to dynamically generate input configurations, adapting to various deployments with ease. Simplify complex configurations and streamline repetitive tasks by leveraging the power of Jinja templating within your Ansible playbooks.
 
 ### Embrace infrastructure as code and manage your entire Catalyst Center configuration through Git. This repository provides the tools and guidance to make Git your single source of truth, ensuring:
 
@@ -45,37 +44,37 @@ Enhance scalability and flexibility with Jinja-based template support. These tem
 
 # Cisco Validated Playbooks
 
-## Day0 Configurations (Access and Integrations)
+## Day 0 Configurations (Access and Integrations)
 - [Catalyst Center Role Based Access Control and Users Management](./workflows/users_and_roles/README.md)
 - [Catalyst Center ISE and AAA Servers Integration](./workflows/ise_radius_integration/#readme)
 
-## Day1 Configurations (Design and Discovery)
+## Day 1 Configurations (Design and Discovery)
 - [Catalyst Center Site Hierarchy and Floor Maps design](./workflows/site_hierarchy/#readme)
 - [Catalyst Center Device Credentials configurations and assignment](./workflows/device_credentials/#readme)
 - [Catalyst Center Network Settings (Servers, Banners, TZ, SNMP, Logging, Telemetry Management](./workflows/network_settings/#readme)
-- [Catalyst Center Network Settings Global Ip Pools and Site Pools reservation Management](./workflows/network_settings/#readme)
+- [Catalyst Center Network Settings Global IP Address Pools and Site IP Address Pools reservation Management](./workflows/network_settings/#readme)
 - [Catalyst Center Network Settings Wireless Design Management](./workflows/wireless_design/#readme)
 - [Catalyst Center Wireless Network Profile Management](./workflows/network_profile_wireless/#readme) 
 - [Catalyst Center Network Profile Switching Management](./workflows/network_profile_switching/#readme)
-- [Catalyst Center Devces Discovery](./workflows/device_discovery/#readme)
+- [Catalyst Center Devices Discovery](./workflows/device_discovery/#readme)
 - [Catalyst Center Device Inventory and device management](./workflows/inventory#readme)
 - [Catalyst Center Plug and Play Device Onboarding](./workflows/plug_and_play/README.md)
 - [Catalyst Center Device Provisioning and Re-Provisioning Management](./workflows/provision/README.md)
 - [Catalyst Center Design and Deploy Device Templates](./workflows/device_templates/README.md)
 
-## Day2 Configurations (Underlay automation and SD Access fabric)
+## Day 2 Configurations (Underlay automation and SD Access fabric)
 - [Catalyst Center Underlay Automation (LAN Automation) Management](./workflows/lan_automation/#readme)
 - [Catalyst Center SDA Fabric Site and Fabric Zones](./workflows/sda_fabric_sites_zones/README.md)
-- [Catalyst Center SDA Fabric Transits (IP and SDA) Management](./workflows/sda_fabric_transits/README.md)
-- [Catalyst Center Virtual Networks and L3 Anycast Gateways and L2 Vlans](./workflows/sda_virtual_networks_l2l3_gateways/README.md)
+- [Catalyst Center SDA Fabric Transits (IP transit and SDA Transit) Management](./workflows/sda_fabric_transits/README.md)
+- [Catalyst Center Virtual Networks and L3 Anycast Gateways and L2 VLANs Management](./workflows/sda_virtual_networks_l2l3_gateways/README.md)
 - [Catalyst Center SDA Fabric Device assignment to fabric sites and zones](./workflows/sda_fabric_device_roles/README.md)
 - [Catalyst Center SDA Fabric Devices and Host Onboarding](./workflows/sda_hostonboarding/README.md)
 - [Catalyst Center SDA Extranet Policies Management](./workflows/sda_fabric_extranet_policy/README.md)
 - [Catalyst Center Application Policy Management](./workflows/application_policy/README.md)
 
-## DayN Operation (Software Upgrade, Compliance, Events, Provisioning, backups and Assurance)
-- [Catalyst Center Devces Software image management (SWIM)](./workflows/swim/README.md)
-- [Catalyst Center Device compliance and remidiation](./workflows/network_compliance/README.md)
+## Day N Operation (Software Upgrade, Compliance, Events, Provisioning, backups and Assurance)
+- [Catalyst Center Devices Software image management (SWIM)](./workflows/swim/README.md)
+- [Catalyst Center Device compliance and remediation management](./workflows/network_compliance/README.md)
 - [Catalyst Center Notification Destination and Events Subscription](./workflows/events_and_notifications/README.md)
 - [Catalyst Center Devices Replacement Management](./workflows/device_replacement_rma/README.md)
 - [Catalyst Center Access Point Provisioning and Access Point Configuration Management](./workflows/accesspoints_configuration_provisioning/README.md)
@@ -120,7 +119,7 @@ Follow these steps to install the Cisco Validated Playbooks, Schema, and Sample 
 ## Python
     Python 3.9+ is required to install iac-validate. Don't have Python 3.9 or later? 
     See Python 3 Installation & Setup Guide https://realpython.com/installing-python/
-    Create your python virtual environment using commend:
+    Create your python virtual environment using command below:
 ```bash
 python3 -m venv python3env --prompt "AnsiblePython3 VENV"
 source python3env/bin/activate
@@ -147,17 +146,14 @@ cd dnac_ansible_workflows
 pip install -r requirements.txt
 ```
 ## Install the collection (Galaxy link):
-For installing or upgrading the cisco.dnac ansible collection follow steps:
-    Install Collection from Ansible Galaxy
-    These instructions are for regular users to install via Ansible Galaxy. The instructions also include installation of all Python requirements for a given version. 
-    The cisco.dnac collection is available on the Ansible Galaxy server and can be automatically installed on your system using following command
+For installing or upgrading the cisco.dnac Ansible collection, follow these steps: Install Collection from Ansible Galaxy These instructions are for regular users to install via Ansible Galaxy. The instructions also include installation of all Python requirements for a given version. The cisco.dnac collection is available on the Ansible Galaxy server and can be automatically installed on your system using the following command:
 
 ### Latest version
 Clone the dnacenter-ansible repository.
 ```bash
 ansible-galaxy collection install cisco.dnac --force
 ```
-### Sppecific version
+### Specific version
 ```bash
 ansible-galaxy collection install cisco.dnac:==6.29.0 --force
 ```
@@ -202,10 +198,10 @@ pip install dnacentersdk:2.8.3
 ```
 
 ## Ansible configuration file
-Enable Jinja2 extensions: loopcontrols and do
-[Jinja2 Extensions Documentation](https://jinja.palletsprojects.com/en/stable/extensions/)
+Enable Jinja2 extensions: loopcontrols and do Jinja2 Extensions Documentation
 
-By default, Ansible will issue a warning when a duplicate dict key is encountered in YAML. We recommend to change to error instead and stop playbook execution when a duplicate key is detected.
+By default, Ansible will issue a warning when a duplicate dict key is encountered in YAML. We recommend changing to error instead and stopping playbook execution when a duplicate key is detected.
+
 ```bash
 jinja2_extensions=jinja2.ext.loopcontrols,jinja2.ext.do
 duplicate_dict_key=error
@@ -213,21 +209,23 @@ duplicate_dict_key=error
 
 # Create your inventory
 ## Inventory:
-This folder contains inventory file for your dev, lab, sandbox or production env which will be utilised by swim playbooks.
+This folder contains inventory files for your dev, lab, sandbox, or production environments which will be utilized by SWIM playbooks.
 
-Create your inventory file in below template format to utilize the swim playbooks.
+Create your inventory file in the template format below to utilize the SWIM playbooks.
 
 The template for the inventory file is:
 ```bash
 cat inventory/demo_lab/001-dnac_inventory_template.yml
 ```
 
-Setup up your ansible python interpretor following suitable method for your environment : https://docs.ansible.com/ansible/latest/reference_appendices/interpreter_discovery.html
+Set up your Ansible Python interpreter following a suitable method for your environment: https://docs.ansible.com/ansible/latest/reference_appendices/interpreter_discovery.html
+
+
     
 ### Hairarchical variable files for inputs
 
-The second folder of the workflows contains playbook and var files for workflows.
-Example:
+The second folder of the workflows contains playbook and var files for workflows. Example:
+
 ```bash
 workflows/swim
 playbooks/
@@ -251,7 +249,7 @@ catalyst_center_hosts:
     hosts:
     <dnac hostname >:
     dnac_debug: false
-    dnac_host: <Cisco Catalyst Center IP Address> #(Mandatory) Cisco Catalyst Center Ip address
+    dnac_host: <Cisco Catalyst Center IP Address> #(Mandatory) Cisco Catalyst Center IP Address
     dnac_password: <Cisco Catalyst Center UI admin Password> #(Mandatory) 
     dnac_port: 443 #(Mandatory) 
     dnac_username: <Cisco Catalyst Center UI admin username> #(Mandatory) 
@@ -308,7 +306,7 @@ Pull the latest master from the repo
 git pull origin master
 ```
 
-# Raising an issue or enhanceent request
+# Raising an issue or enhancement request
 - Visit the Catalyst Center Ansible repository: https://github.com/cisco-en-programmability/catalyst-center-ansible-iac/issues
 - Click the "New Issue" button.
 - Carefully follow the provided issue template, ensuring you include:
