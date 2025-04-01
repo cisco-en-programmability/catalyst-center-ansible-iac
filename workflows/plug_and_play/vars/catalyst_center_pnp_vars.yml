@@ -29,9 +29,9 @@ pnp_details:
       project_name: Onboarding Configuration
       template_name: PnP-Devices-SW
       image_name: cat9k_iosxe.17.12.04.SPA.bin
-      # template_params:
-      #   PNP_VLAN_ID: 2000
-      #   LOOPBACK_IP: 204.1.2.100
+      template_params:
+        PNP_VLAN_ID: 2000
+        LOOPBACK_IP: 204.1.2.100
       device_info:
         - serial_number: FJC272127LW
           hostname: DC-FR-9300.cisco.local
@@ -43,9 +43,9 @@ pnp_details:
       project_name: Onboarding Configuration
       template_name: PnP-Devices-SW
       image_name: cat9k_iosxe.17.12.02.SPA.bin
-      # template_params:
-      #   PNP_VLAN_ID: 2005
-      #   LOOPBACK_IP: 204.1.2.2
+      template_params:
+        PNP_VLAN_ID: 2005
+        LOOPBACK_IP: 204.1.2.2
       device_info:
         - serial_number: FJC271925Q1
           hostname: NY-EN-9300
@@ -58,10 +58,10 @@ pnp_details:
       project_name: Onboarding Configuration
       image_name: C9800-40-universalk9_wlc.17.12.02.SPA.bin
       template_name: PnP-Devices_SJ-EWLC
-      # template_params:
-      #   MGMT_IP: 10.22.40.244
-      #   MGMT_SUBNET: 255.255.255.0
-      #   NTP_SERVER_IP: 171.68.38.66
+      template_params:
+        MGMT_IP: 10.22.40.244
+        MGMT_SUBNET: 255.255.255.0
+        NTP_SERVER_IP: 171.68.38.66
       device_info:
         - serial_number: FOX2639PAYD
           hostname: SJ-EWLC-1
