@@ -55,7 +55,6 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 - [Catalyst Center Network Settings Global IP Address Pools and Site IP Address Pools reservation Management](./workflows/network_settings/#readme)
 - [Catalyst Center Network Settings Wireless Design Management](./workflows/wireless_design/#readme)
 - [Catalyst Center Wireless Network Profile Management](./workflows/network_profile_wireless/#readme) 
-- [Catalyst Center Network Profile Switching Management](./workflows/network_profile_switching/#readme)
 - [Catalyst Center Devices Discovery](./workflows/device_discovery/#readme)
 - [Catalyst Center Device Inventory and device management](./workflows/inventory#readme)
 - [Catalyst Center Plug and Play Device Onboarding](./workflows/plug_and_play/README.md)
@@ -80,11 +79,7 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 - [Catalyst Center Access Point Provisioning and Access Point Configuration Management](./workflows/accesspoints_configuration_provisioning/README.md)
 - [Device Configuration Customization using Catalyst Center Templates](./workflows/device_templates/README.md)
 - [Catalyst Center managed network devices configurations backup management](./workflows/device_config_backup/README.md)
-- [Catalyst Center Assurance Health Score KPIs settings and thresholds management](./workflows/assurance_health_score/README.md)
-- [Catalyst Center Assurance Path Trace Management](./workflows/assurance_pathtrace/README.md)
-- [Catalyst Center Assurance Network Health Management](./workflows/assurance_network_health/README.md)
-- [Catalyst Center Assurance issues and events management](./workflows/assurance_issues_management/README.md)
-- [Catalyst Center Assurance ICAP Management](./workflows/assurance_intelligent_capture/README.md)
+
 
 ## Demo Videos
 [IaC Demo Videos](http://3.136.0.140/index.html)
