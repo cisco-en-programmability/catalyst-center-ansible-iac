@@ -7,9 +7,8 @@ application_policy_details:
   - queuing_profile:
     - profile_name: "Enterprise-QoS-Profile"
       profile_description: "QoS profile optimized for business-critical applications"
-      bandwidth_settings:
-        is_common_between_all_interface_speeds: true
-        interface_speed: "ALL"
+      interface_speed_bandwidth_clauses:
+        interface_speed: "ONE_GBPS"
         bandwidth_percentages:
           transactional_data: "5"
           best_effort: "10"
@@ -66,7 +65,7 @@ application_policy_details:
       help_string: "Security Gateway Application based on IP"
       description: "Defines security gateway policies using server IPs"
       type: "server_ip"
-      network_identity_setting:
+      network_identity:
         protocol: "UDP"
         port: "2000"
         ip_subnet: ["1.1.1.1","2.2.2.2","3.3.3.3"]
