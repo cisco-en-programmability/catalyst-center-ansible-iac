@@ -55,6 +55,7 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 - [Catalyst Center Network Settings Global IP Address Pools and Site IP Address Pools reservation Management](./workflows/network_settings/#readme)
 - [Catalyst Center Network Settings Wireless Design Management](./workflows/wireless_design/#readme)
 - [Catalyst Center Wireless Network Profile Management](./workflows/network_profile_wireless/#readme) 
+- [Catalyst Center Network Profile Switching Management](./workflows/network_profile_switching/#readme)
 - [Catalyst Center Devices Discovery](./workflows/device_discovery/#readme)
 - [Catalyst Center Device Inventory and device management](./workflows/inventory#readme)
 - [Catalyst Center Plug and Play Device Onboarding](./workflows/plug_and_play/README.md)
@@ -79,7 +80,11 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 - [Catalyst Center Access Point Provisioning and Access Point Configuration Management](./workflows/accesspoints_configuration_provisioning/README.md)
 - [Device Configuration Customization using Catalyst Center Templates](./workflows/device_templates/README.md)
 - [Catalyst Center managed network devices configurations backup management](./workflows/device_config_backup/README.md)
-
+- [Catalyst Center Assurance Health Score KPIs settings and thresholds management](./workflows/assurance_health_score/README.md)
+- [Catalyst Center Assurance Path Trace Management](./workflows/assurance_pathtrace/README.md)
+- [Catalyst Center Assurance Network Health Management](./workflows/assurance_network_health/README.md)
+- [Catalyst Center Assurance issues and events management](./workflows/assurance_issues_management/README.md)
+- [Catalyst Center Assurance ICAP Management](./workflows/assurance_intelligent_capture/README.md)
 
 ## Demo Videos
 [IaC Demo Videos](http://3.136.0.140/index.html)
@@ -153,7 +158,7 @@ ansible-galaxy collection install cisco.dnac --force
 ansible-galaxy collection install cisco.dnac:==6.29.0 --force
 ```
 
-### Install latest devel version from  GitHub abd build
+### Install latest devel version from  GitHub and build
 ```bash
 git clone https://github.com/cisco-en-programmability/dnacenter-ansible.git
 ```
@@ -182,7 +187,7 @@ pip install dnacentersdk
 ```
 
 ### Upgrading to the latest Version
-Use --upgrade opton to upgrde to latest version available.
+Use --upgrade option to upgrade to latest version available.
 ```bash
 pip install dnacentersdk --upgrade
 ```
@@ -213,11 +218,11 @@ The template for the inventory file is:
 cat inventory/demo_lab/001-dnac_inventory_template.yml
 ```
 
-Set up your Ansible Python interpreter following a suitable method for your environment: https://docs.ansible.com/ansible/latest/reference_appendices/interpreter_discovery.html
+Follow the Ansible documentation to set up your Python interpreter:: https://docs.ansible.com/ansible/latest/reference_appendices/interpreter_discovery.html
 
 
     
-### Hairarchical variable files for inputs
+### Hierarchical variable files for inputs
 
 The second folder of the workflows contains playbook and var files for workflows. Example:
 
@@ -255,19 +260,19 @@ catalyst_center_hosts:
 Here are a few examples of Cisco Validated Playbooks in the repo. For details documentation of the playbook usage refer the guide inside the corresponding module.
 
 ## Example 1: 
-Swim upgrade, this include uploading the images, golden tagging the image filtered location and device family and distributed and activating images on the networkk devices.
+SWIM upgrade: This includes uploading the images, golden tagging the image filtered location and device family and distributed and activating images on the network devices.
 ```bash
 ansible-playbook -i ./inventory_dnaccluster ./workflows/swim/playbook/swim_workflow_playbook.yml --extra-vars VARS_FILE_PATH=< Vars File PATH (Full Path or relative path from playbook)> -vvvv
 ```
     
 ## Example 2: 
-Create Sites, buildings floors using playbook : workflows/sites/playbook/site_hierarchy_playbook.yml
+Create sites, buildings floors using playbook: workflows/sites/playbook/site_hierarchy_playbook.yml
     
 ```bash
  ansible-playbook -i ./inventory_dnaccluster ./workflows/sites/playbook/site_hierarchy_playbook.yml --extra-vars VARS_FILE_PATH=./../vars/site_hierarchy_design_vars_.yml
 ```
     
-Feel free to explore the playbooks/ directory for more examples and use cases.
+Explore the playbooks/ directory for additional examples and use cases.
 
 # Attention macOS users:
 
