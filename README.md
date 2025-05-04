@@ -137,7 +137,7 @@ git clone --depth 1 --branch v2.3.7.6.1 https://github.com/cisco-en-programmabil
 
 ## Navigate to the project directory:    
 ```bash
-cd dnac_ansible_workflows
+cd catalyst-center-ansible-iac
 ```
 
 ## Install the required dependencies:
@@ -242,20 +242,21 @@ vars/
 
 ## Create a basic inventory file with Cisco Catalyst Center Inputs in inventory folder. for example demo_inv.yml
 ```yaml
----
-#Inventory file for demo_lab
 catalyst_center_hosts:
     hosts:
-    <dnac hostname >:
-    dnac_debug: false
-    dnac_host: <Cisco Catalyst Center IP Address> #(Mandatory) Cisco Catalyst Center IP Address
-    dnac_password: <Cisco Catalyst Center UI admin Password> #(Mandatory) 
-    dnac_port: 443 #(Mandatory) 
-    dnac_username: <Cisco Catalyst Center UI admin username> #(Mandatory) 
-    dnac_verify: false #(Mandatory) 
-    dnac_version: <Cisco Catalyst Center Release version> #(Mandatory)  Example: 2.3.5.3
-```
+         <Your catalyst center hostname >:
+            catalyst_center_host: xx.xx.xx.xx.
+            catalyst_center_password: XXXXXXXX
+            catalyst_center_port: 443
+            catalyst_center_timeout: 60
+            catalyst_center_username: admin
+            catalyst_center_verify: false
+            catalyst_center_version: 2.3.7.6
+            catalyst_center_debug: true
+            catalyst_center_log_level: INFO
+            catalyst_center_log: true
 
+```
 Here are a few examples of Cisco Validated Playbooks in the repo. For details documentation of the playbook usage refer the guide inside the corresponding module.
 
 ## Example 1: 
