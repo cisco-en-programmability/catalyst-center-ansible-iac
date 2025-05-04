@@ -80,9 +80,8 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 - [Catalyst Center Access Point Provisioning and Access Point Configuration Management](./workflows/accesspoints_configuration_provisioning/README.md)
 - [Device Configuration Customization using Catalyst Center Templates](./workflows/device_templates/README.md)
 - [Catalyst Center managed network devices configurations backup management](./workflows/device_config_backup/README.md)
-- [Catalyst Center Assurance Health Score KPIs settings and thresholds management](./workflows/assurance_health_score/README.md)
+- [Catalyst Center Assurance Health Score KPIs settings and thresholds management](./workflows/assurance_health_score_settings/README.md)
 - [Catalyst Center Assurance Path Trace Management](./workflows/assurance_pathtrace/README.md)
-- [Catalyst Center Assurance Network Health Management](./workflows/assurance_network_health/README.md)
 - [Catalyst Center Assurance issues and events management](./workflows/assurance_issues_management/README.md)
 - [Catalyst Center Assurance ICAP Management](./workflows/assurance_intelligent_capture/README.md)
 
