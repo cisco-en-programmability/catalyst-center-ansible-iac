@@ -54,8 +54,8 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 - [Catalyst Center Network Settings (Servers, Banners, TZ, SNMP, Logging, Telemetry Management](./workflows/network_settings/#readme)
 - [Catalyst Center Network Settings Global IP Address Pools and Site IP Address Pools reservation Management](./workflows/network_settings/#readme)
 - [Catalyst Center Network Settings Wireless Design Management](./workflows/wireless_design/#readme)
-- [Catalyst Center Wireless Network Profile Management](./workflows/network_profile_wireless/#readme) 
-- [Catalyst Center Network Profile Switching Management](./workflows/network_profile_switching/#readme)
+- [Catalyst Center Wireless Network Profile Management](./workflows/network_profile_wireless/#readme) <mark><span style="background-color: lightblue; color: white; padding: 0.2em 0.5em; border-radius: 3px;">**New, Supported>=2.3.7.9**</span></mark>
+- [Catalyst Center Network Profile Switching Management](./workflows/network_profile_switching/#readme) <mark><span style="background-color: lightblue; color: white; padding: 0.2em 0.5em; border-radius: 3px;">**New, Supported>=2.3.7.9**</span></mark>
 - [Catalyst Center Devices Discovery](./workflows/device_discovery/#readme)
 - [Catalyst Center Device Inventory and device management](./workflows/inventory#readme)
 - [Catalyst Center Plug and Play Device Onboarding](./workflows/plug_and_play/README.md)
