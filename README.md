@@ -242,6 +242,8 @@ vars/
 
 ## Create a basic inventory file with Cisco Catalyst Center Inputs in inventory folder. for example demo_inv.yml
 ```yaml
+---
+#Inventory file for demo_lab
 catalyst_center_hosts:
     hosts:
          <Your catalyst center hostname >:
