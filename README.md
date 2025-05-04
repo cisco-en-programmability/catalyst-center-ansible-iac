@@ -83,7 +83,7 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 - [Catalyst Center Assurance Health Score KPIs settings and thresholds management](./workflows/assurance_health_score_settings/README.md)
 - [Catalyst Center Assurance Path Trace Management](./workflows/assurance_pathtrace/README.md)
 - [Catalyst Center Assurance issues and events management](./workflows/assurance_issues_management/README.md)
-- [Catalyst Center Assurance ICAP Management](./workflows/assurance_intelligent_capture/README.md) <span style="background-color: lightblue; color: white; padding: 5px 10px; border-radius: 5px;"><blink>New (Supported in Catalyst Center >= 2.3.7.9)</blink></span>
+- [Catalyst Center Assurance ICAP Management](./workflows/assurance_intelligent_capture/README.md) <mark><span style="background-color: lightblue; color: white; padding: 0.2em 0.5em; border-radius: 3px;">**New, Supported>=2.3.7.9**</span></mark>
 
 ## Demo Videos
 [IaC Demo Videos](http://3.136.0.140/index.html)
