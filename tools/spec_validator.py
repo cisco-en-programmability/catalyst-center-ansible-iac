@@ -296,7 +296,76 @@ def get_type_description(value):
         return "bool"
     else:
         return "unknown"
+def generate_schema(data):
+    """
+    Generates a schema string from the given YAML data, handling nested structures.
 
+    Args:
+        yaml_data (dict): A dictionary representing the YAML data.
+
+    Returns:
+        str: A string containing the schema.
+    Sample:
+        catalyst_center_version: str(required=False)
+        catalyst_center_verify: bool(required=False)
+        catalyst_center_api_task_timeout: int(required=False, default=1200)
+        catalyst_center_debug: bool(required=False, default=False)
+        catalyst_center_log: bool(required=False, default=False)
+        catalyst_center_log_append: bool(required=False, default=True)
+        catalyst_center_log_file_path: str(required=False, default='dnac.log')
+        catalyst_center_log_level: enum("CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", required=False)
+        catalyst_center_config_verify: bool(required=False)
+        jinjatemplate: bool(required=False)
+        jinjatemplate_file: str(required=False)
+        passwords_file: str(required=False)
+        wireless_nw_profiles_details: list(include('wireless_nw_profiles_type'), min=0, max=1000, required=True)
+        ---
+        wireless_nw_profiles_type:
+        profile_name: str(required=True)
+        site_names: list(str(), required=False)
+        ssid_details: list(include('ssid_details_type'), required=False)
+        ap_zones: list(include('ap_zones_type'), required=False)
+        onboarding_templates: list(str(), required=False)
+        day_n_templates: list(str(), required=False)
+        additional_interfaces: list(include('additional_interfaces_type'), required=False)
+        ssid_details_type:
+        ssid: str(required=True)
+        dot11be_profile_name: str(required=False)
+        enable_fabric: bool(required=False)
+        vlan_group_name: str(required=False)
+        interface_name: str(required=False)
+        anchor_group_name: str(required=False)
+        local_to_vlan: int(required=False, min=1, max=4094)
+        ap_zones_type:
+        ap_zone_name: str(required=True)
+        ssids: list(str(), required=False)
+        rf_profile_name: str(required=False)
+        additional_interfaces_type:
+        interface_name: str(required=True)
+        vlan_id: int(required=True, min=1, max=4094)
+    """
+    schema = ""
+    if not data:
+        return schema
+    if isinstance(data, dict):
+        for key, value in data.items():
+            if isinstance(value, dict):
+                # Recursive call for nested dictionaries
+                schema += f"{key}:\n"
+                schema += generate_schema(value)
+            elif isinstance(value, list):
+                # Handle lists
+                schema += f"{key}: list(include('{key}_type'), min=0, max=1000, required=True)\n"
+                schema += f"---\n{key}_type:\n"
+                for item in value:
+                    if isinstance(item, dict):
+                        schema += generate_schema(item)
+                    else:
+                        schema += f"{key}: {get_type_description(item)}(required=True)\n"
+            else:
+                # Handle simple types
+                schema += f"{key}: {get_type_description(value)}(required=False)\n"
+    return schema
 def generate_table(data, title_prefix="Config", level=0):
     """
     Generates a Markdown table string from a dictionary or list of dictionaries,
@@ -397,8 +466,29 @@ def generate_table(data, title_prefix="Config", level=0):
     else:
         # Not a dict or list, return empty string
         return ""
+def generate_schema_file(yaml_data, output_dir="./"):
+    """
+    Generates schema files from the given YAML data, handling nested structures.
 
+    Args:
+        yaml_data (dict): A dictionary representing the YAML data.
+        output_dir (str): The directory where the schema files will be saved.
 
+    Returns:
+        None
+    """
+    schema_content = generate_schema(yaml_data["config"])
+    if not schema_content:
+        print(f"Error: No schema content generated for YAML data in {output_dir}")
+        return
+    schema_filename = f"schema_{int(time.time())}.yaml"
+    schema_filepath = os.path.join(output_dir, schema_filename)
+    try:
+        with open(schema_filepath, 'w', encoding='utf-8') as f:
+            f.write(schema_content)
+        print(f"Schema file generated: {schema_filepath}")
+    except Exception as e:
+        print(f"Error writing schema file: {e}")
 def generate_readme(yaml_data):
     """
     Generates a README.md string from the given YAML data, handling nested structures,
@@ -412,7 +502,7 @@ def generate_readme(yaml_data):
     """
     readme_content = "## YAML Documentation\n\n"
     readme_content += "This document describes the structure and parameters of the YAML configuration.\n\n"
-    print("YAML Data:\n", yaml_data.keys())
+    #print("YAML Data:\n", yaml_data.keys())
     if "config" in yaml_data.keys():
         readme_content += generate_table(yaml_data["config"])
     else:
