@@ -98,6 +98,7 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 | 2.3.7.6 | 2.3.7.6   | latest   | latest |
 | 2.3.7.7 | 2.3.7.6   | latest   | latest |
 | 2.3.7.9 | 2.3.7.9   | latest   | latest |
+| 2.3.7.10 | 2.3.7.9   | latest   | latest |
 
 # Released Versions
 v2.3.7.6.1
