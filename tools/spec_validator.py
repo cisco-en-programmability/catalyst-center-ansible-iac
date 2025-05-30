@@ -21,7 +21,9 @@ def compare_module_spec(module_file_path, verbose=True):
     mismatches = []
     temp_spec_lines = []
     temp_spec_found = False
+    temp_spec=None
     brace_count = 0
+    temp_spec_error=None
     try:
         with open(module_file_path, 'r', encoding='utf-8') as f:
             for line in f:
@@ -46,16 +48,20 @@ def compare_module_spec(module_file_path, verbose=True):
                             break  # Found the end of temp_spec
 
             if not temp_spec_found:
-                return (filename, ["Error: Could not find temp_spec definition."])
-
-            temp_spec_str = "".join(temp_spec_lines)
-            try:
-                temp_spec = ast.literal_eval(temp_spec_str)
-            except (SyntaxError, ValueError) as e:
-                return (filename, [f"Error parsing temp_spec: {e} - Extracted string: '{temp_spec_str[:100]}...'"])
-            if verbose:
-                print("temp_spec:\n")
-                pprint.pprint(temp_spec)
+                #return (filename, ["Error: Could not find temp_spec definition."])
+                pass
+            else:
+                temp_spec_str = "".join(temp_spec_lines)
+                try:
+                    temp_spec = ast.literal_eval(temp_spec_str)
+                except (SyntaxError, ValueError) as e:
+                    ##return (filename, [f"Error parsing temp_spec: {e} - Extracted string: '{temp_spec_str[:500]}...'"])
+                    temp_spec = None
+                    temp_spec_error = e
+                    
+                if verbose:
+                    print("temp_spec:\n")
+                    pprint.pprint(temp_spec)
         with open(module_file_path, 'r', encoding='utf-8') as f:
             # Extract DOCUMENTATION
             documentation_match = re.search(r"\s*DOCUMENTATION\s*=\s*r\"\"\"(.*?)\"\"\"", f.read(), re.DOTALL) # Re-read from start
@@ -79,8 +85,10 @@ def compare_module_spec(module_file_path, verbose=True):
         #write the table to a file
         with open("documentation_table.md", "w", encoding="utf-8") as f:
             f.write(documentation_table)
-        return (filename, compare_temp_spec_with_documentation_config(temp_spec, documentation))
-
+        if not temp_spec_found or not temp_spec:
+            return (filename, ["Error: Could not find temp_spec definition or Error parsing temp_spec: {temp_spec_error} - Extracted string: '{temp_spec_str[:500]}...'"])
+        else:
+            return (filename, compare_temp_spec_with_documentation_config(temp_spec, documentation))
     except FileNotFoundError:
         return (filename, [f"Error: Module file not found."])
     except Exception as e:
@@ -380,6 +388,7 @@ def generate_table(data, title_prefix="Config", level=0):
         str: A Markdown table string, or an empty string if no table is generated.
     """
     if not data:
+        print("Not data to generate Table")
         return ""
     print(f"Generating table for data: {title_prefix}")
     if isinstance(data, dict):
@@ -462,7 +471,242 @@ def generate_table(data, title_prefix="Config", level=0):
             for i, item in enumerate(data):
                 table_html += f"| {i} | {item} |\n"
             #print(f"Generated table HTML: {table_html}")
-            return table_html
+            return # File: sdkdiffgeneratorforreview.py
+import os
+import difflib
+import re
+import ast # Import the ast library
+from typing import Set
+import logging
+
+# Setup a log file
+log_file = './sdk_diff_generator.log'
+logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def get_files_recursive(path: str) -> Set[str]:
+    files = set()
+    for root, _, filenames in os.walk(path):
+        for filename in filenames:
+            if filename.endswith('.pyc'): # Add this check to ignore .pyc files
+                continue
+            file_path = os.path.relpath(os.path.join(root, filename), path)
+            files.add(file_path)
+    return files
+
+def generate_html_report(data, output_filename):
+    """Generates an HTML report from the collected difference data."""
+    html_content = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>Directory Diff Report</title>
+    <style>
+        body { font-family: sans-serif; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .added { color: green; }
+        .removed { color: red; }
+        .changed { color: blue; }
+        pre {
+            white-space: pre-wrap; /* Wrap long lines */
+            word-wrap: break-word;
+        }
+    </style>
+    </head>
+    <body>
+
+    <h2>Directory Difference Report</h2>
+
+    <table>
+      <tr>
+        <th>File</th>
+        <th>Change Type</th>
+        <th>Details</th>
+      </tr>
+    """
+
+    for row in data:
+        change_class = ""
+        if row["Change Type"] == "Added File" or row["Change Type"] == "Added Function":
+            change_class = "added"
+        elif row["Change Type"] == "Removed File" or row["Change Type"] == "Removed Function":
+            change_class = "removed"
+        elif row["Change Type"] == "Changed Function" or row["Change Type"] == "Changed File Content":
+            change_class = "changed"
+
+        # Escape HTML characters in details unless it's already preformatted HTML
+        details = row.get("Details", "")
+        if not details.strip().startswith("<pre>"):
+             details = details.replace('<', '&lt;').replace('>', '&gt;')
+
+
+        html_content += f"""
+        <tr>
+            <td>{row.get("File", "")}</td>
+            <td class="{change_class}">{row["Change Type"]}</td>
+            <td>{details}</td>
+        </tr>
+        """
+
+    html_content += """
+    </table>
+
+    </body>
+    </html>
+    """
+
+    try:
+        with open(output_filename, "w") as f:
+            f.write(html_content)
+        logging.info(f"HTML report generated successfully: {output_filename}")
+    except IOError as e:
+        logging.error(f"Error writing HTML report to {output_filename}: {e}")
+
+def get_function_definitions(filepath: str):
+    """Parses a Python file and returns a dictionary of function names to their AST nodes."""
+    functions = {}
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            tree = ast.parse(f.read())
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                functions[node.name] = node
+        return functions
+    except Exception as e:
+        logging.warning(f"Could not parse {filepath} with AST: {e}")
+        return {}
+
+def get_function_source(filepath: str, function_node: ast.FunctionDef):
+    """Extracts the source code for a given function node from a file."""
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        # ast node lineno and end_lineno are 1-based
+        start_line = function_node.lineno - 1
+        # ast node end_lineno is inclusive in Python 3.8+
+        # For older versions, end_lineno might be the line *after* the end.
+        # Let's assume 3.8+ or handle potential IndexError.
+        end_line = function_node.end_lineno
+        return "".join(lines[start_line:end_line])
+    except Exception as e:
+        logging.warning(f"Could not extract source for function {function_node.name} in {filepath}: {e}")
+        return None
+
+
+def compare_directories(
+    dir1: str, dir2: str, extensions=('.py', '.json', '.yaml', '.yml', '.txt')
+) -> None:
+    """
+    Compare two directories recursively using AST for Python files and generate an HTML report of differences.
+
+    Args:
+        dir1: Path to the first directory.
+        dir2: Path to the second directory.
+        extensions: Tuple of file extensions to include in the comparison.
+    """
+    logging.info(f"Comparing directories:\n  {dir1}\n  {dir2}")
+
+    files_dir1 = get_files_recursive(dir1)
+    files_dir2 = get_files_recursive(dir2)
+
+    added_files = files_dir2 - files_dir1
+    removed_files = files_dir1 - files_dir2
+    common_files = files_dir1 & files_dir2
+
+    diff_data = []
+    removed_functions_data = []
+    added_functions_data = []
+    changed_functions_data = []
+
+    # Add file changes to the data
+    for file in sorted(added_files):
+        diff_data.append({"File": file, "Change Type": "Added File", "Details": file})
+
+    for file in sorted(removed_files):
+        diff_data.append({"File": file, "Change Type": "Removed File", "Details": file})
+    logging.info(f"Added files: {len(added_files)}, Removed files: {len(removed_files)}")
+    logging.info(f"Common files: {len(common_files)}")
+
+    # Compare common files
+    for file in sorted(common_files):
+        file_path_1 = os.path.join(dir1, file)
+        file_path_2 = os.path.join(dir2, file)
+
+        if file.endswith('.py'):
+            # Use AST for Python files
+            functions1 = get_function_definitions(file_path_1)
+            functions2 = get_function_definitions(file_path_2)
+
+            func_names1 = set(functions1.keys())
+            func_names2 = set(functions2.keys())
+
+            added_functions_in_file = func_names2 - func_names1
+            removed_functions_in_file = func_names1 - func_names2
+            common_functions_in_file = func_names1 & func_names2
+
+            for func_name in sorted(added_functions_in_file):
+                 added_functions_data.append({"File": file, "Change Type": "Added Function", "Details": func_name})
+
+            for func_name in sorted(removed_functions_in_file):
+                 removed_functions_data.append({"File": file, "Change Type": "Removed Function", "Details": func_name})
+
+            # Compare common functions - check if source code changed
+            for func_name in sorted(common_functions_in_file):
+                source1 = get_function_source(file_path_1, functions1[func_name])
+                source2 = get_function_source(file_path_2, functions2[func_name])
+
+                if source1 is not None and source2 is not None and source1 != source2:
+                    # Function source code changed. Use difflib on the source snippets.
+                    diff_lines = list(difflib.ndiff(source1.splitlines(keepends=True), source2.splitlines(keepends=True)))
+                    formatted_details = "<pre>" + "".join(diff_lines).replace('<', '&lt;').replace('>', '&gt;') + "</pre>"
+                    changed_functions_data.append({"File": file, "Change Type": "Changed Function", "Details": formatted_details})
+
+        elif file.endswith(extensions): # Handle other file types with difflib
+             try:
+                with open(file_path_1, 'r') as f1, open(file_path_2, 'r') as f2:
+                    lines_1 = f1.readlines()
+                    lines_2 = f2.readlines()
+             except Exception as e:
+                logging.warning(f"Could not read {file}: {e}")
+                continue
+
+             # If file content is different, report it
+             if lines_1 != lines_2:
+                  diff = list(difflib.ndiff(lines_1, lines_2))
+                  formatted_details = "<pre>" + "".join(diff).replace('<', '&lt;').replace('>', '&gt;') + "</pre>"
+                  diff_data.append({"File": file, "Change Type": "Changed File Content", "Details": formatted_details})
+
+
+    # Append collected function data in the desired order
+    diff_data.extend(sorted(removed_functions_data, key=lambda x: x['Details'])) # Sort by function name
+    diff_data.extend(sorted(added_functions_data, key=lambda x: x['Details'])) # Sort by function name
+    # Sort changed functions by file then function name (extracted from Details if possible, or just file)
+    # Sorting by file and then the start of the details string (which contains the diff)
+    diff_data.extend(sorted(changed_functions_data, key=lambda x: x['File'] + x['Details'][:50])) # Use first 50 chars of details for sorting
+
+
+    # Generate the HTML report
+    generate_html_report(diff_data, "directory_diff_report.html")
+
+if __name__ == "__main__":
+  # The script will compare these two directories and generate an HTML report
+  # Ensure these paths are correct for your environment
+  dir_path1 = "/Users/pawansi/workspace/CatC_Configs/venv-anisible/lib/python3.11/site-packages/dnacentersdk/api/v2_3_5_3"
+  dir_path2 = "/Users/pawansi/workspace/CatC_Configs/venv-anisible/lib/python3.11/site-packages/dnacentersdk/api/v2_3_7_6"
+
+  compare_directories(dir_path1, dir_path2)
+
     else:
         # Not a dict or list, return empty string
         return ""
@@ -502,11 +746,11 @@ def generate_readme(yaml_data):
     """
     readme_content = "## YAML Documentation\n\n"
     readme_content += "This document describes the structure and parameters of the YAML configuration.\n\n"
-    #print("YAML Data:\n", yaml_data.keys())
+    print("YAML Data:\n", yaml_data.keys())
     if "config" in yaml_data.keys():
         readme_content += generate_table(yaml_data["config"])
     else:
-        readme_content += "No 'config' section found in the YAML data.\n"
+        readme_content += generate_table(yaml_data)
 
     return readme_content
 
@@ -559,3 +803,5 @@ if __name__ == "__main__":
         print(f"\nHTML report generated: {report_filename}")
     except Exception as e:
         print(f"Error writing HTML report: {e}")
+    
+    #Generate REdme file using generate_readme
