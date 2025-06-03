@@ -16,3 +16,6 @@ catalyst_center_hosts:
             catalyst_center_debug: true
             catalyst_center_log_level: INFO
             catalyst_center_log: true
+            #(Optional) Python interpreter path, use this cli to find the path in your virtual environment:
+            # python -c "import sys; print(sys.executable)"
+            ansible_python_interpreter: <your python interpreter path>
