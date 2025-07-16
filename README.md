@@ -132,6 +132,10 @@ source python3env/bin/activate
 ```bash
 git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
 ```
+Cloning a released version:
+```bash
+git clone --depth 1 --branch v2.3.7.6.1 https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
+```
 
 ## Navigate to the project directory:    
 ```bash
@@ -214,7 +218,10 @@ The template for the inventory file is:
 ```bash
 cat inventory/demo_lab/hosts.yml
 ```
-You can also Follow the Ansible documentation to set up your Python interpreter:: https://docs.ansible.com/ansible/latest/reference_appendices/interpreter_discovery.html
+
+Follow the Ansible documentation to set up your Python interpreter:: https://docs.ansible.com/ansible/latest/reference_appendices/interpreter_discovery.html
+
+
     
 ### Playbooks location and Vars  (variables) file
 
@@ -227,6 +234,9 @@ playbooks/
 vars/
     vars_swim.yml
 ```
+### Var files:
+    Update var file with your  details and parameter to control playbook
+
 ### Playbook: 
     The playbooks can be directly used without any change when inventory and var files created in the above templates.
 
