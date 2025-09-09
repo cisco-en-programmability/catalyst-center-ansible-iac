@@ -314,18 +314,15 @@ port_assignment_details_type:
   interface_description: str(required=False)
   interface_name: str(required=True)
   security_group_name: str(required=False)
-  voice_vlan_name: str(required=False)
 
 port_channel_details_type:
-  connected_device_type: enum('TRUNK', 'EXTENDED_NODE', required=True)
+  connected_device_type: enum('TRUNK', 'EXTENDED_NODE', required=False)
   interface_names: list(str, required=True, min=0, max=100)
-  port_channel_description: str(required=False)
-  port_channel_name: str(required=False)
   protocol: enum('ON', 'LACP', 'PAGP', required=False)
 
 wireless_ssid_details_type:
   vlan_name: str(required=True)
-  ssid_details: list(include('ssid_details_type'), required=True, min=0, max=100)
+  ssid_details: list(include('ssid_details_type'), required=False, min=0, max=100)
 
 ssid_details_type:
   ssid_name: str(required=True)
