@@ -61,10 +61,12 @@
     - name: Playbook end time for the tags playbook
       set_fact:
         long_op_end: "{{ now() }}"
-
+    - name: Playbook execution time for the tags playbook
+      set_fact:
+        long_op_duration: "{{ (long_op_end - long_op_start) | to_datetime('%H:%M:%S') }}"
     - name: Print the playbook execution time for the tags playbook
       debug:
-        msg: "Playbook execution time for the tags playbook is {{ long_op_start }}, end: {{ long_op_end }}"
+        msg: "Playbook execution time for the tags playbook is {{ long_op_duration }}"
     # delete the template file
     - name: Delete the template file
       ansible.builtin.command: rm ../tmp/template_generated_file.yaml
