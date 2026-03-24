@@ -29,11 +29,11 @@ Before running the playbooks, ensure you have Ansible installed and the necessar
 
 2. **Install Cisco Catalyst Center Collection:**  
    ```bash
-   ansible-galaxy collection install cisco.dnac
+   ansible-galaxy collection install cisco.catalystcenter
    ```
 
 3. **Generate Inventory:**  
-   Create an Ansible inventory file (e.g., `host_inventory_dnac1/hosts.yml`) with your Catalyst Center appliance details:
+   Create an Ansible inventory file (e.g., `host_inventory/hosts.yml`) with your Catalyst Center appliance details:
    ```yaml
    catalyst_center_hosts:
       hosts:
@@ -59,7 +59,7 @@ Prepare the input data for configuring your site hierarchy.
 
 2. **Review Structure and Options:**  
    Refer to the full workflow specification for detailed instructions:  
-   [Site Workflow Manager Module Documentation](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/site_workflow_manager/)
+   [Site Workflow Manager Module Documentation](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/site_workflow_manager/)
 
 #### Schema for Site Hierarchy (Flat Attribute Structure)
 
@@ -130,7 +130,7 @@ You can organize all the sites together, for example, grouping all floors under 
 
 4. Execute: Execute the playbook with your inputs and inventory. Specify your input file using the --e variable VARS_FILE_PATH.
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/site_hierarchy/playbook/site_hierarchy_playbook.yml --e VARS_FILE_PATH=/Users/pawansi/dnac_ansible_workflows/workflows/site_hierarchy/vars/site_hierarchy_design_vars.yml -vvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/site_hierarchy/playbook/site_hierarchy_playbook.yml --e VARS_FILE_PATH=/Users/pawansi/catalyst_center_ansible_workflows/workflows/site_hierarchy/vars/site_hierarchy_design_vars.yml -vvv
 ```
 ## Creating Bulk Site configurations using JINJA template and using the playbook
 
@@ -201,7 +201,7 @@ Use the input var file: jinja_template_site_hierarchy_design_vars.yml and specif
 
 5. Execute with Jinja template:
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/site_hierarchy/playbook/site_hierarchy_playbook.yml --e VARS_FILE_PATH=/Users/pawansi/dnac_ansible_workflows/workflows/site_hierarchy/vars/jinja_template_site_hierarchy_design_vars.yml -vvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/site_hierarchy/playbook/site_hierarchy_playbook.yml --e VARS_FILE_PATH=/Users/pawansi/catalyst_center_ansible_workflows/workflows/site_hierarchy/vars/jinja_template_site_hierarchy_design_vars.yml -vvv
 ```
 
 ### Example of Sites Created Using a Jinja Template
@@ -232,7 +232,7 @@ Playbook can be used to delete sites under a specified hierarchy.
 
 6. Run the delete Playbook:
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/site_hierarachy/playbook/delete_site_hierarchy_playbook.yml --e VARS_FILE_PATH=/Users/pawansi/dnac_ansible_workflows/workflows/site_hierarchy/vars/delete_site_hierarchy_design_vars.yml -vvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/site_hierarachy/playbook/delete_site_hierarchy_playbook.yml --e VARS_FILE_PATH=/Users/pawansi/catalyst_center_ansible_workflows/workflows/site_hierarchy/vars/delete_site_hierarchy_design_vars.yml -vvv
 ```
 ### Example of Site Deletion
 ```bash
@@ -301,10 +301,10 @@ After executing the playbook, check the Catalyst Center UI to verify the site hi
 
 ```yaml
 python: 3.12.0
-dnac_version: 2.3.7.6
+catalystcenter_version: 2.3.7.6
 ansible: 9.9.0
-dnacentersdk: 2.8.6
-cisco.dnac: 6.30.2
+catalystcentersdk: latest
+cisco.catalystcenter: latest
 ```
 
-For more details, see the [Site Workflow Manager Module Documentation](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/site_workflow_manager/).
+For more details, see the [Site Workflow Manager Module Documentation](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/site_workflow_manager/).

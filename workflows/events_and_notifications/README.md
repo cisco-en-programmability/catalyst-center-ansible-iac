@@ -17,8 +17,8 @@ Catalyst Center platform supports the ability to send custom notifications when 
 
 Before starting, ensure the following requirements are met:
 - **Ansible Installation**: Ansible must be installed on the machine managing the automation process.
-- **Cisco DNA Ansible Collection**: The `cisco.dnac.eventes_and_notifications_workflow_manager` module must be available from the Cisco DNA Ansible Collection.
-- **dnacentersdk Python SDK**: This SDK is required to interact with Cisco Catalyst Center.
+- **Cisco DNA Ansible Collection**: The `cisco.catalystcenter.eventes_and_notifications_workflow_manager` module must be available from the Cisco DNA Ansible Collection.
+- **catalystcentersdk Python SDK**: This SDK is required to interact with Cisco Catalyst Center.
 - **Yamale Python Library**: The `yamale` Python library installed (`pip install yamale`)
 - **Cisco DNA Center or Events and Notifications Connect Access**: Ensure access is configured
 
@@ -43,7 +43,7 @@ catalyst_center_hosts:
 
 ## Defining Events and Notifications Destination and Subscription Details
 The events_notifications_destination_and_subscription_details section specifies the list of events, notification destinations and their configurations to be run through the playbooks.
-To configure this, refer to the full workflow specification: [Ansible Galaxy - Events and Notifications Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/events_and_notifications_workflow_manager/).
+To configure this, refer to the full workflow specification: [Ansible Galaxy - Events and Notifications Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/events_and_notifications_workflow_manager/).
 
 ## Overview of Events and Notifications Workflow with Example 
 
@@ -203,7 +203,7 @@ events_notifications_destination_and_subscription_details:
   - webhook_destination:
       name: webhook demo 110
       description: Webhook Demo Test SEEN-4890-01
-      url: https://4.5.6.8/dnac_test_webhook
+      url: https://4.5.6.8/catc_test_webhook
       method: POST
       trust_cert: false
       headers_list: # Wrap headers inside another key
@@ -945,7 +945,7 @@ yamale -s workflows/events_and_notifications/schema/events_and_notifications_sch
 
 * Execute the Ansible Playbook to add, update, destination and events subscriptions:
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/events_and_notifications/playbook/events_and_notifications_playbook.yml --e VARS_FILE_PATH=../vars/events_and_notifications_destinations_inputs.yml
+    ansible-playbook -i host_inventory/hosts.yml workflows/events_and_notifications/playbook/events_and_notifications_playbook.yml --e VARS_FILE_PATH=../vars/events_and_notifications_destinations_inputs.yml
 ```
 
 ##  Important Notes
@@ -954,7 +954,7 @@ yamale -s workflows/events_and_notifications/schema/events_and_notifications_sch
 ## References
 
 ```yaml
-  dnacentersdk: 2.8.3
-  cisco.dnac: 6.29.0
-  dnac version: 2.3.7.6
+  catalystcentersdk: latest
+  cisco.catalystcenter: 2.4.0
+  Catalyst Center version: 2.3.7.6
 ```

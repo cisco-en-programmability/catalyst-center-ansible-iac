@@ -20,9 +20,9 @@ Checkout the project and playbooks: git@github.com:cisco-en-programmability/cata
 
 2. ## Configure Host Inventory:
 
-The host_inventory_dnac1/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
-Make sure the dnac_version in this file matches your actual Catalyst Center version.
-##The Sample host_inventory_dnac1/hosts.yml
+The host_inventory/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
+Make sure the catalystcenter_version in this file matches your actual Catalyst Center version.
+##The Sample host_inventory/hosts.yml
 
 ```bash
 catalyst_center_hosts:
@@ -42,7 +42,7 @@ catalyst_center_hosts:
 
 ## Running playbook
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml  workflows/sda_virtual_networks_l2l3_gateways/playbook/sda_virtual_networks_l2_l3_gateways_playbook.yml --e VARS_FILE_PATH=../vars/sda_virtual_networks_l2_l3_gateways_input.yml -vvvv
+ansible-playbook -i host_inventory/hosts.yml  workflows/sda_virtual_networks_l2l3_gateways/playbook/sda_virtual_networks_l2_l3_gateways_playbook.yml --e VARS_FILE_PATH=../vars/sda_virtual_networks_l2_l3_gateways_input.yml -vvvv
 ```
 
 # SDA Fabric Virtual Networks Tasks
@@ -551,7 +551,7 @@ In the context of SDA Fabric Virtual Networks, there are three main components: 
   **Example Command to Run the SDA Fabric Virtual Networks Playbook with Merged Method:**
   ```bash
   ansible-playbook 
-    -i ./inventory/demo_lab/inventory_demo_lab.yml # Reference to DNAC to run
+    -i ./inventory/demo_lab/inventory_demo_lab.yml # Reference to Catalyst Center to run
     ./workflows/sda_virtual_networks_l2l3_gateways/playbook/sda_virtual_networks_l2_l3_gateways_playbook.yml # Playbook that will execute
     --extra-vars VARS_FILE_PATH=./../vars/sda_virtual_networks_l2_l3_gateways_input.yml # Location of the input file for playbook execution
     -vvv # Returns detailed information about the message; the more 'v', the more detail
@@ -786,7 +786,7 @@ This example can be reused and customized to your requirement and increase the r
 
     Tuesday 04 March 2025  23:44:01 -0800 (0:00:00.485)       0:04:04.779 ********* 
     =============================================================================== 
-    cisco.dnac.sda_fabric_virtual_networks_workflow_manager --------------- 240.97s
+    cisco.catalystcenter.sda_fabric_virtual_networks_workflow_manager --------------- 240.97s
     template ---------------------------------------------------------------- 2.08s
     ansible.builtin.command ------------------------------------------------- 1.44s
     debug ------------------------------------------------------------------- 0.09s
@@ -864,7 +864,7 @@ This example can be reused and customized to your requirement and increase the r
 
     Wednesday 05 March 2025  00:32:04 -0800 (0:00:00.491)       0:01:36.988 ******* 
     =============================================================================== 
-    cisco.dnac.sda_fabric_virtual_networks_workflow_manager ---------------- 92.94s
+    cisco.catalystcenter.sda_fabric_virtual_networks_workflow_manager ---------------- 92.94s
     template ---------------------------------------------------------------- 2.06s
     ansible.builtin.command ------------------------------------------------- 1.67s
     debug ------------------------------------------------------------------- 0.10s
@@ -882,12 +882,12 @@ This example can be reused and customized to your requirement and increase the r
 ```yaml
 python: 3.12.0
 
-dnac_version: 2.3.7.6
+catalystcenter_version: 2.3.7.6
 
 ansible: 9.9.0
 ansible-core: 2.16.10
 ansible-runner: 2.4.0
 
-dnacentersdk: 2.8.6
-cisco.dnac: 6.30.2
+catalystcentersdk: latest
+cisco.catalystcenter: latest
 ```

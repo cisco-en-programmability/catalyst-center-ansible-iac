@@ -25,7 +25,7 @@
 # catalyst_center_debug:             Enable debug mode (optional, default: false)
 # catalyst_center_log:               Enable logging (optional, default: false)
 # catalyst_center_log_append:        Append to log file (optional, default: true)
-# catalyst_center_log_file_path:     Log file path (optional, default: 'dnac.log')
+# catalyst_center_log_file_path:     Log file path (optional, default: 'catalystcenter.log')
 # catalyst_center_log_level:         Log level (CRITICAL, ERROR, WARNING, INFO, DEBUG)
 # catalyst_center_config_verify:     Configuration verification (optional, default: false)
 #

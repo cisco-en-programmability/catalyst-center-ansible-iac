@@ -16,7 +16,7 @@ You can create an Extranet Policy, edit an Extranet Policy, and delete an Extran
 
 
 ### 3. Detailed Input Specification
-Refer to: [https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/sda_extranet_policies_workflow_manager/](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/sda_extranet_policies_workflow_manager/)
+Refer to: [https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/sda_extranet_policies_workflow_manager/](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/sda_extranet_policies_workflow_manager/)
 
 ### 4. Features
   - Manage SD-Access Extranet Policy operations such as create, update, or delete extranet policies in Cisco Catalyst Center.
@@ -103,7 +103,7 @@ extranet_policies:
 **a. Validate Your Input:**
 
 ```bash
-yamale -s workflows/sda_fabric_extranet_policy/schema/fabric_extranet_policy_schema.yml /auto/dna-sol/ws/thienvo/dnac_ansible_workflows/workflows/sda_fabric_extranet_policy/vars/fabric_extranet_policy_inputs.yml
+yamale -s workflows/sda_fabric_extranet_policy/schema/fabric_extranet_policy_schema.yml /auto/dna-sol/ws/thienvo/catalyst_center_ansible_workflows/workflows/sda_fabric_extranet_policy/vars/fabric_extranet_policy_inputs.yml
 ```
 **b. Execute the Playbook:**
 
@@ -111,7 +111,7 @@ yamale -s workflows/sda_fabric_extranet_policy/schema/fabric_extranet_policy_sch
 
 **c. To create or update the SDA Fabric Extranet Policy.**
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/fabric_extranet_policy/playbook/fabric_extranet_policy_playbook.yml --e VARS_FILE_PATH=../vars/fabric_extranet_policy_inputs.yml
+ansible-playbook -i host_inventory/hosts.yml workflows/fabric_extranet_policy/playbook/fabric_extranet_policy_playbook.yml --e VARS_FILE_PATH=../vars/fabric_extranet_policy_inputs.yml
 ```
 **d. To delete existing  SDA Fabric Extranet Policy.**
 ```bash
@@ -251,10 +251,10 @@ Note: The environment is used for the references in the above instructions.
   ansible: 9.9.0
   ansible-core: 2.16.10
   ansible-runner: 2.4.0
-  dnacentersdk: 2.8.3
-  cisco.dnac: 6.30.0
+  catalystcentersdk: latest
+  cisco.catalystcenter: latest
   ansible.utils: 5.1.2
 ```
-Cisco Catalyst Center Ansible Module Documentation: [sda_extranet_policies_workflow_manager](https://cisco-en-programmability.github.io/dnacenter-ansible/main/plugins/sda_extranet_policies_module)
+Cisco Catalyst Center Ansible Module Documentation: [sda_extranet_policies_workflow_manager](https://cisco-en-programmability.github.io/catalystcenter-ansible/main/plugins/sda_extranet_policies_module)
 
-GitHub Source Code: [sda_extranet_policies_workflow_manager.py](https://github.com/cisco-en-programmability/dnacenter-ansible/blob/main/plugins/modules/sda_extranet_policies_workflow_manager.py)
+GitHub Source Code: [sda_extranet_policies_workflow_manager.py](https://github.com/cisco-en-programmability/catalystcenter-ansible/blob/main/plugins/modules/sda_extranet_policies_workflow_manager.py)

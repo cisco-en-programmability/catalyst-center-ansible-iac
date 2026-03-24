@@ -29,7 +29,7 @@ This module provides a comprehensive toolkit for managing SDA (Software-Defined 
   - **Configure** Autonomous System Numbers (ASN) for IP-based transits.  
   - **Support** for ASN range 1 to 4294967295.
 
-**Version Added**: `6.18.0`  
+**Version Added**: `latest`  
 *Note*: This version refers to the Cisco Catalyst Center Ansible collection.
 
 ---
@@ -47,7 +47,7 @@ Follow these steps to configure and deploy SDA fabric transits in *Cisco Catalys
 
 2. **Install Cisco Catalyst Center Collection**:  
    ```bash
-   ansible-galaxy collection install cisco.dnac
+   ansible-galaxy collection install cisco.catalystcenter
    ```
 
 3. **Generate Inventory**:  
@@ -340,10 +340,10 @@ The following environment was used for testing:
 | Python                | `3.10.10`    |
 | Cisco Catalyst Center | `3.1.3.0`   |
 | Ansible               | `9.9.0`     |
-| cisco.dnac Collection | `6.29.0`    |
-| dnacentersdk          | `2.9.2`     |
+| cisco.catalystcenter Collection | `2.4.0`    |
+| catalystcentersdk          | `latest`     |
 
 For detailed documentation, refer to:  
-- [Ansible Galaxy: Cisco Catalyst Center Collection](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/sda_fabric_transits_workflow_manager)  
+- [Ansible Galaxy: Cisco Catalyst Center Collection](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/sda_fabric_transits_workflow_manager)  
 - [Cisco Catalyst Center Documentation](https://www.cisco.com/c/en/us/support/cloud-systems-management/dna-center/series.html)
 

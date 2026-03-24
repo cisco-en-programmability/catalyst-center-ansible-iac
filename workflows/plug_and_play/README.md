@@ -22,7 +22,7 @@ Before starting, ensure the following requirements are met:
 - **Access to Cisco Catalyst Center**: Ensure that PnP (Plug-and-Play) is enabled. 
 - **Devices that Support PnP**: Confirm that the devices you intend to onboard are PnP-capable.
 - **Ansible Installation**: Ansible must be installed on the machine managing the automation process.
-- **dnacentersdk Python SDK**: This SDK is required to interact with Cisco Catalyst Center.
+- **catalystcentersdk Python SDK**: This SDK is required to interact with Cisco Catalyst Center.
 - **Ansible installation**: Ensure that Ansible is installed.
 - **Yamale Python Library**: The `yamale` Python library installed (`pip install yamale`)
 - **Cisco DNA Center or Plug and Play Connect Access**: Ensure access is configured
@@ -35,7 +35,7 @@ Before starting, ensure the following requirements are met:
 1. **Install Ansible**: Follow the [official Ansible documentation](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) for installation.
 2. **Install Cisco Catalyst Center Collection**:
    ```bash
-   ansible-galaxy collection install cisco.dnac
+   ansible-galaxy collection install cisco.catalystcenter
    ```
 3. **Generate Inventory**: Create an Ansible inventory file (e.g., `inventory.yml`) with your Cisco Catalyst Center details.
    ```yaml
@@ -99,7 +99,7 @@ The `device_info` list contains the specific identity of the physical devices.
 | `pid` | String | No | The Product ID of the device. |
 | `hostname` | String | No | The hostname to assign or identify the device. |
 | `state` | Enum | No | Expected state (e.g., `Unclaimed`, `Claimed`, `Provisioned`). |
-| `authorize` | Boolean | No | **(v2.3.7.9+)** **Galaxy version 6.42.0+** Auto-authorize device if in `Pending Authorization` state. |
+| `authorize` | Boolean | No | **(v2.3.7.9+)** **cisco.catalystcenter collection latest** Auto-authorize device if in `Pending Authorization` state. |
 
 
 
@@ -109,7 +109,7 @@ The Plug and Play (PnP) workflow module automates the complete device lifecycle 
 
 ![Plug and Play UI Page](images/Device_added_successfully.png)
 
-Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/pnp_workflow_manager/
+Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/pnp_workflow_manager/
 
 ### 1. Add Single Device
 
@@ -215,7 +215,7 @@ pnp_details:
 
 ### 7. Bulk Device Addition with Authorization
 
-Add multiple devices in bulk and automatically authorize them (requires Catalyst Center v2.3.7.9+ and Galaxy collection 6.42.0+).
+Add multiple devices in bulk and automatically authorize them (requires Catalyst Center v2.3.7.9+ and cisco.catalystcenter collection latest).
 
 ```yaml
 ---
@@ -807,9 +807,9 @@ The following environment was used for testing:
 |-----------------------|-------------|
 | Python                | `3.12.0`    |
 | Ansible               | `9.9.0`     |
-| cisco.dnac Collection | `6.42.0`    |
-| dnacentersdk          | `2.10.4`     |
+| cisco.catalystcenter Collection | `latest`    |
+| catalystcentersdk          | `latest`     |
 
-For detailed information on Plug and Play workflow, refer to the official documentation:  Refer to: [https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/pnp_workflow_manager/](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/pnp_workflow_manager/)
+For detailed information on Plug and Play workflow, refer to the official documentation:  Refer to: [https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/pnp_workflow_manager/](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/pnp_workflow_manager/)
 
 ---

@@ -26,7 +26,7 @@ The device configuration backup workflow in Cisco Catalyst Center focuses on cre
 ### 2. Workflow Definition: 
 config specifies the devices and their details to include in the backup.
 ### 3. Full Workflow Specification: 
-Refer to the official documentation for detailed information on defining workflows: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/device_configs_backup_workflow_manager
+Refer to the official documentation for detailed information on defining workflows: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/device_configs_backup_workflow_manager
 
 ## II. Procedure
 ### 1. Prepare your Ansible environment:
@@ -35,23 +35,23 @@ Ensure you have network connectivity to your Catalyst Center instance.
 Checkout the project and playbooks: git@github.com:cisco-en-programmability/catalyst-center-ansible-iac.git
 
 ### 2. Configure Host Inventory:
-The host_inventory_dnac1/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
-Make sure the dnac_version in this file matches your actual Catalyst Center version.
-#### **The Sample host_inventory_dnac1/hosts.yml**
+The host_inventory/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
+Make sure the catalystcenter_version in this file matches your actual Catalyst Center version.
+#### **The Sample host_inventory/hosts.yml**
 ```bash
 catalyst_center_hosts:
     hosts:
         catalyst_center220:
-            dnac_host: xx.xx.xx.xx.
-            dnac_password: XXXXXXXX
-            dnac_port: 443
-            dnac_timeout: 60
-            dnac_username: admin
-            dnac_verify: false
-            dnac_version: 2.3.7.6
-            dnac_debug: true
-            dnac_log_level: INFO
-            dnac_log: true
+            catalystcenter_host: xx.xx.xx.xx.
+            catalystcenter_password: XXXXXXXX
+            catalystcenter_port: 443
+            catalyst_center_timeout: 60
+            catalystcenter_username: admin
+            catalystcenter_verify: false
+            catalystcenter_version: 2.3.7.6
+            catalystcenter_debug: true
+            catalystcenter_log_level: INFO
+            catalystcenter_log: true
 ```
 
 ### 3. Define Schema:
@@ -85,7 +85,7 @@ This step involves preparing the input data for creating or managing device conf
 
 ### 4. Generate your Input:
 The workflows/device_config_backup/vars/device_config_backup_workflow_input.yml file should be configured with device details
-Refer to the full workflow specification for detailed instructions on available options and their configuration structure: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/device_configs_backup_workflow_manager
+Refer to the full workflow specification for detailed instructions on available options and their configuration structure: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/device_configs_backup_workflow_manager
 
 
 ### 5. Validate Input (Recommended):
@@ -97,7 +97,7 @@ yamale -s workflows/device_config_backup/schema/device_config_backup_workflow_sc
 ### 6. Run playbook:
 #### **Collect device running configurations through Catalyst Center APIs.**
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/device_config_backup/playbook/device_config_backup_workflow_playbook.yml \
+ansible-playbook -i host_inventory/hosts.yml workflows/device_config_backup/playbook/device_config_backup_workflow_playbook.yml \
 --e VARS_FILE_PATH=../vars/device_config_backup_workflow_input.yml -vvvv
 ```
 
@@ -313,7 +313,7 @@ Note: The environment is used for the references in the above instructions.
   ansible-core: 2.16.10
   ansible-runner: 2.4.0
 
-  dnacentersdk: 2.8.3
-  cisco.dnac: 6.29.0
+  catalystcentersdk: latest
+  cisco.catalystcenter: 2.4.0
   ansible.utils: 5.1.2
 ```

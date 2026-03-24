@@ -31,20 +31,20 @@ Before running the Discovery feature, ensure you have:
 catalyst_center_hosts:
     hosts:
         catalyst_center220:
-            dnac_host: xx.xx.xx.xx.
-            dnac_password: XXXXXXXX
-            dnac_port: 443
-            dnac_timeout: 60
-            dnac_username: admin
-            dnac_verify: false
-            dnac_version: 2.3.7.6
-            dnac_debug: true
-            dnac_log_level: INFO
-            dnac_log: true
+            catalystcenter_host: xx.xx.xx.xx.
+            catalystcenter_password: XXXXXXXX
+            catalystcenter_port: 443
+            catalyst_center_timeout: 60
+            catalystcenter_username: admin
+            catalystcenter_verify: false
+            catalystcenter_version: 2.3.7.6
+            catalystcenter_debug: true
+            catalystcenter_log_level: INFO
+            catalystcenter_log: true
 ```
 
 ### Full Workflow Specification: 
-Refer to the official documentation for detailed information on defining workflows: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/discovery_workflow_manager
+Refer to the official documentation for detailed information on defining workflows: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/discovery_workflow_manager
 
 ### Setting Up Discovery Credentials
 
@@ -184,11 +184,11 @@ discovery_details:
 
 ###  To initiate device discovery:
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/device_discovery/playbook/device_discovery_playbook.yml --e VARS_FILE_PATH=../vars/device_discovery_vars.yml
+    ansible-playbook -i host_inventory/hosts.yml workflows/device_discovery/playbook/device_discovery_playbook.yml --e VARS_FILE_PATH=../vars/device_discovery_vars.yml
 ```
 ###  To delete existing discoveries:
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/device_discovery/playbook/delete_device_discovery.yml --e VARS_FILE_PATH=../vars/device_discovery_vars.yml
+ansible-playbook -i host_inventory/hosts.yml workflows/device_discovery/playbook/delete_device_discovery.yml --e VARS_FILE_PATH=../vars/device_discovery_vars.yml
 ```
 
 ## Referances
@@ -198,8 +198,8 @@ ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/device_discovery/pl
   ansible-core: 2.16.10
   ansible-runner: 2.4.0
 
-  dnacentersdk: 2.8.3
-  cisco.dnac: 6.29.0
+  catalystcentersdk: latest
+  cisco.catalystcenter: 2.4.0
   ansible.utils: 5.1.2
 ```
 

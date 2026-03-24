@@ -5,24 +5,24 @@ This workflow playbook is supported from Catalyst Center Release version 2.3.7.6
 catalyst_center_version: Define the version of Catalyst Center for which Scripts to run for legacy configs, you could keep it same.
 role_details defines the access destails for the role.
 network_settings_details: Details of Network settings 
-Refer to the full workflow specification to define the details: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/network_settings_workflow_manager/
+Refer to the full workflow specification to define the details: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/network_settings_workflow_manager/
 
 Follow the instructions in this README.md file to run the workflow.
 
 ## Example run: Create Network Setting
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/network_settings/playbook/network_settings_playbook.yml --e VARS_FILE_PATH=../vars/network_settings_vars.yml -vvv 
+ansible-playbook -i host_inventory/hosts.yml workflows/network_settings/playbook/network_settings_playbook.yml --e VARS_FILE_PATH=../vars/network_settings_vars.yml -vvv 
 
 ## Example run: Create IP Pools and Reserve IP pools on Sites
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/network_settings/playbook/network_settings_playbook.yml --e VARS_FILE_PATH=../vars/global_pool_and_reserve_pools_on_sites.yml -vvv 
+ansible-playbook -i host_inventory/hosts.yml workflows/network_settings/playbook/network_settings_playbook.yml --e VARS_FILE_PATH=../vars/global_pool_and_reserve_pools_on_sites.yml -vvv 
 
 ## Updating servers on sites AAA NTP, DNS, DHCP, TimeZone, SNMP, Logging, Banner etc.
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/network_settings/playbook/network_settings_playbook.yml --e VARS_FILE_PATH=../vars/server_update_aaa_ntp_dns_dhcp_tz_banner_syslog_snmp_netflow.yml -vvv 
+ansible-playbook -i host_inventory/hosts.yml workflows/network_settings/playbook/network_settings_playbook.yml --e VARS_FILE_PATH=../vars/server_update_aaa_ntp_dns_dhcp_tz_banner_syslog_snmp_netflow.yml -vvv 
 
 ##Example run: Delete Network Settings
 
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/network_settings/playbook/delete_network_settings_playbook.yml --e VARS_FILE_PATH=../vars/network_settings_vars.yml -vvv 
+ansible-playbook -i host_inventory/hosts.yml workflows/network_settings/playbook/delete_network_settings_playbook.yml --e VARS_FILE_PATH=../vars/network_settings_vars.yml -vvv 
 
-##The Sample host_inventory_dnac1/hosts.yml
+##The Sample host_inventory/hosts.yml
 
 ## Generate Inventory 
 Create an Ansible inventory file (e.g., `hosts.yml`) that includes your Cisco Catalyst Center appliance details. You will need to define variables such as the host, username, and password (or other authentication methods).
@@ -45,11 +45,11 @@ User Inputs for Users and roles are stored in  workflows/users_and_roles/vars/us
 
 ##Validate user input before running through Ansible
 ```bash
-(pyats) pawansi@PAWANSI-M-81A3 dnac_ansible_workflows % ./tools/validate.sh -s workflows/network_settings/schema/nw_settings_schema.yml -d workflows/network_settings/vars/network_settings_vars.yml
+(pyats) pawansi@PAWANSI-M-81A3 catalyst_center_ansible_workflows % ./tools/validate.sh -s workflows/network_settings/schema/nw_settings_schema.yml -d workflows/network_settings/vars/network_settings_vars.yml
 workflows/network_settings/schema/nw_settings_schema.yml
 workflows/network_settings/vars/network_settings_vars.yml
 yamale   -s workflows/network_settings/schema/nw_settings_schema.yml  workflows/network_settings/vars/network_settings_vars.yml
-Validating /Users/pawansi/dnac_ansible_workflows/workflows/network_settings/vars/network_settings_vars.yml...
+Validating /Users/pawansi/catalyst_center_ansible_workflows/workflows/network_settings/vars/network_settings_vars.yml...
 Validation success! 👍
 ```
 
@@ -453,8 +453,8 @@ network_settings_details:
     ...
     # Create/Update Global Pools, Subpools, and Network Settings etc.
     - name: Create/Update Global Pools, Subpools, and Network Settings etc 
-      cisco.dnac.network_settings_workflow_manager:
-        <<: *dnac_login
+      cisco.catalystcenter.network_settings_workflow_manager:
+        <<: *catalystcenter_login
         state: merged
         config: "{{ network_settings_details }}"
       when: network_settings_details is defined
@@ -463,7 +463,7 @@ network_settings_details:
   **Command to Run:**
   ```bash
   ansible-playbook \
-    -i ./inventory/demo_lab/inventory_demo_lab.yml \ # refer to DNAC to run
+    -i ./inventory/demo_lab/inventory_demo_lab.yml \ # refer to Catalyst Center to run
     ./workflows/network_settings/playbook/network_settings_playbook.yml \ # playbook will run this
     --extra-vars VARS_FILE_PATH=./../vars/network_settings_vars.yml \ # location of the input file for the playbook to execute
     -vvv # return detailed information about the message; the more 'v', the more detailed
@@ -494,7 +494,7 @@ To run scale network settings, we need to create a scalable site first.
   #### 1b. Playbook Example
   ```yaml
       - name: Set up site config from the design_sites config
-        cisco.dnac.site_workflow_manager:
+        cisco.catalystcenter.site_workflow_manager:
           <<: *common_config
           state: merged
           config: "{{ design_sites }}"
@@ -559,7 +559,7 @@ To run scale network settings, we need to create a scalable site first.
   #### 2b. Playbook Example
   ```yaml
       - name: Set up network settings config from network_settings config
-        cisco.dnac.network_settings_workflow_manager:
+        cisco.catalystcenter.network_settings_workflow_manager:
           <<: *common_config
           state: merged
           config: "{{ network_settings }}"
@@ -1060,7 +1060,7 @@ This task reserves sub-pools from a global IP address pool for specific sites in
   **Example Command to Run the IP Pool Playbook with Merged Method:**
   ```bash
   ansible-playbook 
-    -i ./inventory/demo_lab/inventory_demo_lab.yml # Reference to DNAC to run
+    -i ./inventory/demo_lab/inventory_demo_lab.yml # Reference to Catalyst Center to run
     ./workflows/network_settings/playbook/network_settings_playbook.yml # Playbook that will execute
     --extra-vars VARS_FILE_PATH=./../vars/global_pool_and_reserve_pools_on_sites.yml # Location of the input file for playbook execution
     -vvv # Returns detailed information about the message; the more 'v', the more detail
@@ -1075,12 +1075,12 @@ This task reserves sub-pools from a global IP address pool for specific sites in
 ```yaml
 python: 3.12.0
 
-dnac_version: 2.3.7.6
+catalystcenter_version: 2.3.7.6
 
 ansible: 9.9.0
 ansible-core: 2.16.10
 ansible-runner: 2.4.0
 
-dnacentersdk: 2.8.4
-cisco.dnac: 6.30.0
+catalystcentersdk: latest
+cisco.catalystcenter: latest
 ```

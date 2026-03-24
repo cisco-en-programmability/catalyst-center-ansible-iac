@@ -43,19 +43,19 @@
 
 | Component | Version |
 |-----------|---------|
-| Ansible | 6.42.0 |
+| cisco.catalystcenter Collection | latest |
 | Python | 3.9+ |
-| Cisco Catalyst Center SDK | 2.10.4 |
+| Cisco Catalyst Center SDK | latest |
 
 Detailed Input Specification
-- [Access Point Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/accesspoint_workflow_manager)
+- [Access Point Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/accesspoint_workflow_manager)
 
 ### Required Collections
 
 ```bash
-ansible-galaxy collection install cisco.dnac
+ansible-galaxy collection install cisco.catalystcenter
 ansible-galaxy collection install ansible.utils
-pip install dnacentersdk
+pip install catalystcentersdk
 pip install yamale
 ```
 
@@ -255,9 +255,9 @@ accesspoints_configuration_provisioning/
 ### Step 1: Install Collections
 
 ```bash
-ansible-galaxy collection install cisco.dnac
+ansible-galaxy collection install cisco.catalystcenter
 ansible-galaxy collection install ansible.utils
-pip install dnacentersdk
+pip install catalystcentersdk
 pip install yamale
 ```
 
@@ -301,7 +301,7 @@ Execute the Playbook.**
 To update the Wireless Accesspoint Configuration.**
 
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/accesspoints_configuration_provisioning/playbook/accesspoints_config_playbook.yml --e VARS_FILE_PATH=../vars/accesspoints_configuration_vars.yml
+    ansible-playbook -i host_inventory/hosts.yml workflows/accesspoints_configuration_provisioning/playbook/accesspoints_config_playbook.yml --e VARS_FILE_PATH=../vars/accesspoints_configuration_vars.yml
 ```FILE_PATH=../vars/backup_and_restore_inputs.yml
 ```
 
@@ -643,6 +643,6 @@ accesspoints_details:
 
 ## IV. References
 
-Cisco Catalyst Center Ansible Module Documentation: [accesspoint_workflow_manager](https://cisco-en-programmability.github.io/dnacenter-ansible/main/plugins/accesspoint_workflow_manager_module.html)
+Cisco Catalyst Center Ansible Module Documentation: [accesspoint_workflow_manager](https://cisco-en-programmability.github.io/catalystcenter-ansible/main/plugins/accesspoint_workflow_manager_module.html)
 
-GitHub Source Code: [accesspoint_workflow_manager.py](https://github.com/cisco-en-programmability/dnacenter-ansible/blob/main/plugins/modules/accesspoint_workflow_manager.py)
+GitHub Source Code: [accesspoint_workflow_manager.py](https://github.com/cisco-en-programmability/catalystcenter-ansible/blob/main/plugins/modules/accesspoint_workflow_manager.py)

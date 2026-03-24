@@ -27,7 +27,7 @@ Currently, the Cisco Wireless Controller communicates only with two control plan
 
 - [x] Advanced SDA Fabric Settings: Manage advanced configurations such as TCP MSS adjustment, route distribution protocols, and autonomous system numbers.
 
-For more information, please refer to the following documentation: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/sda_fabric_devices_workflow_manager/?version=6.24.0 
+For more information, please refer to the following documentation: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/sda_fabric_devices_workflow_manager/? 
 
 ### Before you begin
 
@@ -202,7 +202,7 @@ Once the input validation is complete and no errors are found, you can run the p
 
 ```bash
 
-     ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/sda_fabric_device_roles/playbook/sda_fabric_device_roles_playbook.yml --e VARS_FILE_PATH=/Users/majlona/dnac_ansible_workflows/workflows/sda_fabric_device_roles/vars/sda_fabric_device_roles_input.yml -vvv
+     ansible-playbook -i host_inventory/hosts.yml workflows/sda_fabric_device_roles/playbook/sda_fabric_device_roles_playbook.yml --e VARS_FILE_PATH=/Users/majlona/catalyst_center_ansible_workflows/workflows/sda_fabric_device_roles/vars/sda_fabric_device_roles_input.yml -vvv
 ```
 
 If there is an error in the input or an issue with the API call during execution, the playbook will halt and display the relevant error details.
@@ -279,7 +279,7 @@ Use the input var file: workflows/sda_fabric_device_roles/vars/jinja_template_sd
 ##### Execute the Jinja Template
 
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/sda_fabric_device_roles/playbook/sda_fabric_device_roles_playbook_jinja.yml --e VARS_FILE_PATH=workflows/sda_fabric_device_roles/vars/jinja_template_sda_fabric_device_roles.yml -vvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/sda_fabric_device_roles/playbook/sda_fabric_device_roles_playbook_jinja.yml --e VARS_FILE_PATH=workflows/sda_fabric_device_roles/vars/jinja_template_sda_fabric_device_roles.yml -vvv
 ```
 
 
@@ -299,7 +299,7 @@ fabric_devices_details:
 ##### Execute the Playbook
 
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/sda_fabric_device_roles/playbook/delete_sda_fabric_device_roles_playbook.yml --e VARS_FILE_PATH=w/Users/majlona/Desktop/dnac_ansible_workflows_vs_copilot/workflows/sda_fabric_device_roles/vars/delete_sda_fabric_device_roles_input.yml -vvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/sda_fabric_device_roles/playbook/delete_sda_fabric_device_roles_playbook.yml --e VARS_FILE_PATH=w/Users/majlona/Desktop/catalyst_center_ansible_workflows_vs_copilot/workflows/sda_fabric_device_roles/vars/delete_sda_fabric_device_roles_input.yml -vvv
 ```
 
 #### Delete SDA Fabric Device Roles
@@ -326,5 +326,5 @@ fabric_devices_details:
 ##### Execute the Playbook
 
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/sda_fabric_device_roles/playbook/delete_sda_fabric_device_roles_playbook.yml --e VARS_FILE_PATH=w/Users/majlona/Desktop/dnac_ansible_workflows_vs_copilot/workflows/sda_fabric_device_roles/vars/delete_sda_fabric_device_roles_input.yml -vvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/sda_fabric_device_roles/playbook/delete_sda_fabric_device_roles_playbook.yml --e VARS_FILE_PATH=w/Users/majlona/Desktop/catalyst_center_ansible_workflows_vs_copilot/workflows/sda_fabric_device_roles/vars/delete_sda_fabric_device_roles_input.yml -vvv
 ```

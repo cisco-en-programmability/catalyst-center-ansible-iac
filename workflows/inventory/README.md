@@ -14,8 +14,8 @@ inventory_details defines the list of devices and their details to be processed 
   - Maintenance Scheduling: Schedule periodic or one-time maintenance or device restarts.
 
 **Version Information:**
-  - version_added: v6.8.0
-  - Maintenance Scheduling: v6.33.0
+  - version_added: latest
+  - Maintenance Scheduling: latest
 ---
 
 This README outlines the steps to use the Ansible playbooks for managing Application Policies in Cisco Catalyst Center.
@@ -27,7 +27,7 @@ Before running the playbooks, ensure you have Ansible installed and the necessar
 1.  **Install Ansible:** Follow the official Ansible documentation for installation instructions.
 2.  **Install Cisco Catalyst Center Collection:**
     ```bash
-    ansible-galaxy collection install cisco.dnac
+    ansible-galaxy collection install cisco.catalystcenter
     ```
 3.  **Generate Inventory:** Create an Ansible inventory file (e.g., `inventory.yml`) that includes your Cisco Catalyst Center appliance details. You will need to define variables such as the host, username, and password (or other authentication methods).
 
@@ -110,7 +110,7 @@ catalyst_center_hosts:
 
 ```bash
 yamale -s workflows/inventory/schema/inventory_schema.yml workflows/inventory/vars/inventory_vars.yml 
-Validating /Users/pawansi/dnac_ansible_workflows/workflows/inventory/vars/inventory_vars.yml...
+Validating /Users/pawansi/catalyst_center_ansible_workflows/workflows/inventory/vars/inventory_vars.yml...
 Validation success! 👍
 ```
 
@@ -155,7 +155,7 @@ inventory_details:
 
 * Sample run line command to run the add devices Playbook:
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/inventory/playbook/inventory_playbook.yml --e VARS_FILE_PATH=../vars/inventory_vars.yml -vvvvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/inventory/playbook/inventory_playbook.yml --e VARS_FILE_PATH=../vars/inventory_vars.yml -vvvvv
 ```
 
 B. To execute the Ansible playbook for provision devices:
@@ -185,7 +185,7 @@ inventory_details:
 
 *  Sample run line command for running the Provision Playbook:
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/inventory/playbook/inventory_playbook.yml --e VARS_FILE_PATH=../vars/inventory_provision_devices.yml -vvvvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/inventory/playbook/inventory_playbook.yml --e VARS_FILE_PATH=../vars/inventory_provision_devices.yml -vvvvv
 ```
 
 C. To execute the Ansible playbook for resync and reboot devices:
@@ -221,7 +221,7 @@ inventory_details:
 "msg: AP Device(s) XX.XX.XX.XX, XX.XX.XX.XX successfully rebooted!"
 *  To run the Resync/Reboot Playbook:
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/inventory/playbook/inventory_playbook.yml --e VARS_FILE_PATH=../vars/inventory_resync_reboot_vars.yml -vvvvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/inventory/playbook/inventory_playbook.yml --e VARS_FILE_PATH=../vars/inventory_resync_reboot_vars.yml -vvvvv
 ```
 * **NOTE - reboot will work for only AP devices, where resync will work for all the devices.**
 
@@ -258,7 +258,7 @@ inventory_details:
 * Make sure the devices are deleted from the Cisco Catalyst Center.
 *  To run the Delete Playbook:
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/inventory/playbook/delete_inventory_playbook.yml --e VARS_FILE_PATH=../vars/inventory_delete_devices.yml -vvvvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/inventory/playbook/delete_inventory_playbook.yml --e VARS_FILE_PATH=../vars/inventory_delete_devices.yml -vvvvv
 ```
 
 F. To execute the Ansible playbook for schedule the maintenance:
@@ -342,7 +342,7 @@ catalyst_center_version: 2.3.7.6
   ansible: 9.9.0
   ansible-core: 2.16.10
   ansible-runner: 2.4.0
-  dnacentersdk: 2.8.3
-  cisco.dnac: 6.36.0
+  catalystcentersdk: latest
+  cisco.catalystcenter: latest
   ansible.utils: 5.1.2
 ```
