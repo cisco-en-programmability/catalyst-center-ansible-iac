@@ -8,7 +8,7 @@ Application Policy Workflow Playbooks designed to automate the management of app
   - Create, update, and delete application queuing profiles in Cisco Catalyst Center.
   - Supports managing queuing profiles and application policies for traffic classification and prioritization.
 
-**version_added:** "6.32.0"
+**version_added:** "latest"
 
 ---
 
@@ -25,7 +25,7 @@ Before running the playbooks, ensure you have Ansible installed and the necessar
 1.  **Install Ansible:** Follow the official Ansible documentation for installation instructions.
 2.  **Install Cisco Catalyst Center Collection:**
     ```bash
-    ansible-galaxy collection install cisco.dnac
+    ansible-galaxy collection install cisco.catalystcenter
     ```
 3.  **Generate Inventory:** Create an Ansible inventory file (e.g., `inventory.yml`) that includes your Cisco Catalyst Center appliance details. You will need to define variables such as the host, username, and password (or other authentication methods).
 ### Configure Host Inventory
@@ -589,10 +589,10 @@ After executing the playbook, check the Catalyst Center UI to verify switch prof
 
 ```yaml
 python: 3.12.0
-dnac_version: 2.3.7.9
+catalystcenter_version: 2.3.7.9
 ansible: 9.9.0
-cisco.dnac: 6.32.0
-dnacentersdk: 2.8.14
+cisco.catalystcenter: latest
+catalystcentersdk: latest
 ```
 
-For detailed information on network wireless profile workflow refer to the following documentation: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/application_policy_workflow_manager/
+For detailed information on network wireless profile workflow refer to the following documentation: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/application_policy_workflow_manager/

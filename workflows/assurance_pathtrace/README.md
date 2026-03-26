@@ -28,7 +28,7 @@ This Playbook enables network administrators to trace the communication path bet
 
 
 **Version Added:**  
-`6.32.0`
+`latest`
 
 ---
 
@@ -45,7 +45,7 @@ Before running the playbooks, ensure you have Ansible installed and the necessar
 1.  **Install Ansible:** Follow the official Ansible documentation for installation instructions.
 2.  **Install Cisco Catalyst Center Collection:**
     ```bash
-    ansible-galaxy collection install cisco.dnac
+    ansible-galaxy collection install cisco.catalystcenter
     ```
 3.  **Generate Inventory:** Create an Ansible inventory file (e.g., `inventory.yml`) that includes your Cisco Catalyst Center appliance details. You will need to define variables such as the host, username, and password (or other authentication methods).
     ```yaml
@@ -70,7 +70,7 @@ This step involves preparing the input data for configuring path trace diagnosti
 
 1.  **Define Input Variables:** Create the variable file at (e.g., `workflows/assurance_pathtrace/vars/assurance_pathtrace_inputs.yml`).This file should contain the list of source/destination IP addresses and optional trace configuration settings.
 
-2.  **Review Structure and Options:** Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/Playbook/path_trace
+2.  **Review Structure and Options:** Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/Playbook/path_trace
 
 
 #### Schema for Path Trace  
@@ -90,7 +90,7 @@ This schema defines the structure of the input file for configuring a Path Trace
 | `flow_analysis_id`         | String   | No           | N/A               | The Flow Analysis ID returned when a path trace is created. Used to retrieve or delete the trace. |
 
 # Path Trace Limitations
- For a complete list of limitations and supported scenarios, please refer to the official documentation: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/path_trace
+ For a complete list of limitations and supported scenarios, please refer to the official documentation: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/path_trace
 
 ## Example Input File
 
@@ -233,10 +233,10 @@ After executing the playbook, check the Catalyst Center UI to verify path trace.
 
 ```yaml
 python: 3.12.0
-dnac_version: 2.3.7.9
+catalystcenter_version: 2.3.7.9
 ansible: 9.9.0
-cisco.dnac: 6.32.0
-dnacentersdk: 2.8.8
+cisco.catalystcenter: latest
+catalystcentersdk: latest
 ```
 
 # Pathtrace Limitations

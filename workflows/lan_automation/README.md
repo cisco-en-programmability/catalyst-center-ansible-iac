@@ -52,8 +52,8 @@ Ensure that Ansible is installed on your system. If it isn't, please refer to th
 **Environment Requirements:**
 - **Ansible**: Version 2.9 or later
 - **Python**: Version 3.9 or later
-- **cisco.dnac Collection**: Version 6.20.0 or later
-- **dnacentersdk**: Version 2.9.2 or later
+- **cisco.catalystcenter Collection**: Version 2.4.0 or later
+- **catalystcentersdk**: latest
 
 **Clone the Repository:**
 
@@ -68,9 +68,9 @@ cd catalyst-center-ansible-iac
 
 ### Step 2: Configure Host Inventory
 
-The `host_inventory_dnac1/hosts.yml` file is essential for establishing connectivity to your Catalyst Center instance, as it contains all the necessary connection details, including the IP address, credentials, and other relevant parameters. To ensure seamless operation, it is important to verify that the `catalyst_center_version` specified in this file aligns with your actual Catalyst Center version, thereby avoiding any potential compatibility issues that could disrupt functionality.
+The `host_inventory/hosts.yml` file is essential for establishing connectivity to your Catalyst Center instance, as it contains all the necessary connection details, including the IP address, credentials, and other relevant parameters. To ensure seamless operation, it is important to verify that the `catalyst_center_version` specified in this file aligns with your actual Catalyst Center version, thereby avoiding any potential compatibility issues that could disrupt functionality.
 
-**Sample host_inventory_dnac1/hosts.yml:**
+**Sample host_inventory/hosts.yml:**
 
 ```yaml
 catalyst_center_hosts:
@@ -100,8 +100,8 @@ This section provides detailed information about all configuration parameters av
 |---------------------------------|------------|--------------|-------------------|---------------------------------------------------------------------------|
 | `catalyst_center_version`       | String     | No           | From hosts.yml    | Catalyst Center software version. Overrides host file version.            |
 | `catalyst_center_verify`        | Boolean    | No           | `false`           | SSL certificate verification (true/false).                                |
-| `dnac_api_task_timeout`         | Integer    | No           | `604800`          | Maximum time (seconds) to wait for LAN Automation task completion.        |
-| `dnac_task_poll_interval`       | Integer    | No           | `30`              | Interval (seconds) to poll for task completion status.                    |
+| `catalystcenter_api_task_timeout`         | Integer    | No           | `604800`          | Maximum time (seconds) to wait for LAN Automation task completion.        |
+| `catalystcenter_task_poll_interval`       | Integer    | No           | `30`              | Interval (seconds) to poll for task completion status.                    |
 | `config_verify`                 | Boolean    | No           | `false`           | Verify LAN Automation config after applying playbook configuration.       |
 | `state`                         | String     | No           | `merged`          | Desired state after module completion. Choices: `merged`, `deleted`.      |
 
@@ -296,7 +296,7 @@ lan_automation_details:
         launch_and_wait: false
 ```
 
-> **Note**: For comprehensive instructions on the available options and the respective structure, refer to the full workflow specification at [Ansible Galaxy: LAN Automation Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/lan_automation_workflow_manager/)
+> **Note**: For comprehensive instructions on the available options and the respective structure, refer to the full workflow specification at [Ansible Galaxy: LAN Automation Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/lan_automation_workflow_manager/)
 
 ---
 
@@ -321,7 +321,7 @@ Before executing the playbook, it is essential to validate the input schema. Thi
 Once the input validation is complete and no errors are found, you can run the playbook. Provide your input file path using the `--e` variable as `VARS_FILE_PATH`:
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automation_workflow_inputs.yml -vvv
+ansible-playbook -i host_inventory/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automation_workflow_inputs.yml -vvv
 ```
 ---
 
@@ -372,7 +372,7 @@ To stop the LAN Automation session, run the stop playbook with your specified in
 #### Running the Stop Playbook
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/lan_automation/playbook/stop_lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/delete_lan_automation_workflow_inputs.yml -vvv
+ansible-playbook -i host_inventory/hosts.yml workflows/lan_automation/playbook/stop_lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/delete_lan_automation_workflow_inputs.yml -vvv
 ```
 ---
 
@@ -428,7 +428,7 @@ Before executing the playbook, validate the input schema:
 Once validation is complete, run the playbook:
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automated_device_update_inputs.yml -vvv
+ansible-playbook -i host_inventory/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automated_device_update_inputs.yml -vvv
 ```
 
 ---
@@ -474,7 +474,7 @@ lan_automation_details:
 ##### Running the Playbook
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automated_device_update_inputs.yml -vvv
+ansible-playbook -i host_inventory/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automated_device_update_inputs.yml -vvv
 ```
 
 ---
@@ -543,7 +543,7 @@ lan_automation_details:
 ##### Running the Playbook
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automated_device_update_inputs.yml -vvv
+ansible-playbook -i host_inventory/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automated_device_update_inputs.yml -vvv
 ```
 
 ---
@@ -698,7 +698,7 @@ Before executing the playbook, validate the input schema to ensure all required 
 Once validation is complete, run the playbook with your input file:
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automated_device_update_inputs.yml -vvv
+ansible-playbook -i host_inventory/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automated_device_update_inputs.yml -vvv
 ```
 
 > **Note**: If there is an error in the input or an issue with the API call during execution, the playbook will halt and display the relevant error details.
@@ -772,7 +772,7 @@ lan_automation_details:
 ##### Running the Playbook
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automated_device_update_inputs.yml -vvv
+ansible-playbook -i host_inventory/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH= workflows/lan_automation/vars/lan_automated_device_update_inputs.yml -vvv
 ```
 
 ---
@@ -892,7 +892,7 @@ lan_automation_details:
 **Important**: Port Channel deletion requires using the `deleted` state in the playbook execution.
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH=workflows/lan_automation/vars/delete_lan_automation_workflow_inputs.yml --e state=deleted -vvv
+ansible-playbook -i host_inventory/hosts.yml workflows/lan_automation/playbook/lan_automation_workflow_playbook.yml --e VARS_FILE_PATH=workflows/lan_automation/vars/delete_lan_automation_workflow_inputs.yml --e state=deleted -vvv
 ```
 
 ---
@@ -901,7 +901,7 @@ ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/lan_automation/play
 
 For comprehensive instructions on LAN Automation configuration and the complete parameter specification, refer to:
 - [Cisco Catalyst Center LAN Automation Documentation](https://www.cisco.com/c/en/us/support/cloud-systems-management/dna-center/series.html)
-- [Ansible Galaxy: LAN Automation Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/lan_automation_workflow_manager)
+- [Ansible Galaxy: LAN Automation Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/lan_automation_workflow_manager)
 
 **Environment Details** used for testing:
 
@@ -910,7 +910,7 @@ For comprehensive instructions on LAN Automation configuration and the complete 
 | Python                | `3.10.0`    |
 | Cisco Catalyst Center | `3.1.3.0`   |
 | Ansible               | `9.9.0`     |
-| cisco.dnac Collection | `6.32.0`    |
-| dnacentersdk          | `2.8.8`     |
+| cisco.catalystcenter Collection | `latest`    |
+| catalystcentersdk          | `latest`     |
 
 ---

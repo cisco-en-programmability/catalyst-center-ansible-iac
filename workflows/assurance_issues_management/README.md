@@ -2,7 +2,7 @@
 
 This workflow playbook automates the management of assurance issues within Cisco Catalyst Center (formerly Cisco DNA Center).      
 
-It provides tasks to interact with assurance issues, such as creating, updating, and deleting custom assurance issues and issue resolution functionalities. The workflow also enables configuration of thresholds, rules, and other assurance settings, helping streamline issue detection and response within the Catalyst Center platform. For more details, refer to the [Ansible Galaxy documentation](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/assurance_issue_workflow_manager/).
+It provides tasks to interact with assurance issues, such as creating, updating, and deleting custom assurance issues and issue resolution functionalities. The workflow also enables configuration of thresholds, rules, and other assurance settings, helping streamline issue detection and response within the Catalyst Center platform. For more details, refer to the [Ansible Galaxy documentation](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/assurance_issue_workflow_manager/).
 
 ## Workflow Key Features
 - **Create, Update, and Delete Assurance Issues**: Automate the management of custom assurance issues.
@@ -11,7 +11,7 @@ It provides tasks to interact with assurance issues, such as creating, updating,
 - **Resolve, Ignore, and Execute Suggested Commands**: Take automated actions to resolve issues, ignore specific ones, or execute recommended commands as suggested by Cisco Catalyst Center.
 
 **Version Added:**  
-`6.32.0`
+`latest`
 
 ## Workflow Steps
 
@@ -22,7 +22,7 @@ It provides tasks to interact with assurance issues, such as creating, updating,
 1.  **Install Ansible:** Follow the official Ansible documentation for installation instructions.
 2.  **Install Cisco Catalyst Center Collection:**
     ```bash
-    ansible-galaxy collection install cisco.dnac
+    ansible-galaxy collection install cisco.catalystcenter
     ```
 3.  **Generate Inventory:** Create an Ansible inventory file (e.g., `inventory.yml`) that includes your Cisco Catalyst Center appliance details. You will need to define variables such as the host, username, and password (or other authentication methods).
     ```yaml
@@ -119,7 +119,7 @@ The schema file (e.g., `schema/assurance_issues_management_schema.yml`) defines 
 | mac_address                  | string     | No           |                                             | Filter: issues based on device MAC address           |
 | network_device_ip_address    | string     | No           |                                             | Filter: issues based on network device IP address |
 
-> **Note:** For full lists of allowed values for `facility` and `mnemonic`, refer to the schema file `schema/assurance_issues_management_schema.yml` or [ansible galaxy document](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/assurance_issue_workflow_manager/). All lists can have 0 to 1000 items unless otherwise specified.
+> **Note:** For full lists of allowed values for `facility` and `mnemonic`, refer to the schema file `schema/assurance_issues_management_schema.yml` or [ansible galaxy document](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/assurance_issue_workflow_manager/). All lists can have 0 to 1000 items unless otherwise specified.
 
 ## Workflow overview with example
 
@@ -584,7 +584,7 @@ ansible-playbook -i ./inventory/demo_lab/hosts.yaml ./workflows/assurance_issues
 ```
 
 c. **Verify Deployment:** 
-After the playbook execution, you can verify the results in the Cisco Catalyst Center UI under the Assurance section. If dnac_debug is enabled in your inventory, you can also review the Ansible logs for detailed information on the API calls and responses.
+After the playbook execution, you can verify the results in the Cisco Catalyst Center UI under the Assurance section. If catalystcenter_debug is enabled in your inventory, you can also review the Ansible logs for detailed information on the API calls and responses.
 
 ## Run line parameters description:
 
@@ -599,8 +599,8 @@ Refer to the workflow's schema file (workflows/assurance_issues_management/schem
 
 ```bash
 python: 3.10.10
-dnac_version: 2.3.7.9
+catalystcenter_version: 2.3.7.9
 ansible: 9.9.0
-cisco.dnac: 6.32.0
-dnacentersdk: 2.10.14
+cisco.catalystcenter: latest
+catalystcentersdk: latest
 ```

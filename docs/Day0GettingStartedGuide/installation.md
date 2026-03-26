@@ -10,7 +10,7 @@ This repository provides Cisco-validated Ansible playbooks to automate Catalyst 
 - [Update](#update)
 
 # CompatibilityMatrix
-| Deployed Catalyst Center Version   | Catalyst Center Version in Input   | Ansible Galaxy collection (cisco.dnac)Version    | Python SDK (dnacentersdk) Version    |
+| Deployed Catalyst Center Version   | Catalyst Center Version in Input   | Ansible Galaxy collection (cisco.catalystcenter)Version    | Python SDK (catalystcentersdk) Version    |
 | :--------------------------------: | :--------------------------------: | :-----------------------: | :-------------------: |
 | 2.3.5.3 | 2.3.5.3   | latest   | latest |
 | 2.3.5.5 | 2.3.5.3   | latest   | latest |
@@ -33,7 +33,7 @@ Before using these Ansible workflows, ensure that you have the following prerequ
 # Installation of Cisco Validated Playbooks, Schema and Sample Inputs Vars
 
 - Install Python 3.9 or later
-- Install  cisco.dnac collection including Python requirements.
+- Install  cisco.catalystcenter collection including Python requirements.
 - Modify ansible.cfg file to support additional jinja2 extensions
 
 ## Python
@@ -58,7 +58,7 @@ git clone --depth 1 --branch v2.3.7.6.1 https://github.com/cisco-en-programmabil
 
 ## Navigate to the project directory:    
 ```bash
-cd dnac_ansible_workflows
+cd catalyst-center-ansible-iac
 ```
 
 ## Install the required dependencies:
@@ -66,28 +66,28 @@ cd dnac_ansible_workflows
 pip install -r requirements.txt
 ```
 ## Install the collection (Galaxy link):
-For installing or upgrading the cisco.dnac ansible collection follow steps:
+For installing or upgrading the cisco.catalystcenter ansible collection follow steps:
     Install Collection from Ansible Galaxy
     These instructions are for regular users to install via Ansible Galaxy. The instructions also include installation of all Python requirements for a given version. 
-    The cisco.dnac collection is available on the Ansible Galaxy server and can be automatically installed on your system using following command
+    The cisco.catalystcenter collection is available on the Ansible Galaxy server and can be automatically installed on your system using following command
 
 ### Latest version
-Clone the dnacenter-ansible repository.
+Clone the catalystcenter-ansible repository.
 ```bash
-ansible-galaxy collection install cisco.dnac --force
+ansible-galaxy collection install cisco.catalystcenter --force
 ```
-### Sppecific version
+### Specific version
 ```bash
-ansible-galaxy collection install cisco.dnac:==6.29.0 --force
+ansible-galaxy collection install cisco.catalystcenter:==2.4.0 --force
 ```
 
-### Install latest devel version from  GitHub abd build
+### Install latest devel version from GitHub and build
 ```bash
-git clone https://github.com/cisco-en-programmability/dnacenter-ansible.git
+git clone https://github.com/cisco-en-programmability/catalystcenter-ansible.git
 ```
-Go to the dnacenter-ansible directory
+Go to the catalystcenter-ansible directory
 ```bash
-cd dnacenter-ansible
+cd catalystcenter-ansible
 ```
 Pull the latest master from the repo
 ```bash
@@ -96,28 +96,28 @@ git pull origin master
 Build and install a collection from source
 ```bash
 ansible-galaxy collection build --force
-ansible-galaxy collection install cisco-dnac-* --force
+ansible-galaxy collection install cisco-catalystcenter-* --force
 ```
 
-## Install or Update the dnacentersdk:
-For installing or upgrading the dnacentersdk follow steps:
+## Install or Update the catalystcentersdk:
+For installing or upgrading the catalystcentersdk follow steps:
 
 ### Install via pip or pip3
 To get the Python Catalyst Center SDK latest in a fresh development environment:
 
 ```bash
-pip install dnacentersdk
+pip install catalystcentersdk
 ```
 
 ### Upgrading to the latest Version
-Use --upgrade opton to upgrde to latest version available.
+Use --upgrade option to upgrade to latest version available.
 ```bash
-pip install dnacentersdk --upgrade
+pip install catalystcentersdk --upgrade
 ```
 ### Install a specific version
-To install a specific version like 2.8.3
+To install a specific version like 2.3.7.6.2
 ```bash
-pip install dnacentersdk:2.8.3
+pip install catalystcentersdk==2.3.7.6.2
 ```
 
 ## Ansible configuration file
@@ -138,12 +138,12 @@ Create your inventory file in below template format to utilize the swim playbook
 
 The template for the inventory file is:
 ```bash
-cat inventory/demo_lab/001-dnac_inventory_template.yml
+cat inventory/demo_lab/hosts.yml
 ```
 
 Setup up your ansible python interpretor following suitable method for your environment : https://docs.ansible.com/ansible/latest/reference_appendices/interpreter_discovery.html
     
-### Hairarchical variable files for inputs
+### Hierarchical variable files for inputs
 
 The second folder of the workflows contains playbook and var files for workflows.
 Example:
@@ -168,29 +168,32 @@ vars/
 #Inventory file for demo_lab
 catalyst_center_hosts:
     hosts:
-    <dnac hostname >:
-    dnac_debug: false
-    dnac_host: <Cisco Catalyst Center IP Address> #(Mandatory) Cisco Catalyst Center Ip address
-    dnac_password: <Cisco Catalyst Center UI admin Password> #(Mandatory) 
-    dnac_port: 443 #(Mandatory) 
-    dnac_username: <Cisco Catalyst Center UI admin username> #(Mandatory) 
-    dnac_verify: false #(Mandatory) 
-    dnac_version: <Cisco Catalyst Center Release version> #(Mandatory)  Example: 2.3.5.3
+         <Your catalyst center hostname>:
+            catalyst_center_host: xx.xx.xx.xx
+            catalyst_center_password: XXXXXXXX
+            catalyst_center_port: 443
+            catalyst_center_timeout: 60
+            catalyst_center_username: admin
+            catalyst_center_verify: false
+            catalyst_center_version: 2.3.7.6
+            catalyst_center_debug: true
+            catalyst_center_log_level: INFO
+            catalyst_center_log: true
 ```
 
 Here are a few examples of Cisco Validated Playbooks in the repo. For details documentation of the playbook usage refer the guide inside the corresponding module.
 
 ## Example 1: 
-Swim upgrade, this include uploading the images, golden tagging the image filtered location and device family and distributed and activating images on the networkk devices.
+Swim upgrade, this include uploading the images, golden tagging the image filtered location and device family and distributed and activating images on the network devices.
 ```bash
-ansible-playbook -i ./inventory_dnaccluster ./workflows/swim/playbook/swim_workflow_playbook.yml --extra-vars VARS_FILE_PATH=< Vars File PATH (Full Path or relative path from playbook)> -vvvv
+ansible-playbook -i ./inventory/demo_lab/hosts.yml ./workflows/swim/playbook/swim_workflow_playbook.yml --extra-vars VARS_FILE_PATH=< Vars File PATH (Full Path or relative path from playbook)> -vvvv
 ```
     
 ## Example 2: 
 Create Sites, buildings floors using playbook : workflows/sites/playbook/site_hierarchy_playbook.yml
     
 ```bash
- ansible-playbook -i ./inventory_dnaccluster ./workflows/sites/playbook/site_hierarchy_playbook.yml --extra-vars VARS_FILE_PATH=./../vars/site_hierarchy_design_vars_.yml
+ ansible-playbook -i ./inventory/demo_lab/hosts.yml ./workflows/sites/playbook/site_hierarchy_playbook.yml --extra-vars VARS_FILE_PATH=./../vars/site_hierarchy_design_vars_.yml
 ```
     
 Feel free to explore the playbooks/ directory for more examples and use cases.

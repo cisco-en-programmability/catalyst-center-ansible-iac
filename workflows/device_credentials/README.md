@@ -77,23 +77,23 @@ The workflow leverages the **device_credential_workflow_manager**  module to int
 ### Configure Host Inventory
 
 - Update hosts.yml (or your preferred inventory file) with the connection details for your Catalyst Center instance.
- - The **host_inventory_dnac1/hosts.yml** file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
+ - The **host_inventory/hosts.yml** file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
 
 ```yaml
 ---
 catalyst_center_hosts:
     hosts:
         catalyst_center220:
-            dnac_host: xx.xx.xx.xx.
-            dnac_password: XXXXXXXX
-            dnac_port: 443
-            dnac_timeout: 60
-            dnac_username: admin
-            dnac_verify: false
-            dnac_version: 2.3.7.6
-            dnac_debug: true
-            dnac_log_level: INFO
-            dnac_log: true
+            catalystcenter_host: xx.xx.xx.xx.
+            catalystcenter_password: XXXXXXXX
+            catalystcenter_port: 443
+            catalyst_center_timeout: 60
+            catalystcenter_username: admin
+            catalystcenter_verify: false
+            catalystcenter_version: 2.3.7.6
+            catalystcenter_debug: true
+            catalystcenter_log_level: INFO
+            catalystcenter_log: true
 ```
 	
 ### Generate your Input
@@ -102,7 +102,7 @@ catalyst_center_hosts:
 - Refer to the **device_credential_workflow_manager** module documentation for details on the available variables and their formats.
 - Example:
  - The **workflows/device_config_backup/vars/device_config_backup_workflow_input.yml** file should be configured with device details.
- - Refer to the full workflow specification for detailed instructions on the available options and their structure:[full workflow specification](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/device_configs_backup_workflow_manager)
+ - Refer to the full workflow specification for detailed instructions on the available options and their structure:[full workflow specification](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/device_configs_backup_workflow_manager)
 - Operation: 
 - **Add Device Credential:** 
 
@@ -364,7 +364,7 @@ yamale -s workflows/device_credentials/schema/device_credentials_schema.yml work
 
 - Result:
 ```bash
-Validating /Users/pawansi/dnac_ansible_workflows/workflows/device_credentials/vars/device_credentials_vars.yml...
+Validating /Users/pawansi/catalyst_center_ansible_workflows/workflows/device_credentials/vars/device_credentials_vars.yml...
 Validation success! 👍
 ```
 
@@ -375,17 +375,17 @@ Validation success! 👍
 - Command to run:
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/device_credentials/playbook/device_credentials_playbook.yml --e VARS_FILE_PATH=../vars/device_credentials_vars.yml -vvvv
+ansible-playbook -i host_inventory/hosts.yml workflows/device_credentials/playbook/device_credentials_playbook.yml --e VARS_FILE_PATH=../vars/device_credentials_vars.yml -vvvv
 ```
 - Result:
 
 ```bash
 TASK [Create or Update existing Credentials with provided details in "../vars/device_credentials_vars.yml"] ***
-task path: /auto/dna-sol/ws/thanduong/dnac-auto/dnac_ansible_workflows/workflows/device_credentials/playbook/device_credentials_playbook.yml:53
+task path: /auto/dna-sol/ws/thanduong/dnac-auto/catalyst_center_ansible_workflows/workflows/device_credentials/playbook/device_credentials_playbook.yml:53
 <catalyst_center220> ESTABLISH LOCAL CONNECTION FOR USER: thanduon
 <catalyst_center220> EXEC /bin/sh -c 'echo ~thanduon && sleep 0'
 <catalyst_center220> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /users/thanduon/.ansible/tmp `"&& mkdir "` echo /users/thanduon/.ansible/tmp/ansible-tmp-1740126079.5517635-1320856-85222477229834 `" && echo ansible-tmp-1740126079.5517635-1320856-85222477229834="` echo /users/thanduon/.ansible/tmp/ansible-tmp-1740126079.5517635-1320856-85222477229834 `" ) && sleep 0'
-Using module file /users/thanduon/.ansible/collections/ansible_collections/cisco/dnac/plugins/modules/device_credential_workflow_manager.py
+Using module file /users/thanduon/.ansible/collections/ansible_collections/cisco/catalystcenter/plugins/modules/device_credential_workflow_manager.py
 <catalyst_center220> PUT /users/thanduon/.ansible/tmp/ansible-local-1320371l8ksx2_1/tmpf1medyzg TO /users/thanduon/.ansible/tmp/ansible-tmp-1740126079.5517635-1320856-85222477229834/AnsiballZ_device_credential_workflow_manager.py
 <catalyst_center220> EXEC /bin/sh -c 'chmod u+x /users/thanduon/.ansible/tmp/ansible-tmp-1740126079.5517635-1320856-85222477229834/ /users/thanduon/.ansible/tmp/ansible-tmp-1740126079.5517635-1320856-85222477229834/AnsiballZ_device_credential_workflow_manager.py && sleep 0'
 <catalyst_center220> EXEC /bin/sh -c '/auto/dna-sol/pyats-ws/pyats-thanduong/bin/python /users/thanduon/.ansible/tmp/ansible-tmp-1740126079.5517635-1320856-85222477229834/AnsiballZ_device_credential_workflow_manager.py && sleep 0'
@@ -443,19 +443,19 @@ changed: [catalyst_center220] => {
                 }
             ],
             "config_verify": false,
-            "dnac_api_task_timeout": 1200,
-            "dnac_debug": true,
-            "dnac_host": "10.22.40.214",
-            "dnac_log": true,
-            "dnac_log_append": true,
-            "dnac_log_file_path": "dnac.log",
-            "dnac_log_level": "debug",
-            "dnac_password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
-            "dnac_port": "443",
-            "dnac_task_poll_interval": 2,
-            "dnac_username": "thanduon",
-            "dnac_verify": false,
-            "dnac_version": "2.3.7.6",
+            "catalystcenter_api_task_timeout": 1200,
+            "catalystcenter_debug": true,
+            "catalystcenter_host": "10.22.40.214",
+            "catalystcenter_log": true,
+            "catalystcenter_log_append": true,
+            "catalystcenter_log_file_path": "catalystcenter.log",
+            "catalystcenter_log_level": "debug",
+            "catalystcenter_password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+            "catalystcenter_port": "443",
+            "catalystcenter_task_poll_interval": 2,
+            "catalystcenter_username": "thanduon",
+            "catalystcenter_verify": false,
+            "catalystcenter_version": "2.3.7.6",
             "state": "merged",
             "validate_response_schema": true
         }
@@ -523,11 +523,11 @@ changed: [catalyst_center220] => {
 Read vars_file '{{ VARS_FILE_PATH }}'
 
 TASK [Assign Credentials to sites for credentials and sites maps in variables file "../vars/device_credentials_vars.yml"] ***
-task path: /auto/dna-sol/ws/thanduong/dnac-auto/dnac_ansible_workflows/workflows/device_credentials/playbook/device_credentials_playbook.yml:61
+task path: /auto/dna-sol/ws/thanduong/dnac-auto/catalyst_center_ansible_workflows/workflows/device_credentials/playbook/device_credentials_playbook.yml:61
 <catalyst_center220> ESTABLISH LOCAL CONNECTION FOR USER: thanduon
 <catalyst_center220> EXEC /bin/sh -c 'echo ~thanduon && sleep 0'
 <catalyst_center220> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /users/thanduon/.ansible/tmp `"&& mkdir "` echo /users/thanduon/.ansible/tmp/ansible-tmp-1740126102.9772413-1322165-162826310557816 `" && echo ansible-tmp-1740126102.9772413-1322165-162826310557816="` echo /users/thanduon/.ansible/tmp/ansible-tmp-1740126102.9772413-1322165-162826310557816 `" ) && sleep 0'
-Using module file /users/thanduon/.ansible/collections/ansible_collections/cisco/dnac/plugins/modules/device_credential_workflow_manager.py
+Using module file /users/thanduon/.ansible/collections/ansible_collections/cisco/catalystcenter/plugins/modules/device_credential_workflow_manager.py
 <catalyst_center220> PUT /users/thanduon/.ansible/tmp/ansible-local-1320371l8ksx2_1/tmpog0uoozu TO /users/thanduon/.ansible/tmp/ansible-tmp-1740126102.9772413-1322165-162826310557816/AnsiballZ_device_credential_workflow_manager.py
 <catalyst_center220> EXEC /bin/sh -c 'chmod u+x /users/thanduon/.ansible/tmp/ansible-tmp-1740126102.9772413-1322165-162826310557816/ /users/thanduon/.ansible/tmp/ansible-tmp-1740126102.9772413-1322165-162826310557816/AnsiballZ_device_credential_workflow_manager.py && sleep 0'
 <catalyst_center220> EXEC /bin/sh -c '/auto/dna-sol/pyats-ws/pyats-thanduong/bin/python /users/thanduon/.ansible/tmp/ansible-tmp-1740126102.9772413-1322165-162826310557816/AnsiballZ_device_credential_workflow_manager.py && sleep 0'
@@ -564,19 +564,19 @@ changed: [catalyst_center220] => {
                 }
             ],
             "config_verify": false,
-            "dnac_api_task_timeout": 1200,
-            "dnac_debug": true,
-            "dnac_host": "10.22.40.214",
-            "dnac_log": true,
-            "dnac_log_append": true,
-            "dnac_log_file_path": "dnac.log",
-            "dnac_log_level": "debug",
-            "dnac_password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
-            "dnac_port": "443",
-            "dnac_task_poll_interval": 2,
-            "dnac_username": "thanduon",
-            "dnac_verify": false,
-            "dnac_version": "2.3.7.6",
+            "catalystcenter_api_task_timeout": 1200,
+            "catalystcenter_debug": true,
+            "catalystcenter_host": "10.22.40.214",
+            "catalystcenter_log": true,
+            "catalystcenter_log_append": true,
+            "catalystcenter_log_file_path": "catalystcenter.log",
+            "catalystcenter_log_level": "debug",
+            "catalystcenter_password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+            "catalystcenter_port": "443",
+            "catalystcenter_task_poll_interval": 2,
+            "catalystcenter_username": "thanduon",
+            "catalystcenter_verify": false,
+            "catalystcenter_version": "2.3.7.6",
             "state": "merged",
             "validate_response_schema": true
         }
@@ -634,17 +634,17 @@ changed: [catalyst_center220] => {
 - Command to run:
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/device_credentials/playbook/delete_device_credentials_playbook.yml --e VARS_FILE_PATH=../vars/device_credentials_vars.yml -vvvv
+ansible-playbook -i host_inventory/hosts.yml workflows/device_credentials/playbook/delete_device_credentials_playbook.yml --e VARS_FILE_PATH=../vars/device_credentials_vars.yml -vvvv
 ```
 - Reult:
 
 ```bash
 TASK [Create or Update existing Credentials with provided details in "../vars/device_credentials_vars.yml"] ***
-task path: /auto/dna-sol/ws/thanduong/dnac-auto/dnac_ansible_workflows/workflows/device_credentials/playbook/delete_device_credentials_playbook.yml:36
+task path: /auto/dna-sol/ws/thanduong/dnac-auto/catalyst_center_ansible_workflows/workflows/device_credentials/playbook/delete_device_credentials_playbook.yml:36
 <catalyst_center220> ESTABLISH LOCAL CONNECTION FOR USER: thanduon
 <catalyst_center220> EXEC /bin/sh -c 'echo ~thanduon && sleep 0'
 <catalyst_center220> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /users/thanduon/.ansible/tmp `"&& mkdir "` echo /users/thanduon/.ansible/tmp/ansible-tmp-1740129405.6199465-1431951-27769327087581 `" && echo ansible-tmp-1740129405.6199465-1431951-27769327087581="` echo /users/thanduon/.ansible/tmp/ansible-tmp-1740129405.6199465-1431951-27769327087581 `" ) && sleep 0'
-Using module file /users/thanduon/.ansible/collections/ansible_collections/cisco/dnac/plugins/modules/device_credential_workflow_manager.py
+Using module file /users/thanduon/.ansible/collections/ansible_collections/cisco/catalystcenter/plugins/modules/device_credential_workflow_manager.py
 <catalyst_center220> PUT /users/thanduon/.ansible/tmp/ansible-local-1430199wc5qelwj/tmptr7r6kkp TO /users/thanduon/.ansible/tmp/ansible-tmp-1740129405.6199465-1431951-27769327087581/AnsiballZ_device_credential_workflow_manager.py
 <catalyst_center220> EXEC /bin/sh -c 'chmod u+x /users/thanduon/.ansible/tmp/ansible-tmp-1740129405.6199465-1431951-27769327087581/ /users/thanduon/.ansible/tmp/ansible-tmp-1740129405.6199465-1431951-27769327087581/AnsiballZ_device_credential_workflow_manager.py && sleep 0'
 <catalyst_center220> EXEC /bin/sh -c '/auto/dna-sol/pyats-ws/pyats-thanduong/bin/python /users/thanduon/.ansible/tmp/ansible-tmp-1740129405.6199465-1431951-27769327087581/AnsiballZ_device_credential_workflow_manager.py && sleep 0'
@@ -703,19 +703,19 @@ changed: [catalyst_center220] => (item={'global_credential_details': {'cli_crede
                 }
             ],
             "config_verify": false,
-            "dnac_api_task_timeout": 1200,
-            "dnac_debug": true,
-            "dnac_host": "10.22.40.214",
-            "dnac_log": true,
-            "dnac_log_append": true,
-            "dnac_log_file_path": "dnac.log",
-            "dnac_log_level": "debug",
-            "dnac_password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
-            "dnac_port": "443",
-            "dnac_task_poll_interval": 2,
-            "dnac_username": "thanduon",
-            "dnac_verify": false,
-            "dnac_version": "2.3.7.6",
+            "catalystcenter_api_task_timeout": 1200,
+            "catalystcenter_debug": true,
+            "catalystcenter_host": "10.22.40.214",
+            "catalystcenter_log": true,
+            "catalystcenter_log_append": true,
+            "catalystcenter_log_file_path": "catalystcenter.log",
+            "catalystcenter_log_level": "debug",
+            "catalystcenter_password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+            "catalystcenter_port": "443",
+            "catalystcenter_task_poll_interval": 2,
+            "catalystcenter_username": "thanduon",
+            "catalystcenter_verify": false,
+            "catalystcenter_version": "2.3.7.6",
             "state": "deleted",
             "validate_response_schema": true
         }
@@ -882,7 +882,7 @@ Refer to the Ansible Vault Update workflow to add variables to your Ansible Vaul
 
 ## How to run with jinja template:
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/device_credentials/playbook/device_credentials_playbook.yml --e VARS_FILE_PATH=../vars/jinja_template_device_credentials_input.yml -vvvv
+ansible-playbook -i host_inventory/hosts.yml workflows/device_credentials/playbook/device_credentials_playbook.yml --e VARS_FILE_PATH=../vars/jinja_template_device_credentials_input.yml -vvvv
 ```
 
 
@@ -895,6 +895,6 @@ ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/device_credentials/
 * Note: The environment is used for the references in the above instructions.
 ```
   ansible: 9.9.0
-  dnacentersdk: 2.8.3
-  cisco.dnac: 6.30.0
+  catalystcentersdk: latest
+  cisco.catalystcenter: latest
 ```

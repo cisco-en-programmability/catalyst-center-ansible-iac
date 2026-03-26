@@ -31,7 +31,7 @@ This module provides a comprehensive toolkit for managing wireless network profi
 - **Bulk Operations**:  
   - **Create** and **delete** profiles in bulk for scalable deployments.  
 
-**Version Added**: `6.32.0`  
+**Version Added**: `latest`  
 *Note*: This version refers to the Cisco Catalyst Center Ansible collection.
 
 ---
@@ -49,7 +49,7 @@ Follow these steps to configure and deploy wireless network profiles in *Cisco C
 
 2. **Install Cisco Catalyst Center Collection**:  
    ```bash
-   ansible-galaxy collection install cisco.dnac
+   ansible-galaxy collection install cisco.catalystcenter
    ```
 
 3. **Generate Inventory**:  
@@ -250,7 +250,7 @@ wireless_nw_profiles_details:
 ```
 
 ##### 4. **Create Wireless Network Profile with Feature Template Designs**
-*Only supports the API for DNAC version 3.1.3 and above*
+*Only supports the API for Catalyst Center version 3.1.3 and above*
 
 a. *Example*: Configure wireless profile with AAA RADIUS Attributes Configuration
 
@@ -388,9 +388,9 @@ The following environment was used for testing:
 | Python                | `3.12.0`    |
 | Cisco Catalyst Center | `2.3.7.9`   |
 | Ansible               | `9.9.0`     |
-| cisco.dnac Collection | `6.32.0`    |
-| dnacentersdk          | `2.8.8`     |
+| cisco.catalystcenter Collection | `latest`    |
+| catalystcentersdk          | `latest`     |
 
 For detailed documentation, refer to:  
-- [Ansible Galaxy: Cisco Catalyst Center Collection](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/network_profile_wireless_workflow_manager/)  
+- [Ansible Galaxy: Cisco Catalyst Center Collection](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/network_profile_wireless_workflow_manager/)  
 - [Cisco Catalyst Center Documentation](https://www.cisco.com/c/en/us/support/cloud-systems-management/dna-center/series.html)

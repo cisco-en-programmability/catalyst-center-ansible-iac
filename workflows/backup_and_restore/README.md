@@ -38,16 +38,16 @@ The Backup and Restore workflow automates data protection and disaster recovery 
 
 | Component | Version |
 |-----------|---------|
-| Ansible | 6.42.0 |
+| cisco.catalystcenter Collection | latest |
 | Python | 3.9+ |
-| Cisco Catalyst Center SDK | 2.10.4 |
+| Cisco Catalyst Center SDK | latest |
 
 ### Required Collections
 
 ```bash
-ansible-galaxy collection install cisco.dnac
+ansible-galaxy collection install cisco.catalystcenter
 ansible-galaxy collection install ansible.utils
-pip install dnacentersdk
+pip install catalystcentersdk
 pip install yamale
 ```
 
@@ -138,9 +138,9 @@ backup_and_restore/
 ### Step 1: Install Collections
 
 ```bash
-ansible-galaxy collection install cisco.dnac
+ansible-galaxy collection install cisco.catalystcenter
 ansible-galaxy collection install ansible.utils
-pip install dnacentersdk
+pip install catalystcentersdk
 pip install yamale
 ```
 
@@ -312,7 +312,7 @@ Input Validation: Before executing the playbook, it is essential to validate the
 Return result validate:
 
 ```bash
-(pyats-nalakkam) [nalakkam@st-ds-4 dnac_ansible_workflows]$ ./tools/validate.sh   -s workflows/backup_and_restore/schema/backup_and_restore_schema.yml   -d workflows/backup_and_restore/vars/backup_and_restore_inputs.yml
+(pyats-nalakkam) [nalakkam@st-ds-4 catalyst_center_ansible_workflows]$ ./tools/validate.sh   -s workflows/backup_and_restore/schema/backup_and_restore_schema.yml   -d workflows/backup_and_restore/vars/backup_and_restore_inputs.yml
 workflows/backup_and_restore/schema/backup_and_restore_schema.yml
 workflows/backup_and_restore/vars/backup_and_restore_inputs.yml
 yamale   -s workflows/backup_and_restore/schema/backup_and_restore_schema.yml  workflows/backup_and_restore/vars/backup_and_restore_inputs.yml
@@ -446,7 +446,7 @@ backup_restore_details:
 Return result validate:
 
 ```bash
-(pyats-nalakkam) [nalakkam@st-ds-4 dnac_ansible_workflows]$ ./tools/validate.sh   -s workflows/backup_and_restore/schema/delete_backup_and_restore_schema.yml   -d workflows/backup_and_restore/vars/delete_backup_and_restore_inputs.yml
+(pyats-nalakkam) [nalakkam@st-ds-4 catalyst_center_ansible_workflows]$ ./tools/validate.sh   -s workflows/backup_and_restore/schema/delete_backup_and_restore_schema.yml   -d workflows/backup_and_restore/vars/delete_backup_and_restore_inputs.yml
 workflows/backup_and_restore/schema/delete_backup_and_restore_schema.yml
 workflows/backup_and_restore/vars/delete_backup_and_restore_inputs.yml
 yamale   -s workflows/backup_and_restore/schema/delete_backup_and_restore_schema.yml  workflows/backup_and_restore/vars/delete_backup_and_restore_inputs.yml
@@ -643,6 +643,6 @@ backup_restore_details:
 ## Additional Resources
 
 - [Cisco Catalyst Center Documentation](https://www.cisco.com/c/en/us/support/cloud-systems-management/dna-center/series.html)
-- [Cisco DNA Center SDK](https://dnacentersdk.readthedocs.io/)
+- [Cisco DNA Center SDK](https://catalystcentersdk.readthedocs.io/)
 - [Ansible Documentation](https://docs.ansible.com/)
 - [Yamale Schema Validation](https://github.com/23andMe/Yamale)

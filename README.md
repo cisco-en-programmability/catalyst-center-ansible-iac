@@ -1,6 +1,6 @@
 # catalyst-center-ansible-iac
-[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/DNACENSolutions/dnac_ansible_workflows)
-[![Run in Cisco Cloud IDE](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-runable-icon.svg)](https://developer.cisco.com/codeexchange/devenv/DNACENSolutions/dnac_ansible_workflows/)
+[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/DNACENSolutions/catalyst_center_ansible_workflows)
+[![Run in Cisco Cloud IDE](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-runable-icon.svg)](https://developer.cisco.com/codeexchange/devenv/DNACENSolutions/catalyst_center_ansible_workflows/)
 ![Catalyst Center Cisco Validated Ansible Playbooks Official](https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git)
 
 # Catalyst Center Cisco Validated Playbooks
@@ -95,7 +95,7 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 [IaC Demo Videos](http://3.136.0.140/index.html)
 
 # CompatibilityMatrix
-| Deployed Catalyst Center Version   | Catalyst Center Version in Input   | Ansible Galaxy collection (cisco.dnac)Version    | Python SDK (dnacentersdk) Version    |
+| Deployed Catalyst Center Version   | Catalyst Center Version in Input   | Ansible Galaxy collection (cisco.catalystcenter)Version    | Python SDK (catalystcentersdk) Version    |
 | :--------------------------------: | :--------------------------------: | :-----------------------: | :-------------------: |
 | 2.3.5.3 | 2.3.5.3   | latest   | latest |
 | 2.3.5.5 | 2.3.5.3   | latest   | latest |
@@ -119,7 +119,7 @@ Before using these Ansible workflows, ensure that you have the following prerequ
 Follow these steps to install the Cisco Validated Playbooks, Schema, and Sample Input Variables:
 
 - Install Python 3.9 or later
-- Install  cisco.dnac collection including Python requirements.
+- Install  cisco.catalystcenter collection including Python requirements.
 - Modify ansible.cfg file to support additional jinja2 extensions
 
 ## Python
@@ -152,25 +152,25 @@ cd catalyst-center-ansible-iac
 pip install -r requirements.txt
 ```
 ## Install the collection (Galaxy link):
-For installing or upgrading the cisco.dnac Ansible collection, follow these steps: Install Collection from Ansible Galaxy These instructions are for regular users to install via Ansible Galaxy. The instructions also include installation of all Python requirements for a given version. The cisco.dnac collection is available on the Ansible Galaxy server and can be automatically installed on your system using the following command:
+For installing or upgrading the cisco.catalystcenter Ansible collection, follow these steps: Install Collection from Ansible Galaxy These instructions are for regular users to install via Ansible Galaxy. The instructions also include installation of all Python requirements for a given version. The cisco.catalystcenter collection is available on the Ansible Galaxy server and can be automatically installed on your system using the following command:
 
 ### Latest version
-Clone the dnacenter-ansible repository.
+Clone the catalystcenter-ansible repository.
 ```bash
-ansible-galaxy collection install cisco.dnac --force
+ansible-galaxy collection install cisco.catalystcenter --force
 ```
 ### Specific version
 ```bash
-ansible-galaxy collection install cisco.dnac:==6.29.0 --force
+ansible-galaxy collection install cisco.catalystcenter:==2.4.0 --force
 ```
 
 ### Install latest devel version from  GitHub and build
 ```bash
-git clone https://github.com/cisco-en-programmability/dnacenter-ansible.git
+git clone https://github.com/cisco-en-programmability/catalystcenter-ansible.git
 ```
-Go to the dnacenter-ansible directory
+Go to the catalystcenter-ansible directory
 ```bash
-cd dnacenter-ansible
+cd catalystcenter-ansible
 ```
 Pull the latest master from the repo
 ```bash
@@ -179,28 +179,28 @@ git pull origin master
 Build and install a collection from source
 ```bash
 ansible-galaxy collection build --force
-ansible-galaxy collection install cisco-dnac-* --force
+ansible-galaxy collection install cisco-catalystcenter-* --force
 ```
 
-## Install or Update the dnacentersdk:
-For installing or upgrading the dnacentersdk follow steps:
+## Install or Update the catalystcentersdk:
+For installing or upgrading the catalystcentersdk follow steps:
 
 ### Install via pip or pip3
 To get the Python Catalyst Center SDK latest in a fresh development environment:
 
 ```bash
-pip install dnacentersdk
+pip install catalystcentersdk
 ```
 
 ### Upgrading to the latest Version
 Use --upgrade option to upgrade to latest version available.
 ```bash
-pip install dnacentersdk --upgrade
+pip install catalystcentersdk --upgrade
 ```
 ### Install a specific version
-To install a specific version like 2.8.3
+To install a specific version like 2.3.7.6.2
 ```bash
-pip install dnacentersdk:2.8.3
+pip install catalystcentersdk==2.3.7.6.2
 ```
 
 ## Ansible configuration file
@@ -279,14 +279,14 @@ Here are a few examples of Cisco Validated Playbooks in the repo. For details do
 ## Example 1: 
 SWIM upgrade: This includes uploading the images, golden tagging the image filtered location and device family and distributed and activating images on the network devices.
 ```bash
-ansible-playbook -i ./inventory_dnaccluster ./workflows/swim/playbook/swim_workflow_playbook.yml --extra-vars VARS_FILE_PATH=< Vars File PATH (Full Path or relative path from playbook)> -vvvv
+ansible-playbook -i ./inventory/demo_lab/hosts.yml ./workflows/swim/playbook/swim_workflow_playbook.yml --extra-vars VARS_FILE_PATH=< Vars File PATH (Full Path or relative path from playbook)> -vvvv
 ```
-    
-## Example 2: 
+
+## Example 2:
 Create sites, buildings floors using playbook: workflows/sites/playbook/site_hierarchy_playbook.yml
-    
+
 ```bash
- ansible-playbook -i ./inventory_dnaccluster ./workflows/sites/playbook/site_hierarchy_playbook.yml --extra-vars VARS_FILE_PATH=./../vars/site_hierarchy_design_vars_.yml
+ ansible-playbook -i ./inventory/demo_lab/hosts.yml ./workflows/sites/playbook/site_hierarchy_playbook.yml --extra-vars VARS_FILE_PATH=./../vars/site_hierarchy_design_vars_.yml
 ```
     
 Explore the playbooks/ directory for additional examples and use cases.
@@ -313,7 +313,7 @@ Clone the Catalyst Center ansible IaC repository if not already cloned.
 git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
 ```
     
-Go to the dnacenter-ansible directory
+Go to the catalystcenter-ansible directory
 ```bash
 cd catalyst-center-ansible-iac
 ```

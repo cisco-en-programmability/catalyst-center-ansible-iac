@@ -7,7 +7,7 @@ The Return Material Authorization (RMA) workflow lets you replace failed devices
 
 When using the RMA workflow with routers and switches, the software image, configuration, and license are restored from the failed device to the replacement device. For wireless APs, the replacement device is assigned to the same site and provisioned with the primary wireless controller, RF profile, and AP group settings, and it placed on the same floor map location in Catalyst Center as the failed AP. For Cisco switch stacks (hardware stacking), you don't need to follow a separate procedure in Catalyst Center for member switch replacement, which is handled by the active switch. The member switch is replaced by the active switch by providing the software image and configuration. Full stack replacement is handled by Catalyst Center.
 
-For more information , Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/rma_workflow_manager/
+For more information , Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/rma_workflow_manager/
 
 # Procedure
 1. ## Prepare your Ansible environment:
@@ -18,25 +18,25 @@ Checkout the project and playbooks: git@github.com:cisco-en-programmability/cata
 
 2. ## Configure Host Inventory:
 
-The host_inventory_dnac1/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
-Make sure the dnac_version in this file matches your actual Catalyst Center version.
-##The Sample host_inventory_dnac1/hosts.yml
+The host_inventory/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
+Make sure the catalystcenter_version in this file matches your actual Catalyst Center version.
+##The Sample host_inventory/hosts.yml
 
 ```bash
 catalyst_center_hosts:
     hosts:
         catalyst_center220:
             #(Mandatory) CatC Ip address
-            catalyst_center_host:  <DNAC IP Address>
+            catalyst_center_host:  <Catalyst Center IP Address>
             #(Mandatory) CatC UI admin Password
-            catalyst_center_password: <DNAC UI admin Password>
+            catalyst_center_password: <Catalyst Center UI admin Password>
             catalyst_center_port: 443
             catalyst_center_timeout: 60
             #(Mandatory) CatC UI admin username
-            catalyst_center_username: <DNAC UI admin username> 
+            catalyst_center_username: <Catalyst Center UI admin username> 
             catalyst_center_verify: false
-            #(Mandatory) DNAC Release version
-            catalyst_center_version: <DNAC Release version>
+            #(Mandatory) Catalyst Center Release version
+            catalyst_center_version: <Catalyst Center Release version>
             catalyst_center_debug: true
             catalyst_center_log_level: INFO
             catalyst_center_log: true
@@ -101,19 +101,19 @@ rma_devices:
 ## Validate the inputs:
 ```bash
 yamale -s workflows/device_replacement_rma/schema/device_replacement_rma_schema.yml workflows/device_replacement_rma/vars/device_replacement_rma_input.yml
-Validating /Users/pawansi/dnac_ansible_workflows/workflows/device_replacement_rma/vars/device_replacement_rma_input.yml...
+Validating /Users/pawansi/catalyst_center_ansible_workflows/workflows/device_replacement_rma/vars/device_replacement_rma_input.yml...
 Validation success! 👍
 ```
 ## Run Playbook with input:
 
 ```bash
-ansible-playbook -i host_inventory_dnac1 workflows/device_replacement_rma/playbook/device_replacement_rma_playbook.yml --e VARS_FILE_PATH=../vars/device_replacement_rma_input.yml  -vvv
+ansible-playbook -i host_inventory workflows/device_replacement_rma/playbook/device_replacement_rma_playbook.yml --e VARS_FILE_PATH=../vars/device_replacement_rma_input.yml  -vvv
 ```
 
 
 ## Run playbook with state set to deleted
 ```bash
-ansible-playbook -i host_inventory_dnac1 workflows/device_replacement_rma/playbook/delete_device_replacement_rma_playbook.yml --e VARS_FILE_PATH=../vars/device_replacement_rma_input.yml  -vvv
+ansible-playbook -i host_inventory workflows/device_replacement_rma/playbook/delete_device_replacement_rma_playbook.yml --e VARS_FILE_PATH=../vars/device_replacement_rma_input.yml  -vvv
 ```
 
 3. Unmark the faulty devicew replacement

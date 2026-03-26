@@ -93,7 +93,7 @@ We have three ways to import images into Catalyst Center:
   ![alt text](./images/import_parallel_image_2.png)
 
   ### c. cco
-  Import images prepared for DNAC from Cisco Connection Online.
+  Import images prepared for Catalyst Center from Cisco Connection Online.
   + Example input config:
   ```yaml
   swim_details:
@@ -111,7 +111,7 @@ We have three ways to import images into Catalyst Center:
   For example, with the above images, we can see some CCO images that are proposed on Catalyst Center (cat9k_iosxe.17.06.08.SPA.bin, cat9k_iosxe.17.09.05.SPA.bin, cat9k_iosxe.17.09.06a.SPA.bin, ...). We can only install CCO type with those proposed images.
 
   ### d. Delete image in Cisco Catalyst Center
-  After the image is imported to DNAC using the above methods (local, URL, CCO), it will exist on the Cisco Catalyst Center. We can delete it through the following playbook.
+  After the image is imported to Catalyst Center using the above methods (local, URL, CCO), it will exist on the Cisco Catalyst Center. We can delete it through the following playbook.
   ![alt text](./images/imported_image.png)
   + Example input config (state: "deleted"):
   ```yaml
@@ -131,7 +131,7 @@ We have three ways to import images into Catalyst Center:
 
   ![alt text](./images/deleted_image.png)
 
-  **NOTE:The API for deleting images is only supported from DNAC version 2.3.7.9 and above.**
+  **NOTE:The API for deleting images is only supported from Catalyst Center version 2.3.7.9 and above.**
 
 2. ## Tag/untag golden image:
 Define and manage golden images that represent standard or preferred versions for your network devices.
@@ -456,8 +456,8 @@ The software image (SWIM) can be updated on the device in a single run by combin
 
 ```yaml
 python: 3.12.0
-dnac_version: 3.1.5
+catalystcenter_version: 3.1.5
 ansible: 9.9.0
-dnacentersdk: 2.10.4
-cisco.dnac: 6.42.0
+catalystcentersdk: latest
+cisco.catalystcenter: latest
 ```

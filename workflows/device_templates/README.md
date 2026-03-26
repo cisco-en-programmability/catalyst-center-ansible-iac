@@ -5,7 +5,7 @@
 This Ansible workflow automates creating and managing template projects, device templates and deploying the templates to the devices. One of the many powerful features of Cisco's Catalyst Center is its templating engine, which allows you to configure nearly your entire network.
 
 ### 1. Detailed Input Spec.
-Refer to: [https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/template_workflow_manager/](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/template_workflow_manager/)
+Refer to: [https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/template_workflow_manager/](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/template_workflow_manager/)
 
 ### 2. Features.
 - Create, update, or delete configuration templates.
@@ -36,9 +36,9 @@ Refer to: [https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/modul
 - Checkout the project and playbooks: git@github.com:cisco-en-programmability/catalyst-center-ansible-iac.git.
 
 ### 2. Configure Host Inventory.
-- The host_inventory_dnac1/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
-- Make sure the dnac_version in this file matches your actual Catalyst Center version.
-- The Sample host_inventory_dnac1/hosts.yml
+- The host_inventory/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
+- Make sure the catalystcenter_version in this file matches your actual Catalyst Center version.
+- The Sample host_inventory/hosts.yml
 
 ```bash
 ---
@@ -136,7 +136,7 @@ template_details:
 yamale -s workflows/device_templates/schema/template_workflow_schema.yml workflows/device_templates/vars/template_workflow_inputs.yml 
 ```
 ```
-Validating /Users/pawansi/dnac_ansible_workflows/workflows/device_templates/vars/template_workflow_inputs.yml...
+Validating /Users/pawansi/catalyst_center_ansible_workflows/workflows/device_templates/vars/template_workflow_inputs.yml...
 Validation success! 👍
 ```
 
@@ -293,10 +293,10 @@ Note: The environment is used for the references in the above instructions.
 
 ```
 
-  dnacentersdk: 2.8.3
-  cisco.dnac: 6.30.0
+  catalystcentersdk: latest
+  cisco.catalystcenter: latest
 
 ```
-Cisco Catalyst Center Ansible Module Documentation: [template_workflow_manager](https://cisco-en-programmability.github.io/dnacenter-ansible/main/plugins/template_workflow_manager_module.html)
+Cisco Catalyst Center Ansible Module Documentation: [template_workflow_manager](https://cisco-en-programmability.github.io/catalystcenter-ansible/main/plugins/template_workflow_manager_module.html)
 
-GitHub Source Code: [template_workflow_manager.py](https://github.com/cisco-en-programmability/dnacenter-ansible/blob/main/plugins/modules/template_workflow_manager.py)
+GitHub Source Code: [template_workflow_manager.py](https://github.com/cisco-en-programmability/catalystcenter-ansible/blob/main/plugins/modules/template_workflow_manager.py)

@@ -5,26 +5,26 @@ This workflow playbook is supported from Catalyst Center Release version 2.3.7.6
 ise_radius_integration_details  defines the list of devices and devices details for the devices to be run through the playbooks.
 
 
-Refer to the full workflow specification to define the details: https://docs.ansible.com/ansible/latest/collections/cisco/dnac/ise_radius_integration_workflow_manager_module.html
+Refer to the full workflow specification to define the details: https://docs.ansible.com/ansible/latest/collections/cisco/catalystcenter/ise_radius_integration_workflow_manager_module.html
 
 
-## The Sample host_inventory_dnac1/hosts.yml
+## The Sample host_inventory/hosts.yml
 
 ```bash
 catalyst_center_hosts:
     hosts:
         catalyst_center220:
             #(Mandatory) CatC Ip address
-            catalyst_center_host:  <DNAC IP Address>
+            catalyst_center_host:  <Catalyst Center IP Address>
             #(Mandatory) CatC UI admin Password
-            catalyst_center_password: <DNAC UI admin Password>
+            catalyst_center_password: <Catalyst Center UI admin Password>
             catalyst_center_port: 443
             catalyst_center_timeout: 60
             #(Mandatory) CatC UI admin username
-            catalyst_center_username: <DNAC UI admin username> 
+            catalyst_center_username: <Catalyst Center UI admin username> 
             catalyst_center_verify: false
-            #(Mandatory) DNAC Release version
-            catalyst_center_version: <DNAC Release version>
+            #(Mandatory) Catalyst Center Release version
+            catalyst_center_version: <Catalyst Center Release version>
             catalyst_center_debug: true
             catalyst_center_log_level: INFO
             catalyst_center_log: true
@@ -33,11 +33,11 @@ User Inputs for Users and roles are stored in  workflows/network compliance/vars
 
 ## Validate user input before running though ansible
 ```bash
-(pyats) pawansi@PAWANSI-M-81A3 dnac_ansible_workflows % ./tools/validate.sh -s workflows/ise_radius_integration/schema/ise_radius_integration_workflow_schema.yml -d workflows/ise_radius_integration/vars/ise_radius_integration_workflow_input.yml 
+(pyats) pawansi@PAWANSI-M-81A3 catalyst_center_ansible_workflows % ./tools/validate.sh -s workflows/ise_radius_integration/schema/ise_radius_integration_workflow_schema.yml -d workflows/ise_radius_integration/vars/ise_radius_integration_workflow_input.yml 
 workflows/ise_radius_integration/schema/ise_radius_integration_workflow_schema.yml
 workflows/ise_radius_integration/vars/ise_radius_integration_workflow_input.yml
 yamale   -s workflows/ise_radius_integration/schema/ise_radius_integration_workflow_schema.yml  workflows/ise_radius_integration/vars/ise_radius_integration_workflow_input.yml
-Validating /Users/pawansi/dnac_ansible_workflows/workflows/ise_radius_integration/vars/ise_radius_integration_workflow_input.yml...
+Validating /Users/pawansi/catalyst_center_ansible_workflows/workflows/ise_radius_integration/vars/ise_radius_integration_workflow_input.yml...
 Validation success! 👍
 
 ```
@@ -45,7 +45,7 @@ Validation success! 👍
 
 # Execution Reference Logs
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/ise_radius_integration/playbook/ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_input.yml -vvvv
+ansible-playbook -i host_inventory/hosts.yml workflows/ise_radius_integration/playbook/ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_input.yml -vvvv
 ```
 
 # Understanding the Configs for ISE and AAA Integration Tasks
@@ -137,7 +137,7 @@ ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/ise_radius_integrat
         trusted_server: True
         ise_integration_wait_time: 60
   ```
-  We can only add one ISE for each DNAC.
+  We can only add one ISE for each Catalyst Center.
 
   Update ISE server (we can only update with retries, timeout, protocol|add more, pxgrid_enabled, fqdn, user_name, password|if fail):
   ```yaml
@@ -245,17 +245,17 @@ ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/ise_radius_integrat
   Example command to run the ise_radius_integration playbook:
   ```bash
   ansible-playbook 
-    -i ./inventory/demo_lab/inventory_demo_lab.yml # refer to DNAC to run
+    -i ./inventory/demo_lab/inventory_demo_lab.yml # refer to Catalyst Center to run
     ./workflows/ise_radius_integration/playbook/ise_radius_integration_workflow_playbook.yml # playbook will run this
     --extra-vars VARS_FILE_PATH=< Full Path to vars file># location of the input file for the playbook to execute
     -vvv # return detailed information about the message; the more 'v', more detailed
   ```
 # Example runs:
 ## Configure or Update Authentication and Policy Servers
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/ise_radius_integration/playbook/ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_input.yml -vvvv
+ansible-playbook -i host_inventory/hosts.yml workflows/ise_radius_integration/playbook/ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_input.yml -vvvv
 
 ## Delete Authentication and Policy Servers
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/ise_radius_integration/playbook/delete_ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_input.yml -vvvv
+ansible-playbook -i host_inventory/hosts.yml workflows/ise_radius_integration/playbook/delete_ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_input.yml -vvvv
 
 ## Authentication and Policy Server with Jinja Template and passwords from Ansible Vault.
 ### Jinja Template file: ise_radius_inegration_jinja_template.j2
@@ -301,10 +301,10 @@ ise_radius_integration_details:
 
 
 ### Execution of playbook with jinja inputs
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/ise_radius_integration/playbook/ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_jinja_input.yml -vvv
+ansible-playbook -i host_inventory/hosts.yml workflows/ise_radius_integration/playbook/ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_jinja_input.yml -vvv
 
 ### Deletion with Jinja Template
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/ise_radius_integration/playbook/ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_jinja_input.yml -vvv
+ansible-playbook -i host_inventory/hosts.yml workflows/ise_radius_integration/playbook/ise_radius_integration_workflow_playbook.yml --e VARS_FILE_PATH=../vars/ise_radius_integration_workflow_jinja_input.yml -vvv
 
 
 # Reference
@@ -313,12 +313,12 @@ ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/ise_radius_integrat
 ```yaml
   python: 3.12.0
 
-  dnac_version: 2.3.7.6
+  catalystcenter_version: 2.3.7.6
 
   ansible: 9.9.0
   ansible-core: 2.16.10
   ansible-runner: 2.4.0
 
-  dnacentersdk: 2.8.4
-  cisco.dnac: 6.30.0
+  catalystcentersdk: latest
+  cisco.catalystcenter: latest
 ```

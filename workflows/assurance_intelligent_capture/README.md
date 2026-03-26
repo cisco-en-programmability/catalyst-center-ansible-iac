@@ -16,7 +16,7 @@ Key features include:
   - Validate configuration and deployment status.
   - Download and verify PCAP files to a specified directory.
 
-**Version Added:**  `6.32.0`
+**Version Added:**  `latest`
 
 ---
 
@@ -33,7 +33,7 @@ Before running the playbooks, ensure you have Ansible installed and the necessar
 
 2. **Install Cisco Catalyst Center Collection:**
    ```bash
-   ansible-galaxy collection install cisco.dnac
+   ansible-galaxy collection install cisco.catalystcenter
    ```
 
 ### Configure Host Inventory
@@ -251,11 +251,11 @@ Run the following command to validate your input file against the schema:
 
 ```yaml
 python: 3.12.0
-dnac_version: 2.3.7.9
+catalystcenter_version: 2.3.7.9
 ansible: 9.9.0
-cisco.dnac: 6.32.0
-dnacentersdk: 2.8.8
+cisco.catalystcenter: latest
+catalystcentersdk: latest
 ```
 
 For detailed information on the assurance ICAP workflow, refer to the following documentation:  
-https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/assurance_icap_settings_workflow_manager/
+https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/assurance_icap_settings_workflow_manager/

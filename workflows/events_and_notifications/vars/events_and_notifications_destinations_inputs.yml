@@ -23,7 +23,7 @@ events_notifications_destination_and_subscription_details:
   - webhook_destination:
       name: webhook demo 110
       description: Webhook Demo Test SEEN-5000-01
-      url: https://4.5.6.8/dnac_test_webhook
+      url: https://4.5.6.8/catc_test_webhook
       method: POST
       trust_cert: false
       headers_list: # Wrap headers inside another key

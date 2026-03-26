@@ -27,30 +27,30 @@ Users with the SUPER-ADMIN-ROLE can create custom roles to fine-tune access perm
 * **Access to Cisco Catalyst Center:** Ensure that User and Role is enabled.
 * **Ansible Installation:** Ansible must be installed on the machine managing the automation process.
 * **Yamale Python Library:** `yamale` Python library installed (`pip install yamale`)
-* **Cisco DNA Ansible Collection:** The cisco.dnac.user_role_workflow_manager module must be available from the Cisco DNA Ansible Collection.
-* **dnacentersdk Python SDK:** This SDK is required to interact with Cisco Catalyst Center.
+* **Cisco DNA Ansible Collection:** The cisco.catalystcenter.user_role_workflow_manager module must be available from the Cisco DNA Ansible Collection.
+* **catalystcentersdk Python SDK:** This SDK is required to interact with Cisco Catalyst Center.
 
 2. ## Configure Host Inventory:
 
-The host_inventory_dnac1/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
-Make sure the dnac_version in this file matches your actual Catalyst Center version.
-##The Sample host_inventory_dnac1/hosts.yml
+The host_inventory/hosts.yml file specifies the connection details (IP address, credentials, etc.) for your Catalyst Center instance.
+Make sure the catalystcenter_version in this file matches your actual Catalyst Center version.
+##The Sample host_inventory/hosts.yml
 
 ```bash
 catalyst_center_hosts:
     hosts:
         catalyst_center220:
             #(Mandatory) CatC Ip address
-            catalyst_center_host:  <DNAC IP Address>
+            catalyst_center_host:  <Catalyst Center IP Address>
             #(Mandatory) CatC UI admin Password
-            catalyst_center_password: <DNAC UI admin Password>
+            catalyst_center_password: <Catalyst Center UI admin Password>
             catalyst_center_port: 443
             catalyst_center_timeout: 60
             #(Mandatory) CatC UI admin username
-            catalyst_center_username: <DNAC UI admin username> 
+            catalyst_center_username: <Catalyst Center UI admin username> 
             catalyst_center_verify: false
-            #(Mandatory) DNAC Release version
-            catalyst_center_version: <DNAC Release version>
+            #(Mandatory) Catalyst Center Release version
+            catalyst_center_version: <Catalyst Center Release version>
             catalyst_center_debug: true
             catalyst_center_log_level: INFO
             catalyst_center_log: true
@@ -58,7 +58,7 @@ catalyst_center_hosts:
 3. ## Define User and Role Data:
 
 The workflows/users_and_roles/vars/users_and_roles_workflow_inputs.yml file stores the user and role details you want to configure.
-Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/user_role_workflow_manager/
+Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/user_role_workflow_manager/
 
 Use the `user_details` section in your YAML configuration to define the role's username, email, password and role_list.
 
@@ -109,11 +109,11 @@ user_details:
 ## Validate Your Input:
 ##Validate user input before running though ansible
 ```bash
-    (pyats)  dnac_ansible_workflows % ./tools/validate.sh -s workflows/users_and_roles/schema/users_and_roles_workflow_schema.yml -d workflows/users_and_roles/vars/users_and_roles_workflow_inputs.yml                             
+    (pyats)  catalyst_center_ansible_workflows % ./tools/validate.sh -s workflows/users_and_roles/schema/users_and_roles_workflow_schema.yml -d workflows/users_and_roles/vars/users_and_roles_workflow_inputs.yml                             
     workflows/users_and_roles/schema/users_and_roles_workflow_schema.yml
     workflows/users_and_roles/vars/users_and_roles_workflow_inputs.yml
     yamale   -s workflows/users_and_roles/schema/users_and_roles_workflow_schema.yml  workflows/users_and_roles/vars/users_and_roles_workflow_inputs.yml
-    Validating /Users/pawansi/dnac_ansible_workflows/workflows/users_and_roles/vars/users_and_roles_workflow_inputs.yml...
+    Validating /Users/pawansi/catalyst_center_ansible_workflows/workflows/users_and_roles/vars/users_and_roles_workflow_inputs.yml...
     Validation success! 👍
 ```
 
@@ -122,7 +122,7 @@ Use the provided validation script to ensure your YAML input file adheres to the
 ## Execute the Playbook:
 Run the create Playbook
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/users_and_roles/playbook/users_and_roles_workflow_playbook.yml --e VARS_FILE_PATH=../vars/users_and_roles_workflow_inputs.yml -vvvv
+    ansible-playbook -i host_inventory/hosts.yml workflows/users_and_roles/playbook/users_and_roles_workflow_playbook.yml --e VARS_FILE_PATH=../vars/users_and_roles_workflow_inputs.yml -vvvv
 ```
    **Example:**
 ```yaml
@@ -296,7 +296,7 @@ vault_password_file=~/.vault_secret.sh
 
 ### Create User and Roles with Jinja template and Vault password
 ```bash
-    dnac_ansible_workflows % ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/users_and_roles/playbook/users_and_roles_workflow_playbook.yml --ask-vault-pass --e VARS_FILE_PATH=../jinja_template/template_users_and_roles_workflow_inputs.j2 -vvvv
+    catalyst_center_ansible_workflows % ansible-playbook -i host_inventory/hosts.yml workflows/users_and_roles/playbook/users_and_roles_workflow_playbook.yml --ask-vault-pass --e VARS_FILE_PATH=../jinja_template/template_users_and_roles_workflow_inputs.j2 -vvvv
 ```
 
 ```jinja_template
@@ -394,7 +394,7 @@ Figure 5: Role creation and assigned role to the user with Jinja template.
 
 ### ## Deleting the users and the roles with Jinja template and Vault password
 ```bash
-    dnac_ansible_workflows % ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/users_and_roles/playbook/delete_users_and_roles_workflow_playbook.yml  --ask-vault-pass --e VARS_FILE_PATH=../jinja_template/template_users_and_roles_workflow_inputs.j2 -vvvv
+    catalyst_center_ansible_workflows % ansible-playbook -i host_inventory/hosts.yml workflows/users_and_roles/playbook/delete_users_and_roles_workflow_playbook.yml  --ask-vault-pass --e VARS_FILE_PATH=../jinja_template/template_users_and_roles_workflow_inputs.j2 -vvvv
 ```
 
 Figure 6: User deleted using Jinja template.
@@ -409,8 +409,8 @@ Figure 7: Role deleted using Jinja template.
 
 ```yaml
 python: 3.12.0
-dnac_version: 2.3.7.6
+catalystcenter_version: 2.3.7.6
 ansible: 9.9.0
-dnacentersdk: 2.8.6
-cisco.dnac: 6.30.2
+catalystcentersdk: latest
+cisco.catalystcenter: latest
 ```

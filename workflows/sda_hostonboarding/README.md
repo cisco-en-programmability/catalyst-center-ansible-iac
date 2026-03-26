@@ -29,7 +29,7 @@ This playbook automates tasks such as:
 
 ## Playbook parameters spec
 Module documentation (Ansible Galaxy):  
-https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/sda_host_port_onboarding_workflow_manager/
+https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/sda_host_port_onboarding_workflow_manager/
 
 Host Onboarding Figure:  
 ![alt text](./images/host_onboarding.png)
@@ -64,7 +64,7 @@ Large-scale changes across multiple ports, channels, or SSID mappings in a singl
 ### 2. Define Inputs and Validate
 
 #### 2.1. Configure Host Inventory
-File example: `host_inventory_dnac1/hosts.yml`
+File example: `host_inventory/hosts.yml`
 ```yaml
 ---
 catalyst_center_hosts:
@@ -697,7 +697,7 @@ Validation success! 👍
 
 ### 2. Run playbook (create/update)
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml \
+ansible-playbook -i host_inventory/hosts.yml \
   workflows/sda_hostonboarding/playbook/sda_host_onboarding_playbook.yml \
   --e VARS_FILE_PATH=../vars/sda_host_onboarding_input.yml -vvvv
 ```
@@ -727,7 +727,7 @@ sda_host_onboarding_details:
 
 ### 3. Run playbook (delete)
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml \
+ansible-playbook -i host_inventory/hosts.yml \
   workflows/sda_hostonboarding/playbook/delete_sda_host_onboarding_playbook.yml \
   --e VARS_FILE_PATH=../vars/sda_host_onboarding_input.yml -vvvv
 ```
@@ -737,8 +737,8 @@ ansible-playbook -i host_inventory_dnac1/hosts.yml \
 ## IV. References
 Environment used:
 ```
-dnacentersdk: 2.8.3 (recommend ≥2.9.2)
-cisco.dnac collection: 6.42.0
+catalystcentersdk: latest
+cisco.catalystcenter collection: latest
 ```
 
 ### Advanced Notes & Best Practices

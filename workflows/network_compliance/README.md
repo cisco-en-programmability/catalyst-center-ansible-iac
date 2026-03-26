@@ -29,32 +29,32 @@ Device inputs can be provided through the input file **network_compliance_workfl
 
 4. ## Workflow Specification
 
-For comprehensive details on input options and structure, refer to the full workflow specification: [https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/network_compliance_workflow_manager/](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/network_compliance_workflow_manager/)
+For comprehensive details on input options and structure, refer to the full workflow specification: [https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/network_compliance_workflow_manager/](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/network_compliance_workflow_manager/)
 
 5. ## Running the Playbook
 
 ### Configure Host Inventory
 
-- The **host_inventory_dnac1/hosts.yml** file contains connection details (IP, credentials) for your Catalyst Center instance.
-- Ensure the **dnac_version** matches your Catalyst Center version.
+- The **host_inventory/hosts.yml** file contains connection details (IP, credentials) for your Catalyst Center instance.
+- Ensure the **catalystcenter_version** matches your Catalyst Center version.
 
 ### Configure Host Inventory
-- **host_inventory_dnac1/hosts.yml**
+- **host_inventory/hosts.yml**
 
 ```yaml
 catalyst_center_hosts:
     hosts:
         catalyst_center220:
-            dnac_host: xx.xx.xx.xx.
-            dnac_password: XXXXXXXX
-            dnac_port: 443
-            dnac_timeout: 60
-            dnac_username: admin
-            dnac_verify: false
-            dnac_version: 2.3.7.6
-            dnac_debug: true
-            dnac_log_level: INFO
-            dnac_log: true
+            catalystcenter_host: xx.xx.xx.xx.
+            catalystcenter_password: XXXXXXXX
+            catalystcenter_port: 443
+            catalyst_center_timeout: 60
+            catalystcenter_username: admin
+            catalystcenter_verify: false
+            catalystcenter_version: 2.3.7.6
+            catalystcenter_debug: true
+            catalystcenter_log_level: INFO
+            catalystcenter_log: true
 ```
 
 - User Inputs for Users and roles are stored in **workflows/network compliance/vars/network_compliance_workflow_inputs.yml**
@@ -74,14 +74,14 @@ result:
 workflows/network_compliance/schema/network_compliance_workflow_schema.yml
 workflows/network_compliance/vars/network_compliance_workflow_input.yml
 yamale   -s workflows/network_compliance/schema/network_compliance_workflow_schema.yml  workflows/network_compliance/vars/network_compliance_workflow_input.yml
-Validating /Users/pawansi/dnac_ansible_workflows/workflows/network_compliance/vars/network_compliance_workflow_input.yml...
+Validating /Users/pawansi/catalyst_center_ansible_workflows/workflows/network_compliance/vars/network_compliance_workflow_input.yml...
 Validation success! 👍
 ```
 
 ### Example run
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml --e VARS_FILE_PATH=../vars/network_compliance_workflow_input.yml -vvvv
+ansible-playbook -i host_inventory/hosts.yml workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml --e VARS_FILE_PATH=../vars/network_compliance_workflow_input.yml -vvvv
 ```
 
 ### Important Notes
@@ -93,7 +93,7 @@ ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/network_compliance/
 ## Execution Reference Logs
 
 ```bash
-(pyats) pawansi@PAWANSI-M-81A3 dnac_ansible_workflows % ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml --e VARS_FILE_PATH=../vars/network_compliance_workflow_input.yml -vvvv
+(pyats) pawansi@PAWANSI-M-81A3 catalyst_center_ansible_workflows % ansible-playbook -i host_inventory/hosts.yml workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml --e VARS_FILE_PATH=../vars/network_compliance_workflow_input.yml -vvvv
 ansible-playbook [core 2.15.3]
   config file = None
   configured module search path = ['/Users/pawansi/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
@@ -106,10 +106,10 @@ ansible-playbook [core 2.15.3]
 No config file found; using defaults
 setting up inventory plugins
 Loading collection ansible.builtin from 
-host_list declined parsing /Users/pawansi/dnac_ansible_workflows/host_inventory_dnac1/hosts.yml as it did not pass its verify_file() method
-script declined parsing /Users/pawansi/dnac_ansible_workflows/host_inventory_dnac1/hosts.yml as it did not pass its verify_file() method
-Parsed /Users/pawansi/dnac_ansible_workflows/host_inventory_dnac1/hosts.yml inventory source with yaml plugin
-Loading collection cisco.dnac from /Users/pawansi/.ansible/collections/ansible_collections/cisco/dnac
+host_list declined parsing /Users/pawansi/catalyst_center_ansible_workflows/host_inventory/hosts.yml as it did not pass its verify_file() method
+script declined parsing /Users/pawansi/catalyst_center_ansible_workflows/host_inventory/hosts.yml as it did not pass its verify_file() method
+Parsed /Users/pawansi/catalyst_center_ansible_workflows/host_inventory/hosts.yml inventory source with yaml plugin
+Loading collection cisco.catalystcenter from /Users/pawansi/.ansible/collections/ansible_collections/cisco/dnac
 Loading callback plugin default of type stdout, v2.0 from /Users/pawansi/workspace/dnac_auto/pyats/lib/python3.11/site-packages/ansible/plugins/callback/default.py
 Skipping callback 'default', as we already have a stdout callback.
 Skipping callback 'minimal', as we already have a stdout callback.
@@ -122,7 +122,7 @@ connection: smart
 timeout: 10
 become_method: sudo
 tags: ('all',)
-inventory: ('/Users/pawansi/dnac_ansible_workflows/host_inventory_dnac1/hosts.yml',)
+inventory: ('/Users/pawansi/catalyst_center_ansible_workflows/host_inventory/hosts.yml',)
 extra_vars: ('VARS_FILE_PATH=../vars/network_compliance_workflow_input.yml',)
 forks: 5
 1 plays in workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml
@@ -136,7 +136,7 @@ Read vars_file '{{ VARS_FILE_PATH }}'
 Read vars_file '{{ VARS_FILE_PATH }}'
 
 TASK [Network Compliance devices on Cisco Catalyst Center] **********************************************************************************************************************************************************************************************
-task path: /Users/pawansi/dnac_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:26
+task path: /Users/pawansi/catalyst_center_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:26
 ok: [catalyst_center220] => {
     "ansible_facts": {
         "long_op_start": "2024-09-06 22:48:39.695965"
@@ -146,14 +146,14 @@ ok: [catalyst_center220] => {
 Read vars_file '{{ VARS_FILE_PATH }}'
 
 TASK [Network Compliance devices on Cisco Catalyst Center] **********************************************************************************************************************************************************************************************
-task path: /Users/pawansi/dnac_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:29
+task path: /Users/pawansi/catalyst_center_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:29
 <catalyst_center220> ESTABLISH LOCAL CONNECTION FOR USER: pawansi
 <catalyst_center220> EXEC /bin/sh -c 'echo ~pawansi && sleep 0'
 <catalyst_center220> EXEC /bin/sh -c '( umask 77 && mkdir -p "` echo /Users/pawansi/.ansible/tmp `"&& mkdir "` echo /Users/pawansi/.ansible/tmp/ansible-tmp-1725688119.775716-79455-122732002162610 `" && echo ansible-tmp-1725688119.775716-79455-122732002162610="` echo /Users/pawansi/.ansible/tmp/ansible-tmp-1725688119.775716-79455-122732002162610 `" ) && sleep 0'
 <catalyst_center220> Attempting python interpreter discovery
 <catalyst_center220> EXEC /bin/sh -c 'echo PLATFORM; uname; echo FOUND; command -v '"'"'python3.11'"'"'; command -v '"'"'python3.10'"'"'; command -v '"'"'python3.9'"'"'; command -v '"'"'python3.8'"'"'; command -v '"'"'python3.7'"'"'; command -v '"'"'python3.6'"'"'; command -v '"'"'python3.5'"'"'; command -v '"'"'/usr/bin/python3'"'"'; command -v '"'"'/usr/libexec/platform-python'"'"'; command -v '"'"'python2.7'"'"'; command -v '"'"'/usr/bin/python'"'"'; command -v '"'"'python'"'"'; echo ENDFOUND && sleep 0'
 <catalyst_center220> Python interpreter discovery fallback (unsupported platform for extended discovery: darwin)
-Using module file /Users/pawansi/.ansible/collections/ansible_collections/cisco/dnac/plugins/modules/network_compliance_workflow_manager.py
+Using module file /Users/pawansi/.ansible/collections/ansible_collections/cisco/catalystcenter/plugins/modules/network_compliance_workflow_manager.py
 <catalyst_center220> PUT /Users/pawansi/.ansible/tmp/ansible-local-79449tduyx5w8/tmp8tjct_x3 TO /Users/pawansi/.ansible/tmp/ansible-tmp-1725688119.775716-79455-122732002162610/AnsiballZ_network_compliance_workflow_manager.py
 <catalyst_center220> EXEC /bin/sh -c 'chmod u+x /Users/pawansi/.ansible/tmp/ansible-tmp-1725688119.775716-79455-122732002162610/ /Users/pawansi/.ansible/tmp/ansible-tmp-1725688119.775716-79455-122732002162610/AnsiballZ_network_compliance_workflow_manager.py && sleep 0'
 <catalyst_center220> EXEC /bin/sh -c '/Users/pawansi/workspace/dnac_auto/pyats/bin/python3.11 /Users/pawansi/.ansible/tmp/ansible-tmp-1725688119.775716-79455-122732002162610/AnsiballZ_network_compliance_workflow_manager.py && sleep 0'
@@ -412,19 +412,19 @@ changed: [catalyst_center220] => {
                 }
             ],
             "config_verify": false,
-            "dnac_api_task_timeout": 1200,
-            "dnac_debug": true,
-            "dnac_host": "10.195.227.14",
-            "dnac_log": true,
-            "dnac_log_append": true,
-            "dnac_log_file_path": "dnac.log",
-            "dnac_log_level": "INFO",
-            "dnac_password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
-            "dnac_port": "443",
-            "dnac_task_poll_interval": 2,
-            "dnac_username": "admin",
-            "dnac_verify": false,
-            "dnac_version": "2.3.7.6",
+            "catalystcenter_api_task_timeout": 1200,
+            "catalystcenter_debug": true,
+            "catalystcenter_host": "10.195.227.14",
+            "catalystcenter_log": true,
+            "catalystcenter_log_append": true,
+            "catalystcenter_log_file_path": "catalystcenter.log",
+            "catalystcenter_log_level": "INFO",
+            "catalystcenter_password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+            "catalystcenter_port": "443",
+            "catalystcenter_task_poll_interval": 2,
+            "catalystcenter_username": "admin",
+            "catalystcenter_verify": false,
+            "catalystcenter_version": "2.3.7.6",
             "state": "merged",
             "validate_response_schema": true
         }
@@ -439,7 +439,7 @@ changed: [catalyst_center220] => {
 Read vars_file '{{ VARS_FILE_PATH }}'
 
 TASK [Print the Network Compliance devices output] ******************************************************************************************************************************************************************************************************
-task path: /Users/pawansi/dnac_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:35
+task path: /Users/pawansi/catalyst_center_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:35
 ok: [catalyst_center220] => {
     "msg": {
         "ansible_facts": {
@@ -684,7 +684,7 @@ ok: [catalyst_center220] => {
 Read vars_file '{{ VARS_FILE_PATH }}'
 
 TASK [Network Compliance devices playbook end time] *****************************************************************************************************************************************************************************************************
-task path: /Users/pawansi/dnac_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:38
+task path: /Users/pawansi/catalyst_center_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:38
 ok: [catalyst_center220] => {
     "ansible_facts": {
         "long_op_end": "2024-09-06 22:49:44.336194"
@@ -694,7 +694,7 @@ ok: [catalyst_center220] => {
 Read vars_file '{{ VARS_FILE_PATH }}'
 
 TASK [Print Network Compliance devices playbook execution time] *****************************************************************************************************************************************************************************************
-task path: /Users/pawansi/dnac_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:41
+task path: /Users/pawansi/catalyst_center_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:41
 ok: [catalyst_center220] => {
     "msg": "Network Compliance devices playbook run time: 2024-09-06 22:48:39.695965, end: 2024-09-06 22:49:44.336194"
 }
@@ -703,7 +703,7 @@ Read vars_file '{{ VARS_FILE_PATH }}'
 Read vars_file '{{ VARS_FILE_PATH }}'
 
 TASK [run command module to find python version] ********************************************************************************************************************************************************************************************************
-task path: /Users/pawansi/dnac_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:45
+task path: /Users/pawansi/catalyst_center_ansible_workflows/workflows/network_compliance/playbook/network_compliance_workflow_playbook.yml:45
 Read vars_file '{{ VARS_FILE_PATH }}'
 <catalyst_center_hosts> ESTABLISH LOCAL CONNECTION FOR USER: pawansi
 <catalyst_center_hosts> EXEC /bin/sh -c 'echo ~pawansi && sleep 0'

@@ -59,19 +59,19 @@ Key features include:
 
 | Component | Version |
 |-----------|---------|
-| Ansible | 6.40.0 |
+| cisco.catalystcenter Collection | latest |
 | Python | 3.9+ |
-| Cisco Catalyst Center SDK | 2.10.4 |
+| Cisco Catalyst Center SDK | latest |
 
-**Version Added**: `6.40.0`  
+**Version Added**: `latest`  
 *Note*: This version refers to the Cisco Catalyst Center Ansible collection.
 
 ### Required Collections
 
 ```bash
-ansible-galaxy collection install cisco.dnac
+ansible-galaxy collection install cisco.catalystcenter
 ansible-galaxy collection install ansible.utils
-pip install dnacentersdk
+pip install catalystcentersdk
 pip install yamale
 ```
 
@@ -173,7 +173,7 @@ Follow these steps to configure and manage Access Point locations in *Cisco Cata
 
 2. **Install Cisco Catalyst Center Collection**:  
    ```bash
-   ansible-galaxy collection install cisco.dnac
+   ansible-galaxy collection install cisco.catalystcenter
    ```
 
 3. **Generate Inventory**:  
@@ -730,11 +730,11 @@ The following environment was used for testing:
 | Python                | `3.10.10`   |
 | Cisco Catalyst Center | `3.1.5.0`   |
 | Ansible               | `2.17.13`   |
-| cisco.dnac Collection | `6.40.0`    |
-| dnacentersdk          | `2.10.4`    |
+| cisco.catalystcenter Collection | `latest`    |
+| catalystcentersdk          | `latest`    |
 
 For detailed documentation, refer to:  
-- [Ansible Galaxy: Cisco Catalyst Center Collection](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/accesspoint_location_workflow_manager/)  
+- [Ansible Galaxy: Cisco Catalyst Center Collection](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/accesspoint_location_workflow_manager/)  
 - [Cisco Catalyst Center Documentation](https://www.cisco.com/c/en/us/support/cloud-systems-management/dna-center/series.html)
 - [Access Point Location Workflow Manager Module Documentation](https://github.com/cisco-en-programmability/catalyst-center-ansible-dev/blob/main/plugins/modules/accesspoint_location_workflow_manager.py)
 

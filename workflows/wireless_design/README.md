@@ -19,7 +19,7 @@ This playbook automates the management of wireless network designs in Cisco Cata
 - **Anchor Groups**:
   - Add/Edit/Delete single, multiple, or bulk Anchor Groups.
 
-**Version Added**: 6.33.2
+**Version Added**: latest
 
 ## Workflow Steps
 
@@ -28,7 +28,7 @@ This playbook automates the management of wireless network designs in Cisco Cata
 1. **Install Ansible**: Follow the [official Ansible documentation](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) for installation.
 2. **Install Cisco Catalyst Center Collection**:
    ```bash
-   ansible-galaxy collection install cisco.dnac
+   ansible-galaxy collection install cisco.catalystcenter
    ```
 3. **Generate Inventory**: Create an Ansible inventory file (e.g., `inventory.yml`) with your Cisco Catalyst Center details.
    ```yaml
@@ -153,14 +153,14 @@ The schema file (e.g., `schema/wireless_design_schema.yml`) defines the structur
 | `mobility_anchors` | List[Dict] | Yes      | N/A           | Mobility anchors. Includes `mobility_anchor_type`.                          |
 
 
-> **Note**: Refer to the official documentation for detailed information on defining workflows: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/wireless_design_workflow_manager/
+> **Note**: Refer to the official documentation for detailed information on defining workflows: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/wireless_design_workflow_manager/
 
 
 ## Example Input File
 The Wireless Design module allows you to configure and manage various aspects of your wireless network through Cisco Catalyst Center. The configuration is structured into several key components:
 ![Wireless Design UI Page](./images/wireless_design.png)
 
-Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/docs/ 
+Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/docs/ 
 
 ### 1. Wireless SSIDs
 SSIDs are the foundation of wireless networks, enabling devices to connect to the network with specific configurations. In Cisco Catalyst Center, SSIDs can be configured for enterprise or guest use cases with detailed security, QoS, and radio settings. 
@@ -1558,8 +1558,8 @@ The Jinja Template allows you to create bulk configurations for wireless design,
 
 ```yaml
 python: 3.12.0
-dnac_version: 2.3.7.9
+catalystcenter_version: 2.3.7.9
 ansible: 9.9.0
-dnacentersdk: 2.8.14
-cisco.dnac: 6.33.2
+catalystcentersdk: latest
+cisco.catalystcenter: latest
 ```

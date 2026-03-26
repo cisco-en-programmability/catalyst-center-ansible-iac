@@ -18,7 +18,7 @@ It is supported from Catalyst Center Release version 2.3.7.6
 1.  **Install Ansible:** Follow the official Ansible documentation for installation instructions.
 2.  **Install Cisco Catalyst Center Collection:**
     ```bash
-    ansible-galaxy collection install cisco.dnac
+    ansible-galaxy collection install cisco.catalystcenter
     ```
 3.  **Generate Inventory:** Create an Ansible inventory file (e.g., `inventory.yml`) that includes your Cisco Catalyst Center appliance details. You will need to define variables such as the host, username, and password (or other authentication methods).
     ```yaml
@@ -90,7 +90,7 @@ The schema file (e.g., `schema/provision_workflow_schema.yml`) defines the struc
 | wlan_mode            | string     | No           | WLAN mode                                         |
 | include_guest_ssid   | bool       | No           | Include guest SSID in
 
-Can refer to the full workflow specification details here: [Ansible Galaxy - Provision Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/provision_workflow_manager/).
+Can refer to the full workflow specification details here: [Ansible Galaxy - Provision Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/provision_workflow_manager/).
 
 
 ## Workflow overview with example
@@ -635,7 +635,7 @@ ansible-playbook -i ./inventory/demo_lab/inventory_demo_lab.yml ./workflows/prov
 ```
 
 c. **Verify Deployment:** 
-After the playbook execution, you can verify the results in the Cisco Catalyst Center UI under the Assurance section. If dnac_debug is enabled in your inventory, you can also review the Ansible logs for detailed information on the API calls and responses.
+After the playbook execution, you can verify the results in the Cisco Catalyst Center UI under the Assurance section. If catalystcenter_debug is enabled in your inventory, you can also review the Ansible logs for detailed information on the API calls and responses.
 
 ## Run line parameters description:
 
@@ -653,10 +653,10 @@ The following environment was used for testing:
 | Python                | `3.10.10`   |
 | Cisco Catalyst Center | `2.3.7.9`   |
 | Ansible               | `9.9.0`     |
-| cisco.dnac Collection | `6.35.0`    |
-| dnacentersdk          | `2.10.14`   |
+| cisco.catalystcenter Collection | `latest`    |
+| catalystcentersdk          | `latest`   |
 
 For detailed documentation, refer to:  
-- [Ansible Galaxy: Cisco Catalyst Center Collection](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/provision_workflow_manager/)  
+- [Ansible Galaxy: Cisco Catalyst Center Collection](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/provision_workflow_manager/)  
 - [Cisco Catalyst Center Documentation](https://www.cisco.com/c/en/us/support/cloud-systems-management/dna-center/series.html)
 - [Provision Workflow Manager Module Documentation](https://github.com/cisco-en-programmability/catalyst-center-ansible-dev/blob/main/plugins/modules/provision_workflow_manager.py)

@@ -12,7 +12,7 @@ This workflow automates the management of tags within your infrastructure using 
   - Assign/Unassign Tags to Devices Based on Device Rules
   - Assign/Unassign Devices to Tags based on Device Identifier
 
-**Version Added**: 6.36.0
+**Version Added**: latest
 
 ## Workflow Steps
 
@@ -21,7 +21,7 @@ This workflow automates the management of tags within your infrastructure using 
 1. **Install Ansible**: Follow the [official Ansible documentation](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) for installation.
 2. **Install Cisco Catalyst Center Collection**:
    ```bash
-   ansible-galaxy collection install cisco.dnac
+   ansible-galaxy collection install cisco.catalystcenter
    ```
 3. **Generate Inventory**: Create an Ansible inventory file (e.g., `inventory.yml`) with your Cisco Catalyst Center details.
    ```yaml
@@ -119,7 +119,7 @@ The schema file (e.g., `schema/tags_manager_schema.yml`) defines the structure o
 | `port_names`      | List[String] | No     | N/A           | List of port names for tagging under devices in sites.                     |
 
 
-> **Note**: Refer to the official documentation for detailed information on defining workflows: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/tags_workflow_manager/
+> **Note**: Refer to the official documentation for detailed information on defining workflows: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/tags_workflow_manager/
 
 
 ## Example Input File
@@ -127,7 +127,7 @@ The Tags module allows you to create tags and use them to group devices together
 
 ![Tag UI Page](./images/tag_UI_page.png)
 
-Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/docs/
+Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/docs/
 
 ### 1. Create, Update, and Delete Tags Use Cases
 Include the steps to create, update, and delete tags simply
@@ -422,8 +422,8 @@ If there is an error in the input or an issue with the API call during execution
 
 ```yaml
 python: 3.12.0
-dnac_version: 3.1.5
+catalystcenter_version: 3.1.5
 ansible: 9.9.0
-dnacentersdk: 2.10.1
-cisco.dnac: 6.36.0
+catalystcentersdk: latest
+cisco.catalystcenter: latest
 ```

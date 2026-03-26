@@ -48,8 +48,8 @@ network_devices_info/
 
 - Ansible 2.9 or higher
 - Python 3.9.19 or higher
-- dnacentersdk 2.9.3 or higher
-- cisco.dnac Ansible collection 6.42.0 or higher
+- catalystcentersdk latest
+- cisco.catalystcenter Ansible collection 2.4.0 or later
 - Access to Cisco Catalyst Center with appropriate permissions
 - Network connectivity to Catalyst Center
 
@@ -370,7 +370,7 @@ Playbook Return:
       ...
     - device_ip: 204.1.2.7
       interface_details:
-      - !!python/object/new:dnacentersdk.models.mydict.MyDict
+      - !!python/object/new:catalystcentersdk.models.mydict.MyDict
         dictitems:
 ```
 
@@ -668,7 +668,7 @@ yamale -s workflows/network_devices_info/schema/network_devices_info_schema.yml 
 Return result validate:
 
 ```bash
-(pyats-nalakkam) [nalakkam@st-ds-4 dnac_ansible_workflows]$ yamale -s workflows/network_devices_info/schema/network_devices_info_schema.yml        workflows/network_devices_info/vars/network_devices_info_input.yml
+(pyats-nalakkam) [nalakkam@st-ds-4 catalyst_center_ansible_workflows]$ yamale -s workflows/network_devices_info/schema/network_devices_info_schema.yml        workflows/network_devices_info/vars/network_devices_info_input.yml
 Validating workflows/network_devices_info/vars/network_devices_info_input.yml...
 Validation success! 👍
 ```
@@ -752,6 +752,6 @@ interface_info:
 
 ## References
 
-1. Check the [Cisco Catalyst Center Ansible Collection Documentation](https://galaxy.ansible.com/cisco/dnac)
+1. Check the [Cisco Catalyst Center Ansible Collection Documentation](https://galaxy.ansible.com/cisco/catalystcenter)
 2. Review the [Catalyst Center API Documentation](https://developer.cisco.com/docs/dna-center/)
-3. Consult the module documentation[Catalyst Center Network Devices Info Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/network_devices_info_workflow_manager/?keywords=workflow_manager )
+3. Consult the module documentation[Catalyst Center Network Devices Info Workflow Manager](https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/network_devices_info_workflow_manager/?keywords=workflow_manager )

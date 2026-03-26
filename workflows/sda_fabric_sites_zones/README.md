@@ -20,8 +20,8 @@ A Software-Defined Access (SDA) fabric network may comprise multiple sites. Each
   - Apply Pending Events: Supports applying pending fabric updates caused by changes like IP address pool modifications, ensuring configurations are fully synchronized and devices are updated accordingly.
 
 **Version Information:**
-- Fabric Site & Zone Management introduced in Ansible Galaxy cisco.dnac: **v6.21.0**
-- Pre-Authentication ACL and Apply Pending Events in Ansible Galaxy cisco.dnac: **v6.32.0**
+- Fabric Site & Zone Management introduced in Ansible Galaxy cisco.catalystcenter: latest
+- Pre-Authentication ACL and Apply Pending Events in Ansible Galaxy cisco.catalystcenter: latest
 ---
 
 This README outlines the steps to use the Ansible playbooks for managing Application Policies in Cisco Catalyst Center.
@@ -35,7 +35,7 @@ Before running the playbooks, ensure you have Ansible installed and the necessar
 1.  **Install Ansible:** Follow the official Ansible documentation for installation instructions.
 2.  **Install Cisco Catalyst Center Collection:**
     ```bash
-    ansible-galaxy collection install cisco.dnac
+    ansible-galaxy collection install cisco.catalystcenter
     ```
 3.  **Generate Inventory:** Create an Ansible inventory file (e.g., `inventory.yml`) that includes your Cisco Catalyst Center appliance details. You will need to define variables such as the host, username, and password (or other authentication methods).
 ### Configure Host Inventory
@@ -293,7 +293,7 @@ Figure 1: Delete Fabric Site
 result:
 
 ```
-    Validating /auto/dna-sol/ws/thanduong/dnac-auto/dnac_ansible_workflows/workflows/sda_fabric_sites_zones/vars/sda_fabric_sites_zones_inputs.yml...
+    Validating /auto/dna-sol/ws/thanduong/dnac-auto/catalyst_center_ansible_workflows/workflows/sda_fabric_sites_zones/vars/sda_fabric_sites_zones_inputs.yml...
     Validation success! 👍
 ```
 
@@ -304,7 +304,7 @@ result:
 Run the playbook to seamlessly apply the wireless network profile configuration defined in your input variables to Cisco Catalyst Center. Before proceeding, ensure that the input validation step has been completed successfully, with no errors detected in the provided variables. Once validated, execute the playbook by specifying the input file path using the --e variable as VARS_FILE_PATH. The VARS_FILE_PATH must be provided as a full path to the input file. This ensures that the configuration is accurately deployed to Cisco Catalyst Center, automating the setup process and reducing the risk of manual errors.
 
 ```bash
-ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/sda_fabric_sites_zones/playbook/sda_fabric_sites_zones_playbook.yml --e VARS_FILE_PATH=<your input file>
+ansible-playbook -i host_inventory/hosts.yml workflows/sda_fabric_sites_zones/playbook/sda_fabric_sites_zones_playbook.yml --e VARS_FILE_PATH=<your input file>
 ```
 
 If there is an error in the input or an issue with the API call during execution, the playbook will halt and display the relevant error details.
@@ -355,7 +355,7 @@ Use the input var file: jinja_template_site_hierarchy_design_vars.yml and specif
 
 5. Execute with Jinja template:
 ```bash
-    ansible-playbook -i host_inventory_dnac1/hosts.yml workflows/sda_fabric_sites_zones/playbook/sda_fabric_sites_zones_playbook.yml --e VARS_FILE_PATH=../vars/sda_j2_template_fabric_sites_input.yml
+    ansible-playbook -i host_inventory/hosts.yml workflows/sda_fabric_sites_zones/playbook/sda_fabric_sites_zones_playbook.yml --e VARS_FILE_PATH=../vars/sda_j2_template_fabric_sites_input.yml
 
 TASK [Print the fabric site(s)/zone(s) output] *************************************************************************************************************************************************************************************************************
 ok: [catalyst_center220] => {
@@ -395,11 +395,11 @@ Figure 1 Jinja created fabric sites
   ansible-core: 2.16.10
   ansible-runner: 2.4.0
 
-  dnacentersdk: 2.8.3
-  cisco.dnac: 6.29.0
+  catalystcentersdk: latest
+  cisco.catalystcenter: 2.4.0
   ansible.utils: 5.1.2
 ```
-For detailed information on network wireless profile workflow refer to the following documentation: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/sda_fabric_sites_zones_workflow_manager
+For detailed information on network wireless profile workflow refer to the following documentation: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/sda_fabric_sites_zones_workflow_manager
 
 ## Important Notes
 - Refer to the Catalyst Center documentation for detailed instructions on configuring fabric sites and fabric zones and using the Ansible playbooks.

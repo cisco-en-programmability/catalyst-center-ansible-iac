@@ -27,7 +27,7 @@ This module provides capabilities to configure and manage Assurance Health Score
     - Health score configuration is not applicable to third-party devices and is automatically bypassed.
 
 **Version Added:**  
-`6.32.0`
+`latest`
 
 ---
 
@@ -44,7 +44,7 @@ Before running the playbooks, ensure you have Ansible installed and the necessar
 1.  **Install Ansible:** Follow the official Ansible documentation for installation instructions.
 2.  **Install Cisco Catalyst Center Collection:**
     ```bash
-    ansible-galaxy collection install cisco.dnac
+    ansible-galaxy collection install cisco.catalystcenter
     ```
 3.  **Generate Inventory:** Create an Ansible inventory file (e.g., `inventory.yml`) that includes your Cisco Catalyst Center appliance details. You will need to define variables such as the host, username, and password (or other authentication methods).
     ```yaml
@@ -69,7 +69,7 @@ This step involves preparing the input data for configuring Assurance Health Sco
 
 1.  **Define Input Variables:** Create the variable file at (e.g., `workflows/assurance_health_score_settings/vars/assurance_health_score_settings_inputs.yml`). This file should contain the list of KPI names and threshold values for various device types that you want to configure.
 
-2.  **Review Structure and Options:** Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/assurance_device_health_score_settings_workflow_manager/
+2.  **Review Structure and Options:** Refer to the full workflow specification for detailed instructions on the available options and their structure: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/assurance_device_health_score_settings_workflow_manager/
 
 
 #### Schema for Assurance Health Score Settings
@@ -431,9 +431,9 @@ After executing the playbook, check the Catalyst Center UI to verify Assurance H
 
 ```yaml
 python: 3.12.0
-dnac_version: 2.3.7.9
+catalystcenter_version: 2.3.7.9
 ansible: 9.9.0
-cisco.dnac: 6.32.0
-dnacentersdk: 2.8.8
+cisco.catalystcenter: latest
+catalystcentersdk: latest
 ```
-For detailed information on Assurance Health Score Settings refer to the following documentation:https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/assurance_device_health_score_settings_workflow_manager/
+For detailed information on Assurance Health Score Settings refer to the following documentation:https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/assurance_device_health_score_settings_workflow_manager/

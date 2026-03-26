@@ -1,12 +1,12 @@
 # Cisco Catalyst Center Switch Network Profile Playbooks
 
-This module manages switch network profiles in Cisco Catalyst Center (DNAC), a platform for intent-based networking. It automates the creation, deletion, and assignment of switch profiles to sites and templates.
+This module manages switch network profiles in Cisco Catalyst Center, a platform for intent-based networking. It automates the creation, deletion, and assignment of switch profiles to sites and templates.
 
 **Description:**
 - Create and delete switch network profiles.
 - Assign profiles to sites, onboarding templates, and Day-N templates.
 
-**Version Added:**   `6.32.0`
+**Version Added:**   `latest`
 
 ---
 
@@ -23,7 +23,7 @@ Before running the playbooks, ensure you have Ansible installed and the necessar
 1.  **Install Ansible:** Follow the official Ansible documentation for installation instructions.
 2.  **Install Cisco Catalyst Center Collection:**
     ```bash
-    ansible-galaxy collection install cisco.dnac
+    ansible-galaxy collection install cisco.catalystcenter
     ```
 3.  **Generate Inventory:** Create an Ansible inventory file (e.g., `hosts.yml`) that includes your Cisco Catalyst Center appliance details. You will need to define variables such as the host, username, and password (or other authentication methods).
     ```yaml
@@ -129,7 +129,7 @@ This is the final step where you deploy the configuration to Cisco Catalyst Cent
     This ensures that the configuration is accurately deployed to Cisco Catalyst Center, automating the setup process and reducing the risk of manual errors.
 
     ```bash
-    ansible-playbook -i ./inventory/iac2/host.yml workflows/network_profile_switching/playbook/network_profile_switching_playbook.yml --e VARS_FILE_PATH=/<full path>/dnac_ansible_workflows/workflows/network_profile_switching/vars/network_profile_switching_inputs.yml > logs/switch_profile.log -vvvvvv    
+    ansible-playbook -i ./inventory/iac2/host.yml workflows/network_profile_switching/playbook/network_profile_switching_playbook.yml --e VARS_FILE_PATH=/<full path>/catalyst_center_ansible_workflows/workflows/network_profile_switching/vars/network_profile_switching_inputs.yml > logs/switch_profile.log -vvvvvv    
     ```
 
     If there is an error in the input or an issue with the API call during execution, the playbook will halt and display the relevant error details.
@@ -147,10 +147,10 @@ After executing the playbook, check the Catalyst Center UI to verify switch prof
 
 ```yaml
 python: 3.12.0
-dnac_version: 2.3.7.9
+catalystcenter_version: 2.3.7.9
 ansible: 9.9.0
-cisco.dnac: 6.32.0
-dnacentersdk: 2.8.8
+cisco.catalystcenter: latest
+catalystcentersdk: latest
 ```
 
-For detailed information on network wireless profile workflow refer to the following documentation: https://galaxy.ansible.com/ui/repo/published/cisco/dnac/content/module/network_profile_switching_workflow_manager
+For detailed information on network wireless profile workflow refer to the following documentation: https://galaxy.ansible.com/ui/repo/published/cisco/catalystcenter/content/module/network_profile_switching_workflow_manager
