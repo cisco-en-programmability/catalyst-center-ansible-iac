@@ -1,0 +1,152 @@
+---
+- name: Migrate SDA port assignments from source to destination devices
+  hosts: catalyst_center_hosts
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - "{{ VARS_FILE_PATH }}"
+
+  vars:
+    state: merged
+    cleanup_generated_files: true
+    generated_config_dir: "/tmp/sda_port_assignment_migration"
+    catalyst_center_login: &catalyst_center_login
+      dnac_host: "{{ catalyst_center_host | default(dnac_host) }}"
+      dnac_username: "{{ catalyst_center_username | default(dnac_username) }}"
+      dnac_password: "{{ catalyst_center_password | default(dnac_password) }}"
+      dnac_version: "{{ catalyst_center_version | default(dnac_version) }}"
+      dnac_port: "{{ catalyst_center_port | default(443) }}"
+      dnac_verify: "{{ catalyst_center_verify | default(dnac_verify) }}"
+      config_verify: "{{ catalyst_center_config_verify | default(False) }}"
+      dnac_debug: "{{ catalyst_center_debug | default(False) }}"
+      dnac_log: "{{ catalyst_center_log | default(False) }}"
+      dnac_log_level: "{{ catalyst_center_log_level | default('INFO') }}"
+      dnac_log_file_path: "{{ catalyst_center_log_file_path | default(omit) }}"
+      dnac_log_append: "{{ catalyst_center_log_append | default(False) }}"
+      dnac_api_task_timeout: "{{ catalyst_center_api_task_timeout | default(1200) }}"
+
+  tasks:
+    - name: Print input file path
+      debug:
+        msg: "Input file selected: {{ VARS_FILE_PATH }}"
+
+    - name: Validate migration input list
+      fail:
+        msg: "port_assignment_migration must contain at least one migration entry."
+      when: port_assignment_migration is not defined or port_assignment_migration | length == 0
+
+    - name: Ensure generated config directory exists
+      ansible.builtin.file:
+        path: "{{ generated_config_dir }}"
+        state: directory
+        mode: "0755"
+      changed_when: false
+
+    - name: Port assignment migration workflow start time
+      set_fact:
+        long_op_start: "{{ now() }}"
+
+    - name: Process each source to destination migration entry
+      ansible.builtin.include_tasks: ./tasks/migrate_single_port_assignment.yml
+      loop: "{{ port_assignment_migration }}"
+      loop_control:
+        loop_var: migration_item
+        label: "{{ migration_item.source_device_ip }} -> {{ migration_item.destination_device_ip }} ({{ migration_item.fabric_site }})"
+
+    - name: Print migration workflow output summary
+      debug:
+        var: port_assignment_migration_results
+
+    - name: Build migration interface outcome totals
+      set_fact:
+        migration_interface_summary_totals:
+          total_migrations: "{{ port_assignment_migration_results | default([]) | length }}"
+          total_interfaces_moved: "{{ port_assignment_migration_results | default([]) | map(attribute='interfaces_moved_count') | list | sum(start=0) }}"
+          total_interfaces_updated: "{{ port_assignment_migration_results | default([]) | map(attribute='interfaces_updated_count') | list | sum(start=0) }}"
+          total_interfaces_no_change: "{{ port_assignment_migration_results | default([]) | map(attribute='interfaces_no_change_count') | list | sum(start=0) }}"
+          total_interfaces_unreported: "{{ port_assignment_migration_results | default([]) | map(attribute='interfaces_unreported_count') | list | sum(start=0) }}"
+          total_catalyst_center_changes: "{{ port_assignment_migration_results | default([]) | map(attribute='catalyst_center_change_count') | list | sum(start=0) }}"
+          migrations_with_catalyst_center_changes: "{{ port_assignment_migration_results | default([]) | selectattr('catalyst_center_changed', 'equalto', true) | list | length }}"
+
+    - name: Print migration interface outcome totals
+      debug:
+        msg: |
+          SDA Port Assignment Migration Summary
+          - Total migrations processed: {{ migration_interface_summary_totals.total_migrations }}
+          - Interfaces moved: {{ migration_interface_summary_totals.total_interfaces_moved }}
+          - Interfaces updated/created: {{ migration_interface_summary_totals.total_interfaces_updated }}
+          - Interfaces no change needed: {{ migration_interface_summary_totals.total_interfaces_no_change }}
+          - Interfaces unreported by apply task: {{ migration_interface_summary_totals.total_interfaces_unreported }}
+          - Catalyst Center change count: {{ migration_interface_summary_totals.total_catalyst_center_changes }}
+          - Migrations with Catalyst Center changes: {{ migration_interface_summary_totals.migrations_with_catalyst_center_changes }}
+
+    - name: Print per-migration interface outcome summary
+      vars:
+        moved_lines: >-
+          {{
+            (item.interfaces_moved | default([]) | sort |
+             map('regex_replace', '^(.*)$', '      - \\1') | list | join('\n'))
+            if (item.interfaces_moved | default([]) | length > 0)
+            else '      - None'
+          }}
+        updated_lines: >-
+          {{
+            (item.interfaces_updated | default([]) | sort |
+             map('regex_replace', '^(.*)$', '      - \\1') | list | join('\n'))
+            if (item.interfaces_updated | default([]) | length > 0)
+            else '      - None'
+          }}
+        no_change_lines: >-
+          {{
+            (item.interfaces_no_change | default([]) | sort |
+             map('regex_replace', '^(.*)$', '      - \\1') | list | join('\n'))
+            if (item.interfaces_no_change | default([]) | length > 0)
+            else '      - None'
+          }}
+        unreported_lines: >-
+          {{
+            (item.interfaces_unreported | default([]) | sort |
+             map('regex_replace', '^(.*)$', '      - \\1') | list | join('\n'))
+            if (item.interfaces_unreported | default([]) | length > 0)
+            else '      - None'
+          }}
+      debug:
+        msg: |
+          ------------------------------------------------------------
+          Migration Entry {{ migration_index + 1 }}
+          Source -> Destination : {{ item.source_device_ip }} -> {{ item.destination_device_ip }}
+          Fabric Site           : {{ item.fabric_site }}
+          Export Filter Mode    : {{ item.source_export_filter_mode | default('unknown') }}
+          Interface Mappings    : {{ item.interface_mapping_count | default(0) }}
+          Catalyst Ctr Changes  : {{ item.catalyst_center_change_count | default(0) }}
+
+          Interface Outcomes
+            Moved ({{ item.interfaces_moved_count | default(0) }}):
+          {{ moved_lines }}
+            Updated/Created ({{ item.interfaces_updated_count | default(0) }}):
+          {{ updated_lines }}
+            No Change ({{ item.interfaces_no_change_count | default(0) }}):
+          {{ no_change_lines }}
+            Unreported ({{ item.interfaces_unreported_count | default(0) }}):
+          {{ unreported_lines }}
+      loop: "{{ port_assignment_migration_results | default([]) }}"
+      loop_control:
+        label: "entry {{ migration_index + 1 }}: {{ item.source_device_ip }} -> {{ item.destination_device_ip }}"
+        index_var: migration_index
+
+    - name: Port assignment migration workflow end time
+      set_fact:
+        long_op_end: "{{ now() }}"
+
+    - name: Print migration workflow execution time
+      debug:
+        msg: "Start: {{ long_op_start }}, End: {{ long_op_end }}"
+
+  post_tasks:
+    - name: Get python path
+      ansible.builtin.command: which python
+      register: ansible_play_path
+      delegate_to: catalyst_center_hosts
+      connection: local
+      changed_when: false
