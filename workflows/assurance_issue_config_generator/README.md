@@ -2,6 +2,8 @@
 
 ## Table of Contents
 
+- [User Flow (3 Steps)](#user-flow-3-steps)
+
 - [Overview](#overview)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
@@ -9,9 +11,7 @@
 - [Schema Parameters](#schema-parameters)
 - [Getting Started](#getting-started)
 - [Operations](#operations)
-- [Examples](#examples)
-
----
+- [Examples](#examples)---
 
 ## Overview
 
@@ -109,108 +109,45 @@ assurance_issue_config_generator/
 
 ## Getting Started
 
-### Step 1: Install Prerequisites
+## Workflow Steps
+## User Flow (3 Steps)
+
+```mermaid
+flowchart TD
+  A[Start] --> B[Step 1: Create virtual env and install dependencies]
+  B --> C[Step 2: Provide workflow inputs]
+  C --> D{Choose input location}
+  D -->|Option A| E[Update inventory hosts.yaml]
+  D -->|Option B| F[Update vars input file]
+  E --> G[Step 3: Export env vars]
+  F --> G
+  G --> H[Run ansible-playbook]
+  H --> I[Review playbook summary output]
+  I --> J[Done]
+```
+
+### Installation and Run (Aligned)
+
+1. Create and activate a Python virtual environment, then install dependencies.
 
 ```bash
-ansible-galaxy collection install cisco.dnac
-ansible-galaxy collection install ansible.utils
-pip install dnacentersdk
-pip install yamale
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+ansible-galaxy collection install cisco.dnac --force
 ```
 
-### Step 2: Configure Inventory
+2. Provide workflow inputs in either inventory (`inventory/demo_lab/hosts.yaml`) or the workflow `vars/` file.
 
-Edit `inventory/demo_lab/hosts.yml`:
-
-```yaml
-catalyst_center_hosts:
-  hosts:
-    catalyst_center_primary:
-      catalyst_center_host: 10.0.0.0
-      catalyst_center_username: admin
-      catalyst_center_password: "password"
-```
-
-### Step 3: Configure Variables
-
-Edit `workflows/assurance_issue_config_generator/vars/assurance_issue_config_input.yml`:
-
-```yaml
-assurance_issue_config:
-  - generate_all_configurations: true
-    file_path: "generated_file/complete_assurance_issue_config.yml"
-```
-
-### Step 4: Validate Configuration
+3. Export Catalyst Center environment variables and run the playbook.
 
 ```bash
-./tools/validate.sh -s workflows/assurance_issue_config_generator/schema/assurance_issue_config_schema.yml \
-  -d workflows/assurance_issue_config_generator/vars/assurance_issue_config_input.yml
+export HOSTIP=<catalyst-center-ip-or-fqdn>
+export CATALYST_CENTER_USERNAME=<username>
+export CATALYST_CENTER_PASSWORD='<password>'
+ansible-playbook -i ./inventory/demo_lab/hosts.yaml ./workflows/assurance_issue_config_generator/playbook/assurance_issue_config_generator.yml -vvvv
 ```
 
-### Step 5: Execute Playbook
-
-The playbook supports two input methods:
-
-#### Option A: Vars file input (recommended for version-controlled configs)
-
-```bash
-ansible-playbook -i inventory/demo_lab/hosts.yaml \
-  workflows/assurance_issue_config_generator/playbook/assurance_issue_config_generator.yml \
-  --extra-vars VARS_FILE_PATH=./workflows/assurance_issue_config_generator/vars/assurance_issue_config_input.yml \
-  -vvvv
-```
-
-#### Option B: Inventory / host variable input
-
-Omit `VARS_FILE_PATH` and define `assurance_issue_config` directly as a host variable in your inventory file or in `host_vars`/`group_vars`.
-
-**Example inventory snippet (`inventory/demo_lab/hosts.yaml`):**
-
-```yaml
-catalyst_center_hosts:
-  hosts:
-    catalyst_center_primary:
-      catalyst_center_host: "{{ lookup('ansible.builtin.env', 'HOSTIP') }}"
-      catalyst_center_password: "{{ lookup('ansible.builtin.env', 'CATALYST_CENTER_PASSWORD') }}"
-      catalyst_center_port: 443
-      catalyst_center_username: "{{ lookup('ansible.builtin.env', 'CATALYST_CENTER_USERNAME') }}"
-      catalyst_center_verify: false
-      catalyst_center_version: 2.3.7.9
-
-      # Workflow data defined as host variables
-      assurance_issue_config:
-        - generate_all_configurations: true
-          file_path: "generated_file/complete_assurance_issue_config.yml"
-```
-
-Then run **without** `VARS_FILE_PATH`:
-
-```bash
-ansible-playbook -i inventory/demo_lab/hosts.yaml \
-  workflows/assurance_issue_config_generator/playbook/assurance_issue_config_generator.yml \
-  -vvvv
-```
-
-The playbook auto-detects the input source and prints it at the start:
-- `Input source: vars file <path>` when using Option A
-- `Input source: inventory / host variables (VARS_FILE_PATH not provided)` when using Option B
-
-> **Note:** When `VARS_FILE_PATH` is provided, it takes **precedence** over inventory variables.
-
-### Workflow Execution
-
-The workflow follows these steps:
-
-1. **Load input** from `VARS_FILE_PATH` (if provided) or fall back to inventory / host variables
-2. **Connect** to Catalyst Center using provided credentials
-3. **Retrieve** existing assurance issues via Assurance API calls
-4. **Filter** issues based on specified criteria (severity, category, device, site)
-5. **Transform** API responses into Ansible-compatible format
-6. **Generate** YAML configuration file with proper structure
-7. **Validate** output file format and content
-
----
 
 ## Operations
 

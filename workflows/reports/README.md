@@ -36,6 +36,43 @@ This module provides a comprehensive toolkit for managing reports in *Cisco Cata
 ---
 
 ## Workflow Steps
+## User Flow (3 Steps)
+
+```mermaid
+flowchart TD
+  A[Start] --> B[Step 1: Create virtual env and install dependencies]
+  B --> C[Step 2: Provide workflow inputs]
+  C --> D{Choose input location}
+  D -->|Option A| E[Update inventory hosts.yaml]
+  D -->|Option B| F[Update vars input file]
+  E --> G[Step 3: Export env vars]
+  F --> G
+  G --> H[Run ansible-playbook]
+  H --> I[Review playbook summary output]
+  I --> J[Done]
+```
+
+### Installation and Run (Aligned)
+
+1. Create and activate a Python virtual environment, then install dependencies.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+ansible-galaxy collection install cisco.dnac --force
+```
+
+2. Provide workflow inputs in either inventory (`inventory/demo_lab/hosts.yaml`) or the workflow `vars/` file.
+
+3. Export Catalyst Center environment variables and run the playbook.
+
+```bash
+export HOSTIP=<catalyst-center-ip-or-fqdn>
+export CATALYST_CENTER_USERNAME=<username>
+export CATALYST_CENTER_PASSWORD='<password>'
+ansible-playbook -i ./inventory/demo_lab/hosts.yaml ./workflows/reports/playbook/reports_playbook.yml -vvvv
+```
 
 Follow these steps to configure and manage reports in *Cisco Catalyst Center* using Ansible playbooks.
 
@@ -1118,7 +1155,6 @@ Before creating reports, ensure the following components exist in *Cisco Catalys
 - **Site Hierarchy**: Sites must be defined if using location-based filters.
 - **Network Interfaces and VLANs**: Required if reporting on interface or VLAN configurations.
 - **Webhook Endpoints**: Must be configured if using webhook delivery type.
-
 
 
 ##### 1. **Create Report with Immediate Execution**  

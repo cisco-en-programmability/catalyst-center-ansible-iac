@@ -2,6 +2,8 @@
 
 ## Table of Contents
 
+- [User Flow (3 Steps)](#user-flow-3-steps)
+
 - [Overview](#overview)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
@@ -9,9 +11,7 @@
 - [Schema Parameters](#schema-parameters)
 - [Getting Started](#getting-started)
 - [Operations](#operations)
-- [Examples](#examples)
-
----
+- [Examples](#examples)---
 
 ## Overview
 
@@ -522,3 +522,41 @@ sda_fabric_sites_zones_config:
 - [Cisco Catalyst Center Documentation](https://www.cisco.com/c/en/us/support/cloud-systems-management/dna-center/series.html)
 - [Cisco DNA Center SDK](https://dnacentersdk.readthedocs.io/)
 - [Ansible Documentation](https://docs.ansible.com/)
+## Workflow Steps
+## User Flow (3 Steps)
+
+```mermaid
+flowchart TD
+  A[Start] --> B[Step 1: Create virtual env and install dependencies]
+  B --> C[Step 2: Provide workflow inputs]
+  C --> D{Choose input location}
+  D -->|Option A| E[Update inventory hosts.yaml]
+  D -->|Option B| F[Update vars input file]
+  E --> G[Step 3: Export env vars]
+  F --> G
+  G --> H[Run ansible-playbook]
+  H --> I[Review playbook summary output]
+  I --> J[Done]
+```
+
+### Installation and Run (Aligned)
+
+1. Create and activate a Python virtual environment, then install dependencies.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+ansible-galaxy collection install cisco.dnac --force
+```
+
+2. Provide workflow inputs in either inventory (`inventory/demo_lab/hosts.yaml`) or the workflow `vars/` file.
+
+3. Export Catalyst Center environment variables and run the playbook.
+
+```bash
+export HOSTIP=<catalyst-center-ip-or-fqdn>
+export CATALYST_CENTER_USERNAME=<username>
+export CATALYST_CENTER_PASSWORD='<password>'
+ansible-playbook -i ./inventory/demo_lab/hosts.yaml ./workflows/sda_fabric_sites_zones_config_generator/playbook/sda_fabric_sites_zones_config_generator.yml -vvvv
+```

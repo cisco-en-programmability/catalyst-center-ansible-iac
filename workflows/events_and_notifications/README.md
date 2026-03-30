@@ -71,52 +71,45 @@ events_notifications_destination_and_subscription_details:
         smtp_type: "TLS"
 ```
 
-### Step 1: Execute events_and_notifications playbook
+## Workflow Steps
+## User Flow (3 Steps)
 
-Run the following command to create/update the Email destination
+```mermaid
+flowchart TD
+  A[Start] --> B[Step 1: Create virtual env and install dependencies]
+  B --> C[Step 2: Provide workflow inputs]
+  C --> D{Choose input location}
+  D -->|Option A| E[Update inventory hosts.yaml]
+  D -->|Option B| F[Update vars input file]
+  E --> G[Step 3: Export env vars]
+  F --> G
+  G --> H[Run ansible-playbook]
+  H --> I[Review playbook summary output]
+  I --> J[Done]
+```
+
+### Installation and Run (Aligned)
+
+1. Create and activate a Python virtual environment, then install dependencies.
 
 ```bash
-ansible-playbook -i ./inventory/demo_lab/inventory_demo_lab.yml ./workflows/events_and_notifications/playbook/events_and_notifications_playbook.yml --extra-vars VARS_FILE_PATH=./../vars/events_and_notifications_destinations_inputs.yml -vvvv
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+ansible-galaxy collection install cisco.dnac --force
 ```
 
-#### Expected Outcome:
-The email destination will be created or updated successfully in Cisco Catalyst Center.
+2. Provide workflow inputs in either inventory (`inventory/demo_lab/hosts.yaml`) or the workflow `vars/` file.
 
-To confirm that email destination has been created or updated, follow these steps:
+3. Export Catalyst Center environment variables and run the playbook.
 
-- Navigate to Systems -> Settings -> External Services -> Destinations then Select "Email" destination.
-
-#### Reference Screenshots
-
-![alt text](images/create_update_email_dest_img1.png)
-
-![alt text](images/create_update_email_dest_img2.png)
-
-### Step 2: Verify the playbook output
- 
-Upon successful completion, you should see a message similar to:
-
-``` yaml
-"msg":  
-    {
-        "changed": true,
-        "diff": [],
-        "failed": false,
-        "response": "Destination(s) '['Email destination']' updated successfully in Cisco Catalyst Center."
-    }
+```bash
+export HOSTIP=<catalyst-center-ip-or-fqdn>
+export CATALYST_CENTER_USERNAME=<username>
+export CATALYST_CENTER_PASSWORD='<password>'
+ansible-playbook -i ./inventory/demo_lab/hosts.yaml ./workflows/events_and_notifications/playbook/events_and_notifications_playbook.yml -vvvv
 ```
 
-### Step 3: Upon successful completion, Email destination will be created or updated in UI
-
-To confirm that email destination has been created or updated, follow this step:
-
-- Navigate to Systems -> Settings -> External Services -> Destinations then Select "Email" destination.
-
-#### Reference Screenshots
-
-![alt text](images/create_update_email_dest_img1.png)
-
-![alt text](images/create_update_email_dest_img2.png)
 
 ## 2. Create/Update Syslog destination in Catalyst Center
 

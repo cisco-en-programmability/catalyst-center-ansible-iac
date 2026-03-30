@@ -130,11 +130,46 @@ Specify which information to retrieve using the `requested_info` parameter:
 
 ## Configuration
 
-### Step 1: Update Connection Parameters
+## Workflow Steps
+## User Flow (3 Steps)
 
-Edit the `vars/network_devices_info_input.yml` file and update the Catalyst Center connection parameters:
+```mermaid
+flowchart TD
+  A[Start] --> B[Step 1: Create virtual env and install dependencies]
+  B --> C[Step 2: Provide workflow inputs]
+  C --> D{Choose input location}
+  D -->|Option A| E[Update inventory hosts.yaml]
+  D -->|Option B| F[Update vars input file]
+  E --> G[Step 3: Export env vars]
+  F --> G
+  G --> H[Run ansible-playbook]
+  H --> I[Review playbook summary output]
+  I --> J[Done]
+```
 
-```yaml
+### Installation and Run (Aligned)
+
+1. Create and activate a Python virtual environment, then install dependencies.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+ansible-galaxy collection install cisco.dnac --force
+```
+
+2. Provide workflow inputs in either inventory (`inventory/demo_lab/hosts.yaml`) or the workflow `vars/` file.
+
+3. Export Catalyst Center environment variables and run the playbook.
+
+```bash
+export HOSTIP=<catalyst-center-ip-or-fqdn>
+export CATALYST_CENTER_USERNAME=<username>
+export CATALYST_CENTER_PASSWORD='<password>'
+ansible-playbook -i ./inventory/demo_lab/hosts.yaml ./workflows/network_devices_info/playbook/network_devices_info_playbook.yml -vvvv
+```
+
+
 # Catalyst Center Connection Parameters
 catalyst_center_host: "your-catalyst-center-hostname"
 catalyst_center_username: "xxxx"
@@ -486,7 +521,6 @@ network_devices_info_details:
         } ]  }
       ] } ] ]          
 ```
-
 
 
 ---
