@@ -1,5 +1,5 @@
 ---
-- name: Generate Assurance Issue Configuration
+- name: Generate Wired Campus Automation Configuration
   hosts: catalyst_center_hosts
   connection: local
   gather_facts: no
@@ -17,13 +17,13 @@
       dnac_log: "{{ catalyst_center_log | default(false) }}"
       dnac_log_level: "{{ catalyst_center_log_level | default('INFO') }}"
       dnac_log_file_path: "{{ catalyst_center_log_file_path | default(omit) }}"
-      dnac_log_append: "{{ catalyst_center_log_append | default(True) }}"
+      dnac_log_append: "{{ catalyst_center_log_append | default(true) }}"
       dnac_api_task_timeout: "{{ catalyst_center_api_task_timeout | default(1200) }}"
 
   tasks:
-    # =========================================================================
+    # -------------------------------------------------------------------------
     # Input loading: vars file (VARS_FILE_PATH) or inventory variables
-    # =========================================================================
+    # -------------------------------------------------------------------------
     - name: Load input variables from vars file when VARS_FILE_PATH is provided
       ansible.builtin.include_vars:
         file: "{{ VARS_FILE_PATH }}"
@@ -37,39 +37,33 @@
           {{
             'Input source: vars file ' ~ VARS_FILE_PATH
             if (VARS_FILE_PATH is defined and VARS_FILE_PATH | length > 0)
-            else 'Input source: inventory / host variables (VARS_FILE_PATH not provided)'
+            else 'Input source: inventory variables (VARS_FILE_PATH not provided)'
           }}
 
-    - name: Validate that assurance_issue_config is defined
+    - name: Validate that wired_campus_automation_config is defined
       ansible.builtin.fail:
         msg: >-
-          Variable 'assurance_issue_config' is not defined.
+          Variable 'wired_campus_automation_config' is not defined.
           Provide it via VARS_FILE_PATH or as an inventory/host variable.
-      when: assurance_issue_config is not defined
+      when: wired_campus_automation_config is not defined
 
-    # =========================================================================
+    # -------------------------------------------------------------------------
     # Playbook execution
-    # =========================================================================
-    - name: Playbook start time for assurance issue configuration generation
+    # -------------------------------------------------------------------------
+    - name: Playbook start time for wired campus automation configuration generation
       ansible.builtin.set_fact:
         config_gen_start: "{{ now() }}"
 
-    - name: Generate YAML configuration for assurance issue
-      cisco.dnac.assurance_issue_playbook_config_generator:
+    - name: Generate YAML configuration for wired campus automation
+      cisco.dnac.wired_campus_automation_playbook_config_generator:
         <<: *catalyst_center_login
         state: "{{ state }}"
-        file_path: "{{ item.file_path | default(omit) }}"
-        file_mode: "{{ item.file_mode | default('overwrite') }}"
-        config: >-
-          {{
-            item.config
-            if ((item.config | default({})) | length > 0)
-            else omit
-          }}
-      loop: "{{ assurance_issue_config }}"
+        config_verify: "{{ catalyst_center_config_verify | default(false) }}"
+        config: "{{ [item] }}"
+      loop: "{{ wired_campus_automation_config }}"
       when:
-        - assurance_issue_config is defined
-        - assurance_issue_config | length > 0
+        - wired_campus_automation_config is defined
+        - wired_campus_automation_config | length > 0
       register: config_generation_result
 
     - name: Display configuration generation results
@@ -77,13 +71,10 @@
         var: config_generation_result
       when: config_generation_result is defined
 
-    # =========================================================================
-    # Playbook Execution Summary
-    # =========================================================================
     - name: Playbook end time
       ansible.builtin.set_fact:
         config_gen_end: "{{ now() }}"
 
     - name: Print playbook execution time
       ansible.builtin.debug:
-        msg: "Assurance issue configuration generation playbook run time: start: {{ config_gen_start }}, end: {{ config_gen_end }}"
+        msg: "Wired campus automation configuration generation playbook run time: start: {{ config_gen_start }}, end: {{ config_gen_end }}"
