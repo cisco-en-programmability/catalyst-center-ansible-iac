@@ -25,3 +25,8 @@ docs/plugins/
 docs/_build/
 changelogs/.plugin-cache.yaml
 .DS_Store
+schema_validation_reports
+/net-commander
+.env
+.playwright-cli/
+inventory/mylab/
