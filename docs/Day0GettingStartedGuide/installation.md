@@ -51,10 +51,7 @@ Before using these Ansible workflows, ensure that you have the following prerequ
 ```bash
 git clone https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
 ```
-Cloning a released version:
-```bash
-git clone --depth 1 --branch v2.3.7.6.1 https://github.com/cisco-en-programmability/catalyst-center-ansible-iac.git
-```
+
 
 ## Navigate to the project directory:    
 ```bash
@@ -78,7 +75,7 @@ ansible-galaxy collection install cisco.catalystcenter --force
 ```
 ### Sppecific version
 ```bash
-ansible-galaxy collection install cisco.catalystcenter:==6.29.0 --force
+ansible-galaxy collection install cisco.catalystcenter --force
 ```
 
 ### Install latest devel version from  GitHub abd build
@@ -208,6 +205,4 @@ If that's the case try setting this environment variable:
 ```bash
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 ```
-
-
 
