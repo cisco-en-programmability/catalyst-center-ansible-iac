@@ -145,9 +145,6 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 # Compatibility Matrix
 | Deployed Catalyst Center Version   | Catalyst Center Version in Input   | Ansible Galaxy collection (cisco.catalystcenter)Version    | Python SDK (catalystcentersdk) Version    |
 | :--------------------------------: | :--------------------------------: | :-----------------------: | :-------------------: |
-| 2.3.5.3 | 2.3.5.3   | latest   | latest |
-| 2.3.5.5 | 2.3.5.3   | latest   | latest |
-| 2.3.5.6 | 2.3.5.3   | latest   | latest |
 | 2.3.7.6 | 2.3.7.6   | latest   | latest |
 | 2.3.7.7 | 2.3.7.6   | latest   | latest |
 | 2.3.7.9 | 2.3.7.9   | latest   | latest |
