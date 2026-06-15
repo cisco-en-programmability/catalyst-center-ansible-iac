@@ -1,22 +1,25 @@
+---
+catalyst_center_version: 2.3.7.9
 pnp_details:
   network_devices:
     - device_info:
-      - serial_number: FOX2639PAYD
-        hostname: SJ-EWLC-1
-        state: Unclaimed
-        pid: C9800-40-K9
-        authorize: true
-      - serial_number: FXS2502Q2HC
-        hostname: SF-BN-2-ASR.cisco.local
-        state: Unclaimed
-        pid: ASR1001-X
-        authorize: true
-      - serial_number: FJC271923AK
-        hostname: NY-EN-9300
-        state: Unclaimed
-        pid: C9300-48UXM
-        authorize: false
-  
+        - serial_number: FOX2639PAYD
+          hostname: SJ-EWLC-1
+          state: Unclaimed
+          pid: C9800-40-K9
+          authorize: true
+        - serial_number: FXS2502Q2HC
+          hostname: SF-BN-2-ASR.cisco.local
+          state: Unclaimed
+          pid: ASR1001-X
+          authorize: false
+        - serial_number: FJC271925Q1
+          hostname: NY-EN-9300-1
+          state: Unclaimed
+          pid: C9300-48UXM
+          is_stack_device: true
+          authorize: false
+
   claim_access_points:
     - site_name: Global/USA/New York/NY_BLD2/FLOOR1
       rf_profile: HIGH
@@ -41,20 +44,23 @@ pnp_details:
           state: Unclaimed
           pid: C9300-48T
 
-  claim_switching_devices:
-    - site_name:  Global/USA/New York/NY_BLD1
+    - site_name: Global/USA/SAN JOSE/BLD23
       project_name: Onboarding Configuration
       template_name: PnP-Devices-SW
-      image_name: cat9k_iosxe.17.12.02.SPA.bin
+      image_name: cat9k_iosxe.17.17.01prd6.SPA.bin
       template_params:
         PNP_VLAN_ID: 2005
         LOOPBACK_IP: 204.1.2.2
       device_info:
         - serial_number: FJC271925Q1
-          hostname: NY-EN-9300
+          hostname: NY-EN-9300-1
           state: Unclaimed
           pid: C9300-48UXM
+          is_stack_device: true
       pnp_type: StackSwitch
+      license_level: network-advantage
+      top_of_stack_serial_number: FJC271925Q1
+      cabling_scheme: 1B
 
   claim_wireless_controllers:
     - site_name: Global/USA/SAN JOSE/SJ_BLD23
@@ -119,3 +125,6 @@ pnp_details:
           hostname: SF-BN-2-ASR.cisco.local
           state: Unclaimed
           pid: ASR1001-X
+          is_sudi_required: true
+          user_sudi_serial_nos:
+            - FXS2502Q2HD

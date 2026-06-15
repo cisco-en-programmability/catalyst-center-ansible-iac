@@ -67,8 +67,57 @@ jinjatemplate_file: str(required=False)
 network_devices_type:
   device_info: list(include('device_info_type'), required=True)
 
-device_info_type:
-  serial_number: str(required=False)
+delete_claim_wireless_controllers_type:
+  site_name: str(required=False)
+  project_name: str(required=False)
+  image_name: str(required=False)
+  golden_image: bool(required=False)
+  template_name: str(required=False)
+  template_params: any(any, required=False)
+  device_info: list(include('delete_device_info_type'), required=True)
+  pnp_type: enum('CatalystWLC', required=False)
+  static_ip: str(required=False)
+  subnet_mask: str(required=False)
+  gateway: str(required=False)
+  ip_interface_name: str(required=False)
+  vlan_id: any(str, int, required=False)
+
+delete_claim_switching_device_type:
+  site_name: str(required=False)
+  project_name: str(required=False)
+  template_name: str(required=False)
+  template_params: any(any, required=False)
+  image_name: str(required=False)
+  golden_image: bool(required=False)
+  device_info: list(include('delete_device_info_type'), required=True)
+  pnp_type: enum('Default', 'StackSwitch', required=False)
+  license_level: str(required=False)
+  top_of_stack_serial_number: str(required=False)
+  cabling_scheme: enum('1A', '1B', required=False)
+
+delete_claim_router_device_type:
+  site_name: str(required=False)
+  project_name: str(required=False)
+  template_name: str(required=False)
+  template_params: any(any, required=False)
+  image_name: str(required=False)
+  golden_image: bool(required=False)
+  device_info: list(include('delete_device_info_type'), required=True)
+  pnp_type: enum('Default', required=False)
+  license_level: str(required=False)
+  top_of_stack_serial_number: str(required=False)
+  cabling_scheme: enum('1A', '1B', required=False)
+
+delete_claim_access_points_type:
+  site_name: str(required=False)
+  project_name: str(required=False)
+  template_name: str(required=False)
+  rf_profile: enum('HIGH', 'LOW', 'TYPICAL', required=False)
+  device_info: list(include('delete_device_info_type'), required=True)
+  pnp_type: enum('AccessPoint', required=False)
+
+delete_device_info_type:
+  serial_number: str(required=True)
   hostname: str(required=False)
   state: enum('Unclaimed', 'Claimed', 'Provisioned',  'Error', required=False)
   pid: str(required=False)

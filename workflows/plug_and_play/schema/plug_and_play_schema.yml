@@ -48,10 +48,12 @@
 # For detailed information on each parameter, refer to the schema definition below.
 
 pnp_details:
+  network_devices: list(include('network_devices_type'), min=0, max=10000, required=False)
+  add_network_device: list(include('network_devices_type'), min=0, max=10000, required=False)
+  add_bulk_network_devices: list(include('network_devices_type'), min=0, max=10000, required=False)
   claim_wireless_controllers: list(include('claim_wireless_controllers_type'), min=0, max=10000, required=False)
   claim_switching_devices: list(include('claim_switching_device_type'), min=0, max=10000, required=False)
   claim_router_devices: list(include('claim_router_device_type'), min=0, max=10000, required=False)
-  network_devices: list(include('network_devices_type'), min=0, max=10000, required=False)
   claim_access_points: list(include('claim_access_points_type'), min=0, max=10000, required=False)
 catalyst_center_version: str(required=False)
 catalyst_center_verify: bool(required=False)
@@ -67,10 +69,10 @@ passwords_file: str(required=False)
 jinjatemplate_file: str(required=False)
 ---
 claim_wireless_controllers_type:
-  site_name: str(required=False)
+  site_name: str(required=True)
   project_name: str(required=False)
   image_name: str(required=False)
-  golden_image : bool(required=False)
+  golden_image: bool(required=False)
   template_name: str(required=False)
   template_params: any(any, required=False)
   state: enum('merged', 'deleted', required=False)
@@ -84,7 +86,7 @@ claim_wireless_controllers_type:
   vlan_id: any(str, int, required=False)
 
 claim_switching_device_type:
-  site_name: str(required=False)
+  site_name: str(required=True)
   project_name: str(required=False)
   template_name: str(required=False)
   template_params: any(any, required=False)
@@ -93,9 +95,12 @@ claim_switching_device_type:
   state: enum('merged', 'deleted', required=False)
   device_info: list(include('device_info_type'), required=True)
   pnp_type: enum('Default', 'StackSwitch', required=False)
+  license_level: str(required=False)
+  top_of_stack_serial_number: str(required=False)
+  cabling_scheme: enum('1A', '1B', required=False)
 
 claim_router_device_type:
-  site_name: str(required=False)
+  site_name: str(required=True)
   project_name: str(required=False)
   template_name: str(required=False)
   template_params: any(any, required=False)
@@ -104,14 +109,19 @@ claim_router_device_type:
   state: enum('merged', 'deleted', required=False)
   device_info: list(include('device_info_type'), required=True)
   pnp_type: enum('Default', required=False)
+  license_level: str(required=False)
+  top_of_stack_serial_number: str(required=False)
+  cabling_scheme: enum('1A', '1B', required=False)
 
 device_info_type:
   serial_number: str(required=True)
   hostname: str(required=False)
-  state: enum('Unclaimed', 'Claimed', 'Provisioned',  'Error', required=False)
-  pid: str(required=False)
+  state: enum('Unclaimed', 'Claimed', 'Provisioned', 'Error', required=False)
+  pid: str(required=True)
   authorize: bool(required=False)
   is_sudi_required: bool(required=False)
+  user_sudi_serial_nos: list(str(), required=False)
+  is_stack_device: bool(required=False)
 
 network_devices_type:
   device_info: list(include('device_info_type'), required=True)

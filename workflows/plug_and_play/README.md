@@ -119,25 +119,31 @@ Each item in the lists above (e.g., inside `claim_switching_devices`) typically 
 
 | **Parameter** | **Type** | **Required** | **Description** |
 | :--- | :--- | :--- | :--- |
-| `site_name` | String | Yes (for Claim) | The full hierarchy path of the site (e.g., `Global/USA/San Jose`). |
-| `project_name` | String | No | The project name for configuration templates. |
-| `template_name` | String | No | The name of the template to apply. |
-| `image_name` | String | No | The name of the software image to provision. |
-| `template_params` | Dictionary | No | Variables required by the Jinja2 template (e.g., VLAN ID, IP). |
-| `device_info` | List | Yes | A list of specific devices to apply this configuration to. |
+| `serial_number` | string | Yes | Required for merged and delete workflows |
+| `pid` | string | Yes for merged | Required by the module for add/claim operations |
+| `hostname` | string | No | Applied during claim/update flows |
+| `state` | string | No | Common values: `Unclaimed`, `Claimed`, `Provisioned`, `Error` |
+| `authorize` | bool | No | Auto-authorize when device enters `Pending Authorization` on Catalyst Center `2.3.7.9+` |
+| `is_sudi_required` | bool | No | Enables SUDI authorization handling |
+| `user_sudi_serial_nos` | list[string] | Conditionally required | Required when `is_sudi_required: true` |
+| `is_stack_device` | bool | No | Marks stack members in switch / stack workflows |
 
-#### Device Info Object
+### Claim-Level Parameters
 
-The `device_info` list contains the specific identity of the physical devices.
-
-| **Parameter** | **Type** | **Required** | **Description** |
-| :--- | :--- | :--- | :--- |
-| `serial_number` | String | Yes | The serial number of the device. |
-| `pid` | String | No | The Product ID of the device. |
-| `hostname` | String | No | The hostname to assign or identify the device. |
-| `state` | Enum | No | Expected state (e.g., `Unclaimed`, `Claimed`, `Provisioned`). |
-| `authorize` | Boolean | No | **(v2.3.7.9+)** **Galaxy version 6.42.0+** Auto-authorize device if in `Pending Authorization` state. |
-
+| Parameter | Applies To | Notes |
+| :--- | :--- | :--- |
+| `site_name` | All claim buckets | Required for claim flows |
+| `project_name` | Routers, switches, WLCs | Defaults to `Onboarding Configuration` in the module |
+| `template_name` | Routers, switches, WLCs | Optional |
+| `template_params` | Routers, switches, WLCs | Optional dict |
+| `image_name` | Routers, switches, WLCs | Optional |
+| `golden_image` | Routers, switches, WLCs | Tags the selected image as golden |
+| `pnp_type` | Claim buckets | Common values: `Default`, `StackSwitch`, `CatalystWLC`, `AccessPoint` |
+| `license_level` | Switch / router claim | Primarily relevant to Catalyst switch / stack claims |
+| `top_of_stack_serial_number` | Stack switch claim | Used for stack renumbering |
+| `cabling_scheme` | Stack switch claim | Allowed values: `1A`, `1B` |
+| `rf_profile` | Access point claim | Required for AP claim |
+| `static_ip`, `subnet_mask`, `gateway`, `ip_interface_name`, `vlan_id` | WLC claim | Required by the module for `CatalystWLC` claims |
 
 ## Example Input File
 
@@ -309,7 +315,7 @@ pnp_details:
           state: Unclaimed
           pid: C9300-48UXM
         - serial_number: FOX2639PAYD
-          hostname: SJ-EWLC-1.cisco.local
+          hostname: SJ-EWLC-1
           state: Unclaimed
           pid: C9800-40-K9
 ```
@@ -430,6 +436,7 @@ pnp_details:
         - serial_number: FOX2639PAYD
           hostname: SJ-EWLC-1.cisco.local
           state: Unclaimed
+	  is_stack_device: true
           pid: C9800-40-K9
           authorize: false
 ```
@@ -523,10 +530,10 @@ This task demonstrates how to add and claim a Cisco Catalyst 9K switch using the
 catalyst_center_version: 2.3.7.6
 pnp_details:
   claim_switching_devices:
-    - site_name: Global/USA/SAN JOSE/SJ_BLD21
+    - site_name: Global/USA/SAN JOSE/BLD23
       project_name: Onboarding Configuration
       template_name: PnP-Devices-SW
-      image_name: cat9k_iosxe.17.12.04.SPA.bin
+      image_name: cat9k_iosxe.17.17.01prd6.SPA.bin
       template_params:
         PNP_VLAN_ID: 2000
         LOOPBACK_IP: 204.1.2.100
@@ -586,7 +593,11 @@ pnp_details:
           hostname: NY-EN-9300
           state: Unclaimed
           pid: C9300-48UXM
+          is_stack_device: true
       pnp_type: StackSwitch
+      license_level: network-advantage
+      top_of_stack_serial_number: FJC271925Q1
+      cabling_scheme: 1B
 ```
 
 Step 1: Execute the PnP playbook
@@ -637,22 +648,24 @@ In the Cisco Catalyst Center UI, onboarding a Cisco Embedded Wireless Controller
 **Example: Input (YAML)**
 ```bash
 ---
-catalyst_center_version: 2.3.7.6
+catalyst_center_version: 2.3.7.9
 pnp_details:
   claim_wireless_controllers:
     - site_name: Global/USA/SAN JOSE/SJ_BLD23
       project_name: Onboarding Configuration
       image_name: C9800-40-universalk9_wlc.17.12.02.SPA.bin
+      golden_image: true
       template_name: PnP-Devices_SJ-EWLC
       template_params:
         MGMT_IP: 10.22.40.244
         MGMT_SUBNET: 255.255.255.0
         NTP_SERVER_IP: 171.68.38.66
       device_info:
-        - serial_number: FOX2639PAYD
+        - serial_number: FOX2639PAY7
           hostname: SJ-EWLC-1
           state: Unclaimed
           pid: C9800-40-K9
+          authorize: true
       pnp_type: CatalystWLC
       static_ip: 204.192.50.200
       subnet_mask: 255.255.255.0
@@ -870,3 +883,11 @@ Use either of these forms:
 - Relative to the playbook: `../vars/catalyst_center_pnp_vars.yml`
 - Fully resolved from the repo root: `${PWD}/workflows/plug_and_play/vars/catalyst_center_pnp_vars.yml`
 
+For the delete workflow:
+
+- Relative to the playbook: `../vars/delete_catalyst_center_pnp_vars.yml`
+- Fully resolved from the repo root: `${PWD}/workflows/plug_and_play/vars/delete_catalyst_center_pnp_vars.yml`
+
+## References
+
+- Module implementation reviewed for this workflow: [pnp_workflow_manager.py](/Users/pawansi/workspace/ANSIBLE/catalystcenter-ansible-dev/plugins/modules/pnp_workflow_manager.py:11)
