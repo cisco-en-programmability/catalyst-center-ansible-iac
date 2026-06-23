@@ -1,0 +1,51 @@
+name: Ansible Sanity
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ansible-core-version:
+          - "2.16.*"
+          - "2.19.*"
+
+    name: ansible-core ${{ matrix.ansible-core-version }} / Python 3.12
+
+    steps:
+      - name: Check out collection
+        uses: actions/checkout@v4
+        with:
+          path: ansible_collections/cisco/catalyst_center_iac
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install OS dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Install ansible-core and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "ansible-core==${{ matrix.ansible-core-version }}" virtualenv
+
+      - name: Run ansible-test sanity
+        working-directory: ansible_collections/cisco/catalyst_center_iac
+        env:
+          ANSIBLE_HOME: ${{ runner.temp }}/ansible-home
+          ANSIBLE_LOCAL_TEMP: ${{ runner.temp }}/ansible-local
+        run: |
+          ansible --version
+          ansible-test sanity --requirements --python 3.12

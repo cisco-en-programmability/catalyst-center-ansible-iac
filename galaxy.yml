@@ -1,0 +1,39 @@
+---
+namespace: cisco
+name: catalyst_center_iac
+version: 1.0.0
+readme: README.md
+authors:
+  - Cisco Systems Inc. <ansible-catalyst-center@cisco.com>
+description: >-
+  Cisco-validated Ansible playbooks for Infrastructure as Code (IaC) automation
+  of Cisco Catalyst Center configurations. Covers Day 0, Day 1, Day 2, and Day N
+  operations including site hierarchy, device provisioning, SD-Access fabric,
+  SWIM, assurance, and more.
+license:
+  - Apache-2.0
+license_file: LICENSE
+tags:
+  - cisco
+  - catalyst_center
+  - networking
+  - automation
+  - infrastructure_as_code
+  - dnac
+  - sda
+  - wireless
+  - provisioning
+repository: https://github.com/cisco-en-programmability/catalyst-center-ansible-iac
+homepage: https://github.com/cisco-en-programmability/catalyst-center-ansible-iac
+issues: https://github.com/cisco-en-programmability/catalyst-center-ansible-iac/issues
+dependencies:
+  cisco.catalystcenter: ">=6.29.0"
+build_ignore:
+  - "*.tar.gz"
+  - ".gitignore"
+  - "host_inventory_*"
+  - "ansible_vault_encrypted_inputs/*"
+  - "venv/"
+  - ".env"
+  - "schema_validation_reports"
+  - "net-commander"
