@@ -106,6 +106,7 @@ Enhance scalability and flexibility with Jinja-based templates support. These te
 - [Catalyst Center Reports Management and Scheduling](https://github.com/cisco-en-programmability/catalyst-center-ansible-iac/blob/main/workflows/reports/README.md) <mark><span style="background-color: lightblue; color: white; padding: 0.2em 0.5em; border-radius: 3px;">**New, Supported>=2.3.7.9**</span></mark>
 
 ## Migration Usecases
+- [SDA Fabric Device Onboarding] (https://github.com/cisco-en-programmability/catalyst-center-ansible-iac/blob/main/workflows/sda_fabric_discover_and_onboard_fabric_devices/README.md)  <mark><span style="background-color: lightblue; color: white; padding: 0.2em 0.5em; border-radius: 3px;">**New, Supported>=2.3.7.9**</span></mark>
 - [SDA Port Assignment Migration](https://github.com/cisco-en-programmability/catalyst-center-ansible-iac/blob/main/workflows/sda_port_assignment_migration/README.md) <mark><span style="background-color: lightblue; color: white; padding: 0.2em 0.5em; border-radius: 3px;">**New, Supported>=2.3.7.9**</span></mark>
 - [SDA Device Removal and Unprovision](https://github.com/cisco-en-programmability/catalyst-center-ansible-iac/blob/main/workflows/sda_device_removal_and_unprovision/README.md) <mark><span style="background-color: lightblue; color: white; padding: 0.2em 0.5em; border-radius: 3px;">**New, Supported>=2.3.7.6**</span></mark>
 
