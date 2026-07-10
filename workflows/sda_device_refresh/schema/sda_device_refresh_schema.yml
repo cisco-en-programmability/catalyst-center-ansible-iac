@@ -1,0 +1,128 @@
+# Yamale schema for SDA device refresh workflow
+#
+# This workflow:
+# 1. Resolves multiple source devices from inventory within one refresh job.
+# 2. Reads source provision and fabric configuration from Catalyst Center in bulk.
+# 3. Optionally LAN automates multiple replacement devices in one shared job.
+# 4. Applies source inventory roles, site provisioning, and fabric role/settings to replacements in bulk.
+# 5. Migrates host port onboarding per source/replacement pair.
+# 6. Removes the source devices from the fabric and inventory after successful migration.
+
+state: enum('merged', required=False)
+generated_config_dir: str(required=False)
+cleanup_generated_files: bool(required=False, default=True)
+sda_device_refresh: include('workflow_root', required=True)
+
+catalyst_center_version: str(required=False)
+catalyst_center_verify: bool(required=False)
+catalyst_center_api_task_timeout: int(required=False, default=1200)
+catalyst_center_debug: bool(required=False, default=False)
+catalyst_center_log: bool(required=False, default=False)
+catalyst_center_log_append: bool(required=False, default=True)
+catalyst_center_log_file_path: str(required=False, default='dnac.log')
+catalyst_center_log_level: enum('CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', required=False)
+catalyst_center_config_verify: bool(required=False, default=False)
+catalyst_center_task_poll_interval: int(required=False)
+inventory_device_ready_retry_time: int(required=False, default=400)
+inventory_device_ready_retry_interval: int(required=False, default=10)
+fabric_device_ready_timeout: int(required=False, default=400)
+fabric_device_ready_retries: int(required=False, default=40)
+fabric_device_ready_interval: int(required=False, default=10)
+
+---
+workflow_root:
+  jobs: list(include('refresh_job_type'), min=1, max=500, required=True)
+
+refresh_job_type:
+  job_name: str(required=False)
+  fabric_site_name_hierarchy: str(required=True)
+  lan_automation: include('refresh_lan_automation_type', required=False)
+  device_refreshes: list(include('refresh_pair_type'), min=1, max=100, required=True)
+
+refresh_pair_type:
+  refresh_name: str(required=False)
+  source_device: include('device_identifier_type', required=True)
+  replacement_device: include('replacement_device_type', required=True)
+  port_migration: include('port_migration_type', required=False)
+  overrides: include('override_type', required=False)
+  cleanup_source_device: bool(required=False)
+  device_collection_status_check: bool(required=False)
+
+device_identifier_type:
+  ip_address: str(required=False)
+  serial_number: str(required=False)
+  hostname: str(required=False)
+
+replacement_device_type:
+  onboarding_method: enum('managed', 'lan_automation', required=True)
+  ip_address: str(required=False)
+  serial_number: str(required=False)
+  hostname: str(required=False)
+  management_ip_address: str(required=False)
+  expected_hostname: str(required=False)
+
+refresh_lan_automation_type:
+  seed_device_management_ip_address: str(required=True)
+  seed_peer_device_management_ip_address: str(required=False)
+  seed_device_interface_names: list(str(), min=1, max=100, required=True)
+  ip_pools: list(include('lan_auto_ip_pool_type'), min=1, max=100, required=True)
+  multicast_enabled: bool(required=False)
+  redistribute_isis_to_bgp: bool(required=False)
+  host_name_prefix: str(required=False)
+  isis_domain_pwd: str(required=False)
+  discovery_level: int(min=1, max=5, required=False)
+  discovery_timeout: int(required=False)
+  launch_and_wait: bool(required=False)
+  pnp_authorization: bool(required=False)
+  device_serial_number_authorization: list(str(), min=0, max=100, required=False)
+
+lan_auto_ip_pool_type:
+  ip_pool_name: str(required=True)
+  ip_pool_role: enum('MAIN_POOL', 'PHYSICAL_LINK_POOL', required=True)
+
+port_migration_type:
+  interface_mappings: list(include('interface_mapping_type'), min=1, required=False)
+
+interface_mapping_type:
+  source_interface_name: str(required=True)
+  destination_interface_name: str(required=True)
+
+override_type:
+  inventory_role: enum('ACCESS', 'CORE', 'DISTRIBUTION', 'BORDER_ROUTER', 'UNKNOWN', required=False)
+  site_name_hierarchy: str(required=False)
+  replacement_hostname: str(required=False)
+  device_roles: list(enum('CONTROL_PLANE_NODE', 'EDGE_NODE', 'BORDER_NODE', 'WIRELESS_CONTROLLER_NODE', 'EXTENDED_NODE'), min=1, max=5, required=False)
+  borders_settings: include('fabric_borders_settings_type', required=False)
+
+fabric_borders_settings_type:
+  layer3_settings: include('fabric_layer3_settings_type', required=False)
+  layer2_handoff: list(include('fabric_layer2_handoff_type'), min=0, max=100, required=False)
+  layer3_handoff_ip_transit: list(include('fabric_l3_ip_transit_type'), min=0, max=100, required=False)
+  layer3_handoff_sda_transit: include('fabric_l3_sda_transit_type', required=False)
+
+fabric_layer3_settings_type:
+  local_autonomous_system_number: any(str(), int(), required=True)
+  is_default_exit: bool(required=False)
+  import_external_routes: bool(required=False)
+  border_priority: int(min=1, max=9, required=False)
+  prepend_autonomous_system_count: int(min=0, max=10, required=False)
+
+fabric_layer2_handoff_type:
+  interface_name: str(required=True)
+  internal_vlan_id: int(required=True)
+  external_vlan_id: int(required=True)
+
+fabric_l3_ip_transit_type:
+  transit_network_name: str(required=True)
+  interface_name: str(required=True)
+  external_connectivity_ip_pool_name: str(required=True)
+  virtual_network_name: str(required=False)
+  vlan_id: int(required=False)
+  tcp_mss_adjustment: int(required=False)
+
+fabric_l3_sda_transit_type:
+  transit_network_name: str(required=True)
+  affinity_id_prime: int(required=False)
+  affinity_id_decider: int(required=False)
+  connected_to_internet: bool(required=False)
+  is_multicast_over_transit_enabled: bool(required=False)

@@ -1,0 +1,158 @@
+---
+- name: Refresh SDA devices using brownfield Catalyst Center workflows
+  hosts: catalyst_center_hosts
+  connection: local
+  gather_facts: no
+
+  vars:
+    generated_config_dir: "{{ generated_config_dir | default('/tmp/sda_device_refresh') }}"
+    catalyst_center_login: &catalyst_center_login
+      catalystcenter_host: "{{ catalyst_center_host | default(catalystcenter_host) }}"
+      catalystcenter_username: "{{ catalyst_center_username | default(catalystcenter_username) }}"
+      catalystcenter_password: "{{ catalyst_center_password | default(catalystcenter_password) }}"
+      catalystcenter_version: "{{ catalyst_center_version | default(catalystcenter_version) }}"
+      catalystcenter_port: "{{ catalyst_center_port | default(443) }}"
+      catalystcenter_verify: "{{ catalyst_center_verify | default(catalystcenter_verify) }}"
+      config_verify: "{{ catalyst_center_config_verify | default(False) }}"
+      catalystcenter_debug: "{{ catalyst_center_debug | default(False) }}"
+      catalystcenter_log: "{{ catalyst_center_log | default(False) }}"
+      catalystcenter_log_level: "{{ catalyst_center_log_level | default('INFO') }}"
+      catalystcenter_log_file_path: "{{ catalyst_center_log_file_path | default(omit) }}"
+      catalystcenter_log_append: "{{ catalyst_center_log_append | default(False) }}"
+      catalystcenter_api_task_timeout: "{{ catalyst_center_api_task_timeout | default(1200) }}"
+
+  tasks:
+    - name: Print input source
+      ansible.builtin.debug:
+        msg: >-
+          {{
+            ("Input source: vars file " ~ VARS_FILE_PATH)
+            if (VARS_FILE_PATH is defined and VARS_FILE_PATH | length > 0)
+            else
+            "Input source: inventory variables (VARS_FILE_PATH not provided)"
+          }}
+
+    - name: Load input variables from vars file when provided
+      ansible.builtin.include_vars:
+        file: "{{ VARS_FILE_PATH }}"
+      when:
+        - VARS_FILE_PATH is defined
+        - VARS_FILE_PATH | length > 0
+
+    - name: Validate refresh job list
+      ansible.builtin.fail:
+        msg: >-
+          sda_device_refresh.jobs must contain at least one device refresh job.
+          Check your vars file or inventory variables.
+      when:
+        - sda_device_refresh is not defined
+          or sda_device_refresh.jobs is not defined
+          or sda_device_refresh.jobs | length == 0
+
+    - name: Ensure generated config directory exists
+      ansible.builtin.file:
+        path: "{{ generated_config_dir }}"
+        state: directory
+        mode: "0755"
+      changed_when: false
+
+    - name: SDA device refresh workflow start time
+      ansible.builtin.set_fact:
+        long_op_start: "{{ now() }}"
+
+    - name: Process each SDA refresh job
+      ansible.builtin.include_tasks: ./tasks/refresh_single_device.yml
+      loop: "{{ sda_device_refresh.jobs }}"
+      loop_control:
+        loop_var: refresh_job
+        label: >-
+          {{
+            refresh_job.job_name
+            | default(refresh_job.fabric_site_name_hierarchy)
+          }}
+
+    - name: Print raw refresh results
+      ansible.builtin.debug:
+        var: sda_device_refresh_results
+
+    - name: Build refresh workflow totals
+      ansible.builtin.set_fact:
+        sda_device_refresh_totals:
+          total_jobs: "{{ sda_device_refresh_results | default([]) | length }}"
+          successful_jobs: "{{ sda_device_refresh_results | default([]) | selectattr('status', 'equalto', 'success') | list | length }}"
+          failed_jobs: "{{ sda_device_refresh_results | default([]) | selectattr('status', 'equalto', 'failed') | list | length }}"
+          lan_automation_jobs: "{{ sda_device_refresh_results | default([]) | selectattr('lan_automation_executed', 'equalto', true) | list | length }}"
+          total_pairs: "{{ sda_device_refresh_results | default([]) | map(attribute='pair_count') | list | sum(start=0) }}"
+          successful_pairs: "{{ sda_device_refresh_results | default([]) | map(attribute='successful_pair_count') | list | sum(start=0) }}"
+          failed_pairs: "{{ sda_device_refresh_results | default([]) | map(attribute='failed_pair_count') | list | sum(start=0) }}"
+          lan_automation_pairs: "{{ sda_device_refresh_results | default([]) | map(attribute='lan_automation_pair_count') | list | sum(start=0) }}"
+          inventory_role_changes: "{{ sda_device_refresh_results | default([]) | map(attribute='inventory_role_changed') | map('int') | list | sum(start=0) }}"
+          provision_changes: "{{ sda_device_refresh_results | default([]) | map(attribute='provision_changed') | map('int') | list | sum(start=0) }}"
+          fabric_changes: "{{ sda_device_refresh_results | default([]) | map(attribute='fabric_changed') | map('int') | list | sum(start=0) }}"
+          interfaces_moved: "{{ sda_device_refresh_results | default([]) | map(attribute='interfaces_moved_count') | list | sum(start=0) }}"
+          cleanup_requested_pairs: "{{ sda_device_refresh_results | default([]) | map(attribute='cleanup_requested_count') | list | sum(start=0) }}"
+          cleanup_success_pairs: "{{ sda_device_refresh_results | default([]) | map(attribute='cleanup_success_count') | list | sum(start=0) }}"
+
+    - name: Print refresh workflow summary
+      ansible.builtin.debug:
+        msg: |
+          SDA Device Refresh Summary
+          - Jobs processed: {{ sda_device_refresh_totals.total_jobs }}
+          - Successful jobs: {{ sda_device_refresh_totals.successful_jobs }}
+          - Failed jobs: {{ sda_device_refresh_totals.failed_jobs }}
+          - Device refresh pairs: {{ sda_device_refresh_totals.total_pairs }}
+          - Successful pairs: {{ sda_device_refresh_totals.successful_pairs }}
+          - Failed pairs: {{ sda_device_refresh_totals.failed_pairs }}
+          - Jobs with LAN automation: {{ sda_device_refresh_totals.lan_automation_jobs }}
+          - LAN automated pairs: {{ sda_device_refresh_totals.lan_automation_pairs }}
+          - Inventory role changes: {{ sda_device_refresh_totals.inventory_role_changes }}
+          - Provision changes: {{ sda_device_refresh_totals.provision_changes }}
+          - Fabric changes: {{ sda_device_refresh_totals.fabric_changes }}
+          - Interfaces migrated: {{ sda_device_refresh_totals.interfaces_moved }}
+          - Cleanup requested pairs: {{ sda_device_refresh_totals.cleanup_requested_pairs }}
+          - Cleanup successful pairs: {{ sda_device_refresh_totals.cleanup_success_pairs }}
+
+    - name: Print per-job refresh summary
+      ansible.builtin.debug:
+        msg: |
+          ------------------------------------------------------------
+          Refresh Job {{ refresh_index + 1 }}
+          Job Name               : {{ item.job_name }}
+          Fabric Site            : {{ item.fabric_site_name_hierarchy }}
+          Device Pairs           : {{ item.pair_count }}
+          Successful Pairs       : {{ item.successful_pair_count }}
+          Failed Pairs           : {{ item.failed_pair_count }}
+          LAN Automation Used    : {{ item.lan_automation_executed }}
+          LAN Automated Pairs    : {{ item.lan_automation_pair_count }}
+          Interfaces Migrated    : {{ item.interfaces_moved_count | default(0) }}
+          Cleanup Requested      : {{ item.cleanup_requested_count | default(0) }}
+          Cleanup Successful     : {{ item.cleanup_success_count | default(0) }}
+          Final Status           : {{ item.status }}
+      loop: "{{ sda_device_refresh_results | default([]) }}"
+      loop_control:
+        index_var: refresh_index
+        label: "{{ item.job_name }}"
+
+    - name: Fail workflow when one or more refresh jobs failed
+      ansible.builtin.fail:
+        msg: >-
+          SDA device refresh workflow completed with
+          {{ sda_device_refresh_totals.failed_jobs }} failed job(s).
+          Review sda_device_refresh_results for details.
+      when: sda_device_refresh_totals.failed_jobs | int > 0
+
+    - name: SDA device refresh workflow end time
+      ansible.builtin.set_fact:
+        long_op_end: "{{ now() }}"
+
+    - name: Print refresh workflow execution time
+      ansible.builtin.debug:
+        msg: "Start: {{ long_op_start }}, End: {{ long_op_end }}"
+
+  post_tasks:
+    - name: Get python path
+      ansible.builtin.command: which python
+      register: ansible_play_path
+      delegate_to: catalyst_center_hosts
+      connection: local
+      changed_when: false

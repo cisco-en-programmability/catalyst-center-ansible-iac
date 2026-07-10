@@ -1,0 +1,5 @@
+{
+  "summary": "Composite SDA device refresh workflow that handles multiple source-to-replacement refresh pairs per job, batches onboarding stages where possible, migrates host onboarding, and removes old devices.",
+  "status": "active",
+  "managed_by": "cisco"
+}

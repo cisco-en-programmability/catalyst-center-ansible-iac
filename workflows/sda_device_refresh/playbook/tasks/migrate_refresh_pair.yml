@@ -1,0 +1,78 @@
+---
+- name: Capture migration result baseline for current pair
+  ansible.builtin.set_fact:
+    refresh_pair_migration_result_index: "{{ port_assignment_migration_results | default([]) | length }}"
+
+- block:
+    - name: Migrate host onboarding for current refresh pair
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/../../sda_port_assignment_migration/playbook/tasks/migrate_single_port_assignment.yml"
+      vars:
+        migration_item:
+          fabric_site: "{{ refresh_job.fabric_site_name_hierarchy }}"
+          source_device_ip: "{{ refresh_pair_context.source_management_ip_address }}"
+          destination_device_ip: "{{ refresh_pair_context.replacement_resolved_device.managementIpAddress }}"
+          interface_mappings: "{{ refresh_pair_context.port_migration.interface_mappings | default([]) }}"
+
+    - name: Capture migration result for current refresh pair
+      ansible.builtin.set_fact:
+        refresh_pair_latest_migration_result: >-
+          {{
+            (port_assignment_migration_results | default([]))[refresh_pair_migration_result_index | int]
+            | default({})
+          }}
+
+    - name: Record successful migration result for current refresh pair
+      ansible.builtin.set_fact:
+        refresh_job_pair_results: >-
+          {{
+            (refresh_job_pair_results | default([])) + [
+              {
+                'pair_key': refresh_pair_context.pair_key,
+                'refresh_name': refresh_pair_context.refresh_name,
+                'pair_display_name': refresh_pair_context.pair_display_name,
+                'source_device_identifier': refresh_pair_context.source_identifier_value,
+                'replacement_device_identifier': refresh_pair_context.replacement_identifier_value,
+                'source_device_ip': refresh_pair_context.source_management_ip_address,
+                'replacement_device_ip': refresh_pair_context.replacement_resolved_device.managementIpAddress | default(''),
+                'source_device_hostname': refresh_pair_context.source_hostname | default(''),
+                'replacement_device_hostname': refresh_pair_context.replacement_resolved_device.hostname | default(refresh_pair_context.effective_replacement_hostname | default('')),
+                'replacement_onboarding_method': refresh_pair_context.replacement_onboarding_method,
+                'migration_succeeded': true,
+                'interfaces_moved_count': refresh_pair_latest_migration_result.interfaces_moved_count | default(0),
+                'interfaces_moved': refresh_pair_latest_migration_result.interfaces_moved | default([]),
+                'cleanup_requested': refresh_pair_context.cleanup_source_device | bool,
+                'cleanup_status': 'pending' if (refresh_pair_context.cleanup_source_device | bool) else 'skipped',
+                'device_collection_status_check': refresh_pair_context.device_collection_status_check,
+                'status': 'success' if not (refresh_pair_context.cleanup_source_device | bool) else 'cleanup_pending'
+              }
+            ]
+          }}
+  rescue:
+    - name: Record failed migration result for current refresh pair
+      ansible.builtin.set_fact:
+        refresh_job_pair_results: >-
+          {{
+            (refresh_job_pair_results | default([])) + [
+              {
+                'pair_key': refresh_pair_context.pair_key,
+                'refresh_name': refresh_pair_context.refresh_name,
+                'pair_display_name': refresh_pair_context.pair_display_name,
+                'source_device_identifier': refresh_pair_context.source_identifier_value,
+                'replacement_device_identifier': refresh_pair_context.replacement_identifier_value,
+                'source_device_ip': refresh_pair_context.source_management_ip_address,
+                'replacement_device_ip': refresh_pair_context.replacement_resolved_device.managementIpAddress | default(''),
+                'source_device_hostname': refresh_pair_context.source_hostname | default(''),
+                'replacement_device_hostname': refresh_pair_context.replacement_resolved_device.hostname | default(refresh_pair_context.effective_replacement_hostname | default('')),
+                'replacement_onboarding_method': refresh_pair_context.replacement_onboarding_method,
+                'migration_succeeded': false,
+                'interfaces_moved_count': 0,
+                'interfaces_moved': [],
+                'cleanup_requested': refresh_pair_context.cleanup_source_device | bool,
+                'cleanup_status': 'not_started',
+                'device_collection_status_check': refresh_pair_context.device_collection_status_check,
+                'status': 'failed',
+                'failed_task': ansible_failed_task.name | default('unknown'),
+                'error_message': ansible_failed_result.msg | default(ansible_failed_result | string)
+              }
+            ]
+          }}

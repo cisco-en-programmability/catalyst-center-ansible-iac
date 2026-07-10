@@ -1,0 +1,263 @@
+---
+- name: Normalize identifiers for current refresh pair
+  ansible.builtin.set_fact:
+    refresh_pair_key: "{{ refresh_pair.refresh_name | default('pair_' ~ refresh_pair_index) }}"
+    refresh_pair_display_name: >-
+      {{
+        refresh_pair.refresh_name
+        | default(
+          (
+            refresh_pair.source_device.ip_address
+            | default(refresh_pair.source_device.serial_number | default(refresh_pair.source_device.hostname | default('source')))
+          )
+          ~ ' -> '
+          ~
+          (
+            refresh_pair.replacement_device.ip_address
+            | default(refresh_pair.replacement_device.serial_number | default(refresh_pair.replacement_device.hostname | default('replacement')))
+          )
+        )
+      }}
+    refresh_pair_onboarding_method: "{{ refresh_pair.replacement_device.onboarding_method | default('managed') }}"
+    refresh_pair_source_identifier_count: >-
+      {{
+        [
+          refresh_pair.source_device.ip_address | default(''),
+          refresh_pair.source_device.serial_number | default(''),
+          refresh_pair.source_device.hostname | default('')
+        ]
+        | reject('equalto', '')
+        | list
+        | length
+      }}
+    refresh_pair_replacement_identifier_count: >-
+      {{
+        [
+          refresh_pair.replacement_device.ip_address | default(''),
+          refresh_pair.replacement_device.serial_number | default(''),
+          refresh_pair.replacement_device.hostname | default('')
+        ]
+        | reject('equalto', '')
+        | list
+        | length
+      }}
+    refresh_pair_source_identifier_type: >-
+      {{
+        'ip_address'
+        if (refresh_pair.source_device.ip_address | default('') | length) > 0
+        else (
+          'serial_number'
+          if (refresh_pair.source_device.serial_number | default('') | length) > 0
+          else (
+            'hostname'
+            if (refresh_pair.source_device.hostname | default('') | length) > 0
+            else ''
+          )
+        )
+      }}
+    refresh_pair_replacement_identifier_type: >-
+      {{
+        'ip_address'
+        if (refresh_pair.replacement_device.ip_address | default('') | length) > 0
+        else (
+          'serial_number'
+          if (refresh_pair.replacement_device.serial_number | default('') | length) > 0
+          else (
+            'hostname'
+            if (refresh_pair.replacement_device.hostname | default('') | length) > 0
+            else ''
+          )
+        )
+      }}
+    refresh_pair_source_identifier_value: >-
+      {{
+        refresh_pair.source_device.ip_address
+        | default(refresh_pair.source_device.serial_number | default(refresh_pair.source_device.hostname | default('')))
+      }}
+    refresh_pair_replacement_identifier_value: >-
+      {{
+        refresh_pair.replacement_device.ip_address
+        | default(refresh_pair.replacement_device.serial_number | default(refresh_pair.replacement_device.hostname | default('')))
+      }}
+
+- name: Validate source identifier for current refresh pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_display_name }}' must define exactly one
+      source identifier: source_device.ip_address, source_device.serial_number,
+      or source_device.hostname.
+  when: refresh_pair_source_identifier_count | int != 1
+
+- name: Validate replacement identifier for managed replacement pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_display_name }}' with
+      onboarding_method=managed must define exactly one replacement identifier:
+      replacement_device.ip_address, replacement_device.serial_number, or
+      replacement_device.hostname.
+  when:
+    - refresh_pair_onboarding_method == 'managed'
+    - refresh_pair_replacement_identifier_count | int != 1
+
+- name: Validate replacement identifier for LAN automation pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_display_name }}' with
+      onboarding_method=lan_automation must use replacement_device.serial_number
+      as the identifier and must define replacement_device.management_ip_address.
+  when:
+    - refresh_pair_onboarding_method == 'lan_automation'
+    - refresh_pair_replacement_identifier_count | int != 1
+      or refresh_pair_replacement_identifier_type != 'serial_number'
+      or (refresh_pair.replacement_device.management_ip_address | default('') | length) == 0
+
+- name: Resolve source device in inventory for current refresh pair
+  cisco.catalystcenter.network_device_info:
+    <<: *catalyst_center_login
+    managementIpAddress: "{{ [refresh_pair.source_device.ip_address] if refresh_pair_source_identifier_type == 'ip_address' else omit }}"
+    serialNumber: "{{ [refresh_pair.source_device.serial_number] if refresh_pair_source_identifier_type == 'serial_number' else omit }}"
+    hostname: "{{ [refresh_pair.source_device.hostname] if refresh_pair_source_identifier_type == 'hostname' else omit }}"
+    limit: 10
+  register: refresh_pair_source_device_lookup
+  changed_when: false
+
+- name: Set source already-removed flag for current refresh pair
+  ansible.builtin.set_fact:
+    refresh_pair_source_already_gone: >-
+      {{ (refresh_pair_source_device_lookup.dnac_response.response | default([]) | length) == 0 }}
+
+- name: Fail when source device lookup returned ambiguous results for current refresh pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_display_name }}' expected exactly one source
+      device in inventory, found
+      {{ refresh_pair_source_device_lookup.dnac_response.response | default([]) | length }}.
+  when: (refresh_pair_source_device_lookup.dnac_response.response | default([]) | length) > 1
+
+- name: Record already-complete pair result when source device is already removed
+  ansible.builtin.set_fact:
+    refresh_job_pair_results: >-
+      {{
+        (refresh_job_pair_results | default([])) + [
+          {
+            'pair_key': refresh_pair_key,
+            'refresh_name': refresh_pair.refresh_name | default(refresh_pair_display_name),
+            'pair_display_name': refresh_pair_display_name,
+            'source_device_identifier': refresh_pair_source_identifier_value,
+            'replacement_device_identifier': refresh_pair_replacement_identifier_value,
+            'source_device_ip': '',
+            'replacement_device_ip': '',
+            'source_device_hostname': '',
+            'replacement_device_hostname': '',
+            'replacement_onboarding_method': refresh_pair_onboarding_method,
+            'migration_succeeded': false,
+            'interfaces_moved_count': 0,
+            'interfaces_moved': [],
+            'cleanup_requested': refresh_pair.cleanup_source_device | default(true),
+            'cleanup_status': 'skipped',
+            'device_collection_status_check': refresh_pair.device_collection_status_check | default(None),
+            'status': 'success',
+            'skip_reason': 'source_device_already_removed'
+          }
+        ]
+      }}
+  when: refresh_pair_source_already_gone | bool
+
+- name: Resolve managed replacement device in inventory for current refresh pair
+  cisco.catalystcenter.network_device_info:
+    <<: *catalyst_center_login
+    managementIpAddress: "{{ [refresh_pair.replacement_device.ip_address] if refresh_pair_replacement_identifier_type == 'ip_address' else omit }}"
+    serialNumber: "{{ [refresh_pair.replacement_device.serial_number] if refresh_pair_replacement_identifier_type == 'serial_number' else omit }}"
+    hostname: "{{ [refresh_pair.replacement_device.hostname] if refresh_pair_replacement_identifier_type == 'hostname' else omit }}"
+    limit: 10
+  register: refresh_pair_replacement_device_lookup
+  changed_when: false
+  when:
+    - not refresh_pair_source_already_gone | bool
+    - refresh_pair_onboarding_method == 'managed'
+
+- name: Validate managed replacement device inventory lookup result for current refresh pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_display_name }}' expected exactly one
+      managed replacement device in inventory, found
+      {{ refresh_pair_replacement_device_lookup.dnac_response.response | default([]) | length }}.
+  when:
+    - not refresh_pair_source_already_gone | bool
+    - refresh_pair_onboarding_method == 'managed'
+    - (refresh_pair_replacement_device_lookup.dnac_response.response | default([]) | length) != 1
+
+- name: Validate source and managed replacement are different devices
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_display_name }}' resolved the source and
+      managed replacement to the same device IP
+      {{ refresh_pair_source_device_lookup.dnac_response.response[0].managementIpAddress | default('unknown') }}.
+  when:
+    - not refresh_pair_source_already_gone | bool
+    - refresh_pair_onboarding_method == 'managed'
+    - >
+      {{
+        (refresh_pair_source_device_lookup.dnac_response.response[0].managementIpAddress | default('')) != ''
+        and
+        (refresh_pair_source_device_lookup.dnac_response.response[0].managementIpAddress | default(''))
+        ==
+        (refresh_pair_replacement_device_lookup.dnac_response.response[0].managementIpAddress | default(''))
+      }}
+
+- name: Record current refresh pair context
+  ansible.builtin.set_fact:
+    refresh_job_pair_contexts: >-
+      {{
+        (refresh_job_pair_contexts | default([])) + [
+          {
+            'pair_key': refresh_pair_key,
+            'refresh_name': refresh_pair.refresh_name | default(refresh_pair_display_name),
+            'pair_display_name': refresh_pair_display_name,
+            'replacement_onboarding_method': refresh_pair_onboarding_method,
+            'source_identifier_type': refresh_pair_source_identifier_type,
+            'source_identifier_value': refresh_pair_source_identifier_value,
+            'replacement_identifier_type': refresh_pair_replacement_identifier_type,
+            'replacement_identifier_value': refresh_pair_replacement_identifier_value,
+            'source_resolved_device': refresh_pair_source_device_lookup.dnac_response.response[0] | default({}),
+            'source_management_ip_address': refresh_pair_source_device_lookup.dnac_response.response[0].managementIpAddress | default(''),
+            'source_hostname': refresh_pair_source_device_lookup.dnac_response.response[0].hostname | default(''),
+            'source_serial_number': refresh_pair_source_device_lookup.dnac_response.response[0].serialNumber | default(''),
+            'replacement_resolved_device': (
+              refresh_pair_replacement_device_lookup.dnac_response.response[0]
+              if refresh_pair_onboarding_method == 'managed'
+              else {}
+            ) | default({}),
+            'replacement_serial_number': refresh_pair.replacement_device.serial_number | default(
+              (
+                refresh_pair_replacement_device_lookup.dnac_response.response[0].serialNumber
+                if refresh_pair_onboarding_method == 'managed'
+                else ''
+              ) | default('')
+            ),
+            'replacement_management_ip_candidate': refresh_pair.replacement_device.management_ip_address | default(
+              refresh_pair.replacement_device.ip_address | default(
+                (
+                  refresh_pair_replacement_device_lookup.dnac_response.response[0].managementIpAddress
+                  if refresh_pair_onboarding_method == 'managed'
+                  else ''
+                ) | default('')
+              )
+            ),
+            'replacement_expected_hostname': refresh_pair.replacement_device.expected_hostname | default(
+              refresh_pair.replacement_device.hostname | default(
+                (
+                  refresh_pair_replacement_device_lookup.dnac_response.response[0].hostname
+                  if refresh_pair_onboarding_method == 'managed'
+                  else ''
+                ) | default('')
+              )
+            ),
+            'port_migration': refresh_pair.port_migration | default({}),
+            'overrides': refresh_pair.overrides | default({}),
+            'cleanup_source_device': refresh_pair.cleanup_source_device | default(true),
+            'device_collection_status_check': refresh_pair.device_collection_status_check | default(None)
+          }
+        ]
+      }}
+  when: not refresh_pair_source_already_gone | bool

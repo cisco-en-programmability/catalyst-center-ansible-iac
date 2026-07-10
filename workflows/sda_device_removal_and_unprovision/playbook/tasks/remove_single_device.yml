@@ -14,13 +14,39 @@
       ansible.builtin.set_fact:
         matched_removal_devices: "{{ removal_device_lookup.dnac_response.response | default([]) }}"
 
-    - name: Validate device was found exactly once
+    - name: Set already-removed flag when device not found in inventory
+      ansible.builtin.set_fact:
+        removal_device_already_gone: "{{ matched_removal_devices | length == 0 }}"
+
+    - name: Fail when device lookup returned ambiguous results
       ansible.builtin.fail:
         msg: >-
           Expected exactly one Catalyst Center inventory match for device_name
           '{{ removal_item.device_name }}', found {{ matched_removal_devices | length }}.
           Verify that the hostname matches the inventory entry exactly.
-      when: matched_removal_devices | length != 1
+      when: matched_removal_devices | length > 1
+
+    - name: Record already-removed device as successful cleanup
+      ansible.builtin.set_fact:
+        sda_device_removal_and_unprovision_results: >-
+          {{
+            (sda_device_removal_and_unprovision_results | default([])) + [
+              {
+                'device_name': removal_item.device_name,
+                'fabric_site_name_hierarchy': removal_item.fabric_site_name_hierarchy,
+                'management_ip_address': 'already_removed',
+                'inventory_location': 'unknown',
+                'inventory_role': 'unknown',
+                'inventory_family': 'unknown',
+                'host_onboarding_changed': false,
+                'fabric_role_changed': false,
+                'unprovision_changed': false,
+                'status': 'success',
+                'skip_reason': 'device_already_removed_from_inventory'
+              }
+            ]
+          }}
+      when: removal_device_already_gone | bool
 
     - name: Build removal workflow context for device
       ansible.builtin.set_fact:
@@ -31,6 +57,7 @@
           inventory_location: "{{ matched_removal_devices[0].location | default('unknown') }}"
           inventory_role: "{{ matched_removal_devices[0].role | default('unknown') }}"
           inventory_family: "{{ matched_removal_devices[0].family | default('unknown') }}"
+      when: not removal_device_already_gone | bool
 
     - name: Clear all host onboarding from device
       cisco.catalystcenter.sda_host_port_onboarding_workflow_manager:
@@ -41,6 +68,7 @@
             fabric_site_name_hierarchy: "{{ removal_workflow_device_context.fabric_site_name_hierarchy }}"
             device_collection_status_check: "{{ removal_item.device_collection_status_check | default(omit) }}"
       register: removal_host_onboarding_result
+      when: not removal_device_already_gone | bool
 
     - name: Remove device from SDA fabric site
       cisco.catalystcenter.sda_fabric_devices_workflow_manager:
@@ -52,6 +80,7 @@
               device_config:
                 - device_ip: "{{ removal_workflow_device_context.management_ip_address }}"
       register: removal_fabric_role_result
+      when: not removal_device_already_gone | bool
 
     - name: Unprovision device and remove it from inventory
       cisco.catalystcenter.provision_workflow_manager:
@@ -60,6 +89,7 @@
         config:
           - management_ip_address: "{{ removal_workflow_device_context.management_ip_address }}"
       register: removal_unprovision_result
+      when: not removal_device_already_gone | bool
 
     - name: Record successful device removal result
       ansible.builtin.set_fact:
@@ -80,6 +110,7 @@
               }
             ]
           }}
+      when: not removal_device_already_gone | bool
   rescue:
     - name: Record failed device removal result
       ansible.builtin.set_fact:

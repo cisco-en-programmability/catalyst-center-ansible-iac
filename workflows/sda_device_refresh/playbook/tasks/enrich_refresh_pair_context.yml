@@ -1,0 +1,119 @@
+---
+- name: Capture source provision entry for current refresh pair
+  ansible.builtin.set_fact:
+    refresh_pair_source_provision_entry: >-
+      {{
+        (
+          refresh_source_provision_generated.config | default([])
+          | selectattr('management_ip_address', 'defined')
+          | selectattr('management_ip_address', 'equalto', refresh_pair_context.source_management_ip_address | default(''))
+          | list
+          | first
+        ) | default({})
+      }}
+    refresh_pair_source_fabric_device_entry: >-
+      {%- set ns = namespace(match={}) -%}
+      {%- for entry in refresh_source_fabric_generated.config | default([]) -%}
+      {%- set fabric = entry.fabric_devices | default({}) -%}
+      {%- for device in fabric.device_config | default([]) -%}
+      {%- if fabric.fabric_name | default('') == refresh_job.fabric_site_name_hierarchy
+            and device.device_ip | default('') == refresh_pair_context.source_management_ip_address | default('') -%}
+      {%- set ns.match = device -%}
+      {%- endif -%}
+      {%- endfor -%}
+      {%- endfor -%}
+      {{ ns.match }}
+
+- name: Validate source provision entry for current refresh pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_context.pair_display_name }}' could not
+      derive source provision data for
+      {{ refresh_pair_context.source_management_ip_address }}.
+  when: refresh_pair_source_provision_entry == {}
+
+- name: Validate source fabric entry for current refresh pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_context.pair_display_name }}' could not
+      derive source fabric data for
+      {{ refresh_pair_context.source_management_ip_address }} in fabric
+      {{ refresh_job.fabric_site_name_hierarchy }}.
+  when: refresh_pair_source_fabric_device_entry == {}
+
+- name: Build effective replacement settings for current refresh pair
+  ansible.builtin.set_fact:
+    refresh_pair_effective_site_name_hierarchy: "{{ refresh_pair_context.overrides.site_name_hierarchy | default(refresh_pair_source_provision_entry.site_name_hierarchy) }}"
+    refresh_pair_effective_inventory_role: >-
+      {{
+        refresh_pair_context.overrides.inventory_role
+        | default(
+            refresh_pair_context.source_resolved_device.role
+            | default('UNKNOWN')
+            | upper
+            | regex_replace(' +', '_')
+          )
+      }}
+    refresh_pair_effective_device_roles: "{{ refresh_pair_context.overrides.device_roles | default(refresh_pair_source_fabric_device_entry.device_roles | default([])) }}"
+    refresh_pair_effective_borders_settings: "{{ refresh_pair_context.overrides.borders_settings | default(refresh_pair_source_fabric_device_entry.borders_settings | default({})) }}"
+    refresh_pair_effective_replacement_management_ip: >-
+      {{
+        refresh_pair_context.replacement_management_ip_candidate
+        | default(refresh_pair_context.replacement_resolved_device.managementIpAddress | default(''), true)
+      }}
+    refresh_pair_effective_replacement_hostname: >-
+      {{
+        refresh_pair_context.overrides.replacement_hostname
+        | default(
+            refresh_pair_context.replacement_expected_hostname
+            | default(refresh_pair_context.replacement_resolved_device.hostname | default(''), true),
+            true
+          )
+      }}
+
+- name: Validate effective replacement roles for current refresh pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_context.pair_display_name }}' could not
+      determine any source fabric roles for the replacement device. Provide
+      overrides.device_roles.
+  when: refresh_pair_effective_device_roles | length == 0
+
+- name: Validate replacement management IP for LAN automation pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_context.pair_display_name }}' requires
+      replacement_device.management_ip_address for LAN automation onboarding.
+  when:
+    - refresh_pair_context.replacement_onboarding_method == 'lan_automation'
+    - refresh_pair_effective_replacement_management_ip | length == 0
+
+- name: Record enriched pair context
+  ansible.builtin.set_fact:
+    refresh_job_pair_contexts_enriched: >-
+      {{
+        (refresh_job_pair_contexts_enriched | default([])) + [
+          refresh_pair_context | combine(
+            {
+              'source_provision_entry': refresh_pair_source_provision_entry,
+              'source_fabric_device_entry': refresh_pair_source_fabric_device_entry,
+              'effective_site_name_hierarchy': refresh_pair_effective_site_name_hierarchy,
+              'effective_inventory_role': refresh_pair_effective_inventory_role,
+              'effective_device_roles': refresh_pair_effective_device_roles,
+              'effective_borders_settings': refresh_pair_effective_borders_settings,
+              'effective_replacement_management_ip': refresh_pair_effective_replacement_management_ip,
+              'effective_replacement_hostname': refresh_pair_effective_replacement_hostname,
+              'lan_auto_discovery_device': {
+                'device_serial_number': refresh_pair_context.replacement_serial_number,
+                'device_site_name_hierarchy': refresh_pair_effective_site_name_hierarchy,
+                'device_management_ip_address': refresh_pair_effective_replacement_management_ip
+              }
+              | combine(
+                  {'device_host_name': refresh_pair_effective_replacement_hostname}
+                  if (refresh_pair_effective_replacement_hostname | length) > 0
+                  else {}
+                )
+            }
+          )
+        ]
+      }}

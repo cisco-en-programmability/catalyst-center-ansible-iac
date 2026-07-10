@@ -1,0 +1,671 @@
+- block:
+    - name: Initialize current refresh job state
+      ansible.builtin.set_fact:
+        refresh_job_pair_contexts: []
+        refresh_job_pair_contexts_enriched: []
+        refresh_job_pair_contexts_final: []
+        refresh_job_pair_results: []
+        refresh_job_inventory_role_groups: {}
+        refresh_job_inventory_role_configs: []
+        refresh_job_provision_configs: []
+        refresh_job_fabric_device_configs: []
+        refresh_job_fabric_validation_errors: []
+
+    - name: Set current refresh job display name
+      ansible.builtin.set_fact:
+        refresh_job_display_name: "{{ refresh_job.job_name | default(refresh_job.fabric_site_name_hierarchy) }}"
+        refresh_export_safe_name: "{{ (refresh_job.job_name | default(refresh_job.fabric_site_name_hierarchy)) | regex_replace('[^A-Za-z0-9]+', '_') }}"
+
+    - name: Validate refresh job device list
+      ansible.builtin.fail:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}' must define at least one
+          device_refreshes entry.
+      when:
+        - refresh_job.device_refreshes is not defined
+          or refresh_job.device_refreshes | length == 0
+
+    - name: Validate LAN automation configuration exists when requested by any pair
+      ansible.builtin.fail:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}' contains one or more
+          replacement_device entries with onboarding_method=lan_automation, but
+          the shared job-level lan_automation block is missing.
+      when:
+        - refresh_job.device_refreshes
+          | selectattr('replacement_device.onboarding_method', 'defined')
+          | selectattr('replacement_device.onboarding_method', 'equalto', 'lan_automation')
+          | list
+          | length
+          > 0
+        - refresh_job.lan_automation is not defined
+
+    - name: Build pair contexts for current refresh job
+      ansible.builtin.include_tasks: ./prepare_refresh_pair_context.yml
+      loop: "{{ refresh_job.device_refreshes }}"
+      loop_control:
+        loop_var: refresh_pair
+        index_var: refresh_pair_index
+        label: >-
+          {{
+            refresh_pair.refresh_name
+            | default(
+              (
+                refresh_pair.source_device.ip_address
+                | default(refresh_pair.source_device.serial_number | default(refresh_pair.source_device.hostname | default('source')))
+              )
+              ~ ' -> '
+              ~
+              (
+                refresh_pair.replacement_device.ip_address
+                | default(refresh_pair.replacement_device.serial_number | default(refresh_pair.replacement_device.hostname | default('replacement')))
+              )
+            )
+          }}
+
+    - name: Build aggregated source and replacement lists for validation
+      ansible.builtin.set_fact:
+        refresh_job_source_ip_list: "{{ refresh_job_pair_contexts | map(attribute='source_management_ip_address') | list }}"
+        refresh_job_replacement_serial_list: >-
+          {{
+            refresh_job_pair_contexts
+            | map(attribute='replacement_serial_number')
+            | reject('equalto', '')
+            | list
+          }}
+        refresh_job_replacement_management_ip_list: >-
+          {{
+            refresh_job_pair_contexts
+            | map(attribute='replacement_management_ip_candidate')
+            | reject('equalto', '')
+            | list
+          }}
+
+    - name: Validate source devices are unique within the refresh job
+      ansible.builtin.fail:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}' contains duplicate source
+          devices. Each source device can only appear once per job.
+      when:
+        - refresh_job_source_ip_list | unique | length != refresh_job_source_ip_list | length
+
+    - name: Validate replacement serial numbers are unique within the refresh job
+      ansible.builtin.fail:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}' contains duplicate
+          replacement serial numbers. Each replacement device must be unique.
+      when:
+        - refresh_job_replacement_serial_list | unique | length != refresh_job_replacement_serial_list | length
+
+    - name: Validate replacement management IPs are unique within the refresh job
+      ansible.builtin.fail:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}' contains duplicate
+          replacement management IP addresses. Each replacement device must use a
+          unique management IP.
+      when:
+        - refresh_job_replacement_management_ip_list | unique | length != refresh_job_replacement_management_ip_list | length
+
+    - name: Build refresh export file paths for current job
+      ansible.builtin.set_fact:
+        refresh_source_provision_export_path: "{{ generated_config_dir }}/refresh_provision_{{ refresh_export_safe_name }}.yml"
+        refresh_source_fabric_export_path: "{{ generated_config_dir }}/refresh_fabric_{{ refresh_export_safe_name }}.yml"
+
+    - name: Export source provision configuration for all source devices in the job
+      cisco.catalystcenter.provision_playbook_config_generator:
+        <<: *catalyst_center_login
+        state: gathered
+        file_path: "{{ refresh_source_provision_export_path }}"
+        file_mode: overwrite
+        config:
+          component_specific_filters:
+            components_list:
+              - wired
+              - wireless
+            wired:
+              - management_ip_address: "{{ refresh_job_source_ip_list }}"
+            wireless:
+              - management_ip_address: "{{ refresh_job_source_ip_list }}"
+      register: refresh_source_provision_export
+      changed_when: false
+
+    - name: Validate source provision export file was generated
+      ansible.builtin.stat:
+        path: "{{ refresh_source_provision_export_path }}"
+      register: refresh_source_provision_export_file
+      changed_when: false
+
+    - name: Fail when source provision export did not produce a file
+      ansible.builtin.fail:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}' could not export source
+          provision data for the requested devices.
+      when: not refresh_source_provision_export_file.stat.exists
+
+    - name: Load source provision export data
+      ansible.builtin.include_vars:
+        file: "{{ refresh_source_provision_export_path }}"
+        name: refresh_source_provision_generated
+
+    - name: Export source fabric configuration for all source devices in the job
+      cisco.catalystcenter.sda_fabric_devices_playbook_config_generator:
+        <<: *catalyst_center_login
+        state: gathered
+        file_path: "{{ refresh_source_fabric_export_path }}"
+        file_mode: overwrite
+        config:
+          component_specific_filters:
+            components_list:
+              - fabric_devices
+            fabric_devices: >-
+              {%- set ns = namespace(entries=[]) -%}
+              {%- for device_ip in refresh_job_source_ip_list -%}
+              {%- set ns.entries = ns.entries + [
+                {
+                  'fabric_name': refresh_job.fabric_site_name_hierarchy,
+                  'device_ip': device_ip
+                }
+              ] -%}
+              {%- endfor -%}
+              {{ ns.entries }}
+      register: refresh_source_fabric_export
+      changed_when: false
+
+    - name: Validate source fabric export file was generated
+      ansible.builtin.stat:
+        path: "{{ refresh_source_fabric_export_path }}"
+      register: refresh_source_fabric_export_file
+      changed_when: false
+
+    - name: Fail when source fabric export did not produce a file
+      ansible.builtin.fail:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}' could not export source
+          fabric data for the requested devices in fabric
+          {{ refresh_job.fabric_site_name_hierarchy }}.
+      when: not refresh_source_fabric_export_file.stat.exists
+
+    - name: Load source fabric export data
+      ansible.builtin.include_vars:
+        file: "{{ refresh_source_fabric_export_path }}"
+        name: refresh_source_fabric_generated
+
+    - name: Enrich pair contexts with source provision and fabric data
+      ansible.builtin.include_tasks: ./enrich_refresh_pair_context.yml
+      loop: "{{ refresh_job_pair_contexts }}"
+      loop_control:
+        loop_var: refresh_pair_context
+        label: "{{ refresh_pair_context.pair_display_name }}"
+
+    - name: Build LAN automation target lists for the job
+      ansible.builtin.set_fact:
+        refresh_job_lan_auto_pair_contexts: >-
+          {{
+            refresh_job_pair_contexts_enriched
+            | selectattr('replacement_onboarding_method', 'equalto', 'lan_automation')
+            | list
+          }}
+        refresh_job_lan_auto_site_name_list: >-
+          {{
+            refresh_job_pair_contexts_enriched
+            | selectattr('replacement_onboarding_method', 'equalto', 'lan_automation')
+            | map(attribute='effective_site_name_hierarchy')
+            | unique
+            | list
+          }}
+
+    - name: Validate LAN automation target site consistency
+      ansible.builtin.fail:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}' contains replacement
+          devices that require LAN automation but resolve to different provision
+          sites. Split them into separate jobs with one shared LAN automation
+          site each.
+      when:
+        - refresh_job_lan_auto_site_name_list | default([]) | length > 1
+
+    - name: Build LAN automation discovery device payload
+      ansible.builtin.set_fact:
+        refresh_job_lan_auto_discovery_devices: >-
+          {{
+            refresh_job_lan_auto_pair_contexts
+            | map(attribute='lan_auto_discovery_device')
+            | list
+          }}
+        refresh_job_lan_auto_serial_numbers: >-
+          {{
+            refresh_job_lan_auto_pair_contexts
+            | map(attribute='replacement_serial_number')
+            | list
+          }}
+        refresh_job_lan_auto_site_name: "{{ refresh_job_lan_auto_site_name_list | first | default(refresh_job.fabric_site_name_hierarchy) }}"
+
+    - name: Check which LAN automation replacement devices are already managed in inventory
+      cisco.catalystcenter.network_device_info:
+        <<: *catalyst_center_login
+        serialNumber: "{{ refresh_job_lan_auto_serial_numbers }}"
+        limit: "{{ (refresh_job_lan_auto_serial_numbers | length) + 1 }}"
+      register: refresh_lan_auto_inventory_precheck
+      changed_when: false
+      when: refresh_job_lan_auto_serial_numbers | default([]) | length > 0
+
+    - name: Filter already-managed devices out of LAN automation discovery list
+      ansible.builtin.set_fact:
+        refresh_job_lan_auto_already_managed_serials: >-
+          {{
+            refresh_lan_auto_inventory_precheck.dnac_response.response | default([])
+            | map(attribute='serialNumber') | list
+          }}
+        refresh_job_lan_auto_discovery_devices: >-
+          {{
+            refresh_job_lan_auto_discovery_devices
+            | rejectattr('device_serial_number', 'in',
+                refresh_lan_auto_inventory_precheck.dnac_response.response | default([])
+                | map(attribute='serialNumber') | list)
+            | list
+          }}
+      when: refresh_job_lan_auto_serial_numbers | default([]) | length > 0
+
+    - name: Log already-managed replacement devices skipped for LAN automation
+      ansible.builtin.debug:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}': skipping LAN automation for
+          {{ refresh_job_lan_auto_already_managed_serials | default([]) | length }} already-managed
+          replacement device(s): {{ refresh_job_lan_auto_already_managed_serials | default([]) | join(', ') }}
+      when:
+        - refresh_job_lan_auto_already_managed_serials | default([]) | length > 0
+
+    - name: Run shared LAN automation for all replacement devices in the job
+      cisco.catalystcenter.lan_automation_workflow_manager:
+        <<: *catalyst_center_login
+        config:
+          - lan_automation:
+              discovered_device_site_name_hierarchy: "{{ refresh_job_lan_auto_site_name }}"
+              primary_device_management_ip_address: "{{ refresh_job.lan_automation.seed_device_management_ip_address }}"
+              peer_device_management_ip_address: "{{ refresh_job.lan_automation.seed_peer_device_management_ip_address | default(omit) }}"
+              primary_device_interface_names: "{{ refresh_job.lan_automation.seed_device_interface_names }}"
+              ip_pools: "{{ refresh_job.lan_automation.ip_pools }}"
+              multicast_enabled: "{{ refresh_job.lan_automation.multicast_enabled | default(omit) }}"
+              redistribute_isis_to_bgp: "{{ refresh_job.lan_automation.redistribute_isis_to_bgp | default(omit) }}"
+              host_name_prefix: "{{ refresh_job.lan_automation.host_name_prefix | default(omit) }}"
+              isis_domain_pwd: "{{ refresh_job.lan_automation.isis_domain_pwd | default(omit) }}"
+              discovery_level: "{{ refresh_job.lan_automation.discovery_level | default(omit) }}"
+              discovery_timeout: "{{ refresh_job.lan_automation.discovery_timeout | default(omit) }}"
+              launch_and_wait: "{{ refresh_job.lan_automation.launch_and_wait | default(true) }}"
+              pnp_authorization: "{{ refresh_job.lan_automation.pnp_authorization | default(omit) }}"
+              device_serial_number_authorization: >-
+                {{
+                  (
+                    (refresh_job.lan_automation.device_serial_number_authorization | default([]))
+                    + refresh_job_lan_auto_serial_numbers
+                  ) | unique
+                }}
+              discovery_devices: "{{ refresh_job_lan_auto_discovery_devices }}"
+      register: refresh_lan_automation_result
+      when:
+        - refresh_job_lan_auto_discovery_devices | default([]) | length > 0
+
+    - name: Wait for LAN-automated replacement devices to become managed in inventory
+      cisco.catalystcenter.network_devices_info_workflow_manager:
+        <<: *catalyst_center_login
+        state: gathered
+        config:
+          - network_devices:
+              - device_identifier:
+                  - serial_number: "{{ refresh_job_lan_auto_serial_numbers }}"
+                requested_info:
+                  - device_info
+                timeout: "{{ inventory_device_ready_retry_time | default(400) | int }}"
+                retries: >-
+                  {{
+                    [
+                      (
+                        (inventory_device_ready_retry_time | default(400) | int)
+                        / (inventory_device_ready_retry_interval | default(10) | int)
+                      ) | round(0, 'ceil') | int,
+                      1
+                    ] | max
+                  }}
+                interval: "{{ inventory_device_ready_retry_interval | default(10) | int }}"
+      register: refresh_replacement_inventory_ready_output
+      when:
+        - refresh_job_lan_auto_serial_numbers | default([]) | length > 0
+
+    - name: Capture LAN automation resolved replacement devices
+      ansible.builtin.set_fact:
+        refresh_job_lan_auto_resolved_devices: >-
+          {{
+            refresh_replacement_inventory_ready_output.response | default([])
+            | select('sequence')
+            | reject('string')
+            | list
+            | flatten
+            | selectattr('device_info', 'defined')
+            | map(attribute='device_info')
+            | list
+            | flatten
+          }}
+      when:
+        - refresh_job_lan_auto_serial_numbers | default([]) | length > 0
+
+    - name: Validate all LAN-automated replacement devices were resolved in inventory
+      ansible.builtin.fail:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}' could not resolve all
+          LAN-automated replacement devices in inventory after readiness checks.
+          Expected serials={{ refresh_job_lan_auto_serial_numbers }}.
+          Found serials={{ refresh_job_lan_auto_resolved_devices | default([]) | map(attribute='serialNumber') | list }}.
+      when:
+        - refresh_job_lan_auto_serial_numbers | default([]) | length > 0
+        - >
+          (
+            refresh_job_lan_auto_serial_numbers
+            | difference(
+                refresh_job_lan_auto_resolved_devices | default([]) | map(attribute='serialNumber') | list
+              )
+          ) | length > 0
+
+    - name: Finalize replacement device contexts after LAN automation and managed lookups
+      ansible.builtin.include_tasks: ./finalize_refresh_pair_context.yml
+      loop: "{{ refresh_job_pair_contexts_enriched }}"
+      loop_control:
+        loop_var: refresh_pair_context
+        label: "{{ refresh_pair_context.pair_display_name }}"
+
+    - name: Group replacement inventory role updates by role
+      ansible.builtin.set_fact:
+        refresh_job_inventory_role_groups: >-
+          {{
+            (refresh_job_inventory_role_groups | default({}))
+            | combine(
+                {
+                  item.effective_inventory_role: (
+                    (refresh_job_inventory_role_groups[item.effective_inventory_role] | default([]))
+                    + [item.replacement_resolved_device.managementIpAddress]
+                  )
+                },
+                recursive=True
+              )
+          }}
+      loop: "{{ refresh_job_pair_contexts_final }}"
+      loop_control:
+        label: "{{ item.pair_display_name }}"
+
+    - name: Build bulk inventory role payloads for the job
+      ansible.builtin.set_fact:
+        refresh_job_inventory_role_configs: >-
+          {%- set ns = namespace(configs=[]) -%}
+          {%- for role_group in refresh_job_inventory_role_groups | dict2items -%}
+          {%- set ns.configs = ns.configs + [
+            {
+              'ip_address_list': role_group.value | unique,
+              'role': role_group.key
+            }
+          ] -%}
+          {%- endfor -%}
+          {{ ns.configs }}
+
+    - name: Apply replacement inventory roles in bulk
+      cisco.catalystcenter.inventory_workflow_manager:
+        <<: *catalyst_center_login
+        state: "{{ state | default('merged') }}"
+        config: "{{ refresh_job_inventory_role_configs }}"
+      register: refresh_inventory_role_result
+      when:
+        - refresh_job_inventory_role_configs | length > 0
+
+    - name: Build bulk provision payloads for the job
+      ansible.builtin.set_fact:
+        refresh_job_provision_configs: >-
+          {%- set ns = namespace(configs=[]) -%}
+          {%- for item in refresh_job_pair_contexts_final -%}
+          {%- set cfg = {
+            'management_ip_address': item.replacement_resolved_device.managementIpAddress,
+            'site_name_hierarchy': item.effective_site_name_hierarchy,
+            'provisioning': item.source_provision_entry.provisioning | default(true),
+            'force_provisioning': item.source_provision_entry.force_provisioning | default(false)
+          } -%}
+          {%- if item.source_provision_entry.managed_ap_locations is defined -%}
+          {%- set cfg = cfg | combine({'managed_ap_locations': item.source_provision_entry.managed_ap_locations}) -%}
+          {%- endif -%}
+          {%- if item.source_provision_entry.primary_managed_ap_locations is defined -%}
+          {%- set cfg = cfg | combine({'primary_managed_ap_locations': item.source_provision_entry.primary_managed_ap_locations}) -%}
+          {%- endif -%}
+          {%- if item.source_provision_entry.secondary_managed_ap_locations is defined -%}
+          {%- set cfg = cfg | combine({'secondary_managed_ap_locations': item.source_provision_entry.secondary_managed_ap_locations}) -%}
+          {%- endif -%}
+          {%- if item.source_provision_entry.dynamic_interfaces is defined -%}
+          {%- set cfg = cfg | combine({'dynamic_interfaces': item.source_provision_entry.dynamic_interfaces}) -%}
+          {%- endif -%}
+          {%- if item.source_provision_entry.skip_ap_provision is defined -%}
+          {%- set cfg = cfg | combine({'skip_ap_provision': item.source_provision_entry.skip_ap_provision}) -%}
+          {%- endif -%}
+          {%- if item.source_provision_entry.ap_authorization_list_name is defined -%}
+          {%- set cfg = cfg | combine({'ap_authorization_list_name': item.source_provision_entry.ap_authorization_list_name}) -%}
+          {%- endif -%}
+          {%- if item.source_provision_entry.rolling_ap_upgrade is defined -%}
+          {%- set cfg = cfg | combine({'rolling_ap_upgrade': item.source_provision_entry.rolling_ap_upgrade}) -%}
+          {%- endif -%}
+          {%- set ns.configs = ns.configs + [cfg] -%}
+          {%- endfor -%}
+          {{ ns.configs }}
+
+    - name: Apply replacement provisioning in bulk
+      cisco.catalystcenter.provision_workflow_manager:
+        <<: *catalyst_center_login
+        state: "{{ state | default('merged') }}"
+        config: "{{ refresh_job_provision_configs }}"
+      register: refresh_provision_result
+      when:
+        - refresh_job_provision_configs | length > 0
+
+    - name: Build bulk fabric onboarding payloads for the job
+      ansible.builtin.set_fact:
+        refresh_job_fabric_device_configs: >-
+          {%- set ns = namespace(configs=[]) -%}
+          {%- for item in refresh_job_pair_contexts_final -%}
+          {%- set cfg = {
+            'device_ip': item.replacement_resolved_device.managementIpAddress,
+            'device_roles': item.effective_device_roles
+          } -%}
+          {%- if (item.effective_borders_settings | default({}) | length) > 0 -%}
+          {%- set cfg = cfg | combine({'borders_settings': item.effective_borders_settings}) -%}
+          {%- endif -%}
+          {%- set ns.configs = ns.configs + [cfg] -%}
+          {%- endfor -%}
+          {{ ns.configs }}
+
+    - name: Apply replacement fabric onboarding in bulk
+      cisco.catalystcenter.sda_fabric_devices_workflow_manager:
+        <<: *catalyst_center_login
+        state: "{{ state | default('merged') }}"
+        config:
+          - fabric_devices:
+              fabric_name: "{{ refresh_job.fabric_site_name_hierarchy }}"
+              device_config: "{{ refresh_job_fabric_device_configs }}"
+      register: refresh_fabric_result
+      when:
+        - refresh_job_fabric_device_configs | length > 0
+
+    - name: Validate all replacements in fabric after onboarding
+      cisco.catalystcenter.fabric_devices_info_workflow_manager:
+        <<: *catalyst_center_login
+        state: gathered
+        config:
+          - fabric_devices:
+              - fabric_site_hierarchy: "{{ refresh_job.fabric_site_name_hierarchy }}"
+                device_identifier:
+                  - ip_address: "{{ refresh_job_pair_contexts_final | map(attribute='replacement_resolved_device.managementIpAddress') | list }}"
+                requested_info:
+                  - fabric_info
+                timeout: "{{ fabric_device_ready_timeout | default(400) | int }}"
+                retries: "{{ fabric_device_ready_retries | default(40) | int }}"
+                interval: "{{ fabric_device_ready_interval | default(10) | int }}"
+      register: refresh_fabric_ready_output
+      when:
+        - refresh_job_pair_contexts_final | length > 0
+
+    - name: Capture replacement fabric info entries
+      ansible.builtin.set_fact:
+        refresh_job_replacement_fabric_info_entries: >-
+          {{
+            refresh_fabric_ready_output.response | default([])
+            | select('sequence')
+            | reject('string')
+            | list
+            | flatten
+            | selectattr('fabric_info', 'defined')
+            | map(attribute='fabric_info')
+            | list
+            | flatten
+          }}
+
+    - name: Build replacement fabric validation errors
+      ansible.builtin.set_fact:
+        refresh_job_fabric_validation_errors: >-
+          {{
+            (refresh_job_fabric_validation_errors | default([]))
+            + (
+              [refresh_pair_fabric_error]
+              if (
+                refresh_pair_fabric_entry == {}
+                or (
+                  (item.effective_device_roles | default([]) | difference(refresh_pair_actual_roles))
+                  | length
+                ) > 0
+              )
+              else []
+            )
+          }}
+      loop: "{{ refresh_job_pair_contexts_final }}"
+      loop_control:
+        label: "{{ item.pair_display_name }}"
+      vars:
+        refresh_pair_fabric_entry: >-
+          {{
+            refresh_job_replacement_fabric_info_entries
+            | selectattr('device_ip', 'equalto', item.replacement_resolved_device.managementIpAddress | default(''))
+            | list
+            | first
+            | default({})
+          }}
+        refresh_pair_actual_roles: >-
+          {{
+            ((refresh_pair_fabric_entry.fabric_details | default([]) | first).deviceRoles | default([]))
+            if refresh_pair_fabric_entry != {}
+            else []
+          }}
+        refresh_pair_fabric_error: >-
+          {{
+            "Replacement device '"
+            ~ (item.replacement_resolved_device.managementIpAddress | default('unknown'))
+            ~ "' in pair '"
+            ~ item.pair_display_name
+            ~ "' is not ready in fabric "
+            ~ refresh_job.fabric_site_name_hierarchy
+            ~ ". Expected roles="
+            ~ (item.effective_device_roles | default([]) | join(','))
+            ~ ", found roles="
+            ~ (refresh_pair_actual_roles | default([]) | join(','))
+          }}
+
+    - name: Fail when one or more replacements are not ready in fabric
+      ansible.builtin.fail:
+        msg: >-
+          Refresh job '{{ refresh_job_display_name }}' has replacement devices
+          that are not ready in fabric:
+          {{ refresh_job_fabric_validation_errors | join(' | ') }}
+      when:
+        - refresh_job_fabric_validation_errors | default([]) | length > 0
+
+    - name: Migrate host onboarding per source/replacement pair
+      ansible.builtin.include_tasks: ./migrate_refresh_pair.yml
+      loop: "{{ refresh_job_pair_contexts_final }}"
+      loop_control:
+        loop_var: refresh_pair_context
+        label: "{{ refresh_pair_context.pair_display_name }}"
+
+    - name: Cleanup successful source devices after migration
+      ansible.builtin.include_tasks: ./cleanup_refresh_pair.yml
+      loop: >-
+        {{
+          refresh_job_pair_results
+          | selectattr('migration_succeeded', 'equalto', true)
+          | selectattr('cleanup_requested', 'equalto', true)
+          | list
+        }}
+      loop_control:
+        loop_var: refresh_pair_result
+        label: "{{ refresh_pair_result.pair_display_name }}"
+
+    - name: Build current refresh job result
+      ansible.builtin.set_fact:
+        refresh_job_result:
+          job_name: "{{ refresh_job_display_name }}"
+          fabric_site_name_hierarchy: "{{ refresh_job.fabric_site_name_hierarchy }}"
+          pair_count: "{{ refresh_job_pair_results | length }}"
+          successful_pair_count: "{{ refresh_job_pair_results | selectattr('status', 'equalto', 'success') | list | length }}"
+          failed_pair_count: "{{ refresh_job_pair_results | rejectattr('status', 'equalto', 'success') | list | length }}"
+          lan_automation_executed: "{{ (refresh_job_lan_auto_discovery_devices | default([]) | length) > 0 }}"
+          lan_automation_pair_count: "{{ refresh_job_lan_auto_pair_contexts | default([]) | length }}"
+          inventory_role_changed: "{{ refresh_inventory_role_result.changed | default(false) }}"
+          provision_changed: "{{ refresh_provision_result.changed | default(false) }}"
+          fabric_changed: "{{ refresh_fabric_result.changed | default(false) }}"
+          interfaces_moved_count: "{{ refresh_job_pair_results | map(attribute='interfaces_moved_count') | list | sum(start=0) }}"
+          cleanup_requested_count: "{{ refresh_job_pair_results | selectattr('cleanup_requested', 'equalto', true) | list | length }}"
+          cleanup_success_count: "{{ refresh_job_pair_results | selectattr('cleanup_status', 'equalto', 'success') | list | length }}"
+          pair_results: "{{ refresh_job_pair_results }}"
+          status: >-
+            {{
+              'success'
+              if (
+                refresh_job_pair_results | rejectattr('status', 'equalto', 'success') | list | length
+              ) == 0
+              else 'failed'
+            }}
+
+    - name: Record refresh job result
+      ansible.builtin.set_fact:
+        sda_device_refresh_results: >-
+          {{
+            (sda_device_refresh_results | default([])) + [refresh_job_result]
+          }}
+  rescue:
+    - name: Record failed refresh job result
+      ansible.builtin.set_fact:
+        sda_device_refresh_results: >-
+          {{
+            (sda_device_refresh_results | default([])) + [
+              {
+                'job_name': refresh_job.job_name | default(refresh_job.fabric_site_name_hierarchy | default('unnamed-job')),
+                'fabric_site_name_hierarchy': refresh_job.fabric_site_name_hierarchy | default('unknown'),
+                'pair_count': refresh_job.device_refreshes | default([]) | length,
+                'successful_pair_count': 0,
+                'failed_pair_count': refresh_job.device_refreshes | default([]) | length,
+                'lan_automation_executed': false,
+                'lan_automation_pair_count': 0,
+                'inventory_role_changed': false,
+                'provision_changed': false,
+                'fabric_changed': false,
+                'interfaces_moved_count': 0,
+                'cleanup_requested_count': 0,
+                'cleanup_success_count': 0,
+                'pair_results': refresh_job_pair_results | default([]),
+                'status': 'failed',
+                'failed_task': ansible_failed_task.name | default('unknown'),
+                'error_message': ansible_failed_result.msg | default(ansible_failed_result | string)
+              }
+            ]
+          }}
+  always:
+    - name: Remove refresh export files for current job
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ refresh_source_provision_export_path | default('') }}"
+        - "{{ refresh_source_fabric_export_path | default('') }}"
+      when:
+        - cleanup_generated_files | default(true) | bool
+        - item | length > 0
+      changed_when: false

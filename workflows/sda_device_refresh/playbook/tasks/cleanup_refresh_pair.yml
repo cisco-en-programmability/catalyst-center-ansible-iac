@@ -1,0 +1,84 @@
+---
+- name: Capture cleanup result baseline for current refresh pair
+  ansible.builtin.set_fact:
+    refresh_pair_cleanup_result_index: "{{ sda_device_removal_and_unprovision_results | default([]) | length }}"
+
+- block:
+    - name: Remove old source device for current refresh pair
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/../../sda_device_removal_and_unprovision/playbook/tasks/remove_single_device.yml"
+      vars:
+        removal_item:
+          device_name: "{{ refresh_pair_result.source_device_hostname }}"
+          fabric_site_name_hierarchy: "{{ refresh_job.fabric_site_name_hierarchy }}"
+          device_collection_status_check: >-
+            {{
+              refresh_pair_result.device_collection_status_check
+              if refresh_pair_result.device_collection_status_check is not none
+              else omit
+            }}
+
+    - name: Capture cleanup result for current refresh pair
+      ansible.builtin.set_fact:
+        refresh_pair_latest_cleanup_result: >-
+          {{
+            (sda_device_removal_and_unprovision_results | default([]))[refresh_pair_cleanup_result_index | int]
+            | default({})
+          }}
+
+    - name: Update pair result after cleanup attempt
+      ansible.builtin.set_fact:
+        refresh_job_pair_results: >-
+          {%- set ns = namespace(results=[]) -%}
+          {%- for result in refresh_job_pair_results | default([]) -%}
+          {%- if result.pair_key == refresh_pair_result.pair_key -%}
+          {%- set ns.results = ns.results + [
+            result | combine(
+              {
+                'cleanup_status': (
+                  'success'
+                  if refresh_pair_latest_cleanup_result.status | default('failed') == 'success'
+                  else 'failed'
+                ),
+                'status': (
+                  'success'
+                  if refresh_pair_latest_cleanup_result.status | default('failed') == 'success'
+                  else 'failed'
+                )
+              }
+              | combine(
+                  {
+                    'failed_task': refresh_pair_latest_cleanup_result.failed_task,
+                    'error_message': refresh_pair_latest_cleanup_result.error_message
+                  }
+                  if refresh_pair_latest_cleanup_result.status | default('failed') != 'success'
+                  else {}
+                )
+            )
+          ] -%}
+          {%- else -%}
+          {%- set ns.results = ns.results + [result] -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {{ ns.results }}
+  rescue:
+    - name: Record unexpected cleanup failure for current refresh pair
+      ansible.builtin.set_fact:
+        refresh_job_pair_results: >-
+          {%- set ns = namespace(results=[]) -%}
+          {%- for result in refresh_job_pair_results | default([]) -%}
+          {%- if result.pair_key == refresh_pair_result.pair_key -%}
+          {%- set ns.results = ns.results + [
+            result | combine(
+              {
+                'cleanup_status': 'failed',
+                'status': 'failed',
+                'failed_task': ansible_failed_task.name | default('unknown'),
+                'error_message': ansible_failed_result.msg | default(ansible_failed_result | string)
+              }
+            )
+          ] -%}
+          {%- else -%}
+          {%- set ns.results = ns.results + [result] -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {{ ns.results }}

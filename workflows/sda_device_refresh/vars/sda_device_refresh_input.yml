@@ -1,0 +1,71 @@
+---
+catalyst_center_version: 2.3.7.9
+generated_config_dir: "/tmp/sda_device_refresh"
+cleanup_generated_files: true
+inventory_device_ready_retry_time: 400
+inventory_device_ready_retry_interval: 10
+fabric_device_ready_timeout: 400
+fabric_device_ready_retries: 40
+fabric_device_ready_interval: 10
+
+sda_device_refresh:
+  jobs:
+    - job_name: "sj_bld23_refresh_wave1"
+      fabric_site_name_hierarchy: "Global/USA/SAN JOSE/SJ_BLD23"
+      lan_automation:
+        seed_device_management_ip_address: "204.1.1.6"
+        seed_peer_device_management_ip_address: "204.1.1.2"
+        seed_device_interface_names:
+          - "TenGigabitEthernet1/1/1"
+          - "TenGigabitEthernet1/1/2"
+        ip_pools:
+          - ip_pool_name: "LAN_POOL_SJ_BLD23"
+            ip_pool_role: "MAIN_POOL"
+          - ip_pool_name: "LAN_LINK_POOL_SJ_BLD23"
+            ip_pool_role: "PHYSICAL_LINK_POOL"
+        launch_and_wait: true
+        pnp_authorization: true
+      device_refreshes:
+        - refresh_name: "edge_1"
+          source_device:
+            serial_number: "FJC27172JDX"
+          replacement_device:
+            onboarding_method: "lan_automation"
+            serial_number: "FDO1234ABCD"
+            management_ip_address: "204.1.2.110"
+            expected_hostname: "SJ-ACCESS-9350-1"
+          port_migration:
+            interface_mappings:
+              - source_interface_name: "GigabitEthernet1/0/1"
+                destination_interface_name: "GigabitEthernet1/0/25"
+          cleanup_source_device: true
+
+        - refresh_name: "edge_2"
+          source_device:
+            hostname: "SJ-ACCESS-9300-2"
+          replacement_device:
+            onboarding_method: "lan_automation"
+            serial_number: "FDO1234EFGH"
+            management_ip_address: "204.1.2.111"
+            expected_hostname: "SJ-ACCESS-9350-2"
+          cleanup_source_device: true
+
+        - refresh_name: "edge_3_managed"
+          source_device:
+            ip_address: "204.1.2.71"
+          replacement_device:
+            onboarding_method: "managed"
+            hostname: "SJ-ACCESS-9350-3"
+          cleanup_source_device: true
+
+    # Example with no LAN automation:
+    # - job_name: "sj_bld23_managed_refresh_wave2"
+    #   fabric_site_name_hierarchy: "Global/USA/SAN JOSE/SJ_BLD23"
+    #   device_refreshes:
+    #     - refresh_name: "edge_4"
+    #       source_device:
+    #         serial_number: "FJC27190001"
+    #       replacement_device:
+    #         onboarding_method: "managed"
+    #         serial_number: "FDO1234IJKL"
+    #       cleanup_source_device: true

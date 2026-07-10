@@ -1,0 +1,59 @@
+---
+- name: Capture resolved replacement device after onboarding or managed lookup
+  ansible.builtin.set_fact:
+    refresh_pair_final_replacement_device: >-
+      {{
+        (
+          refresh_job_lan_auto_resolved_devices | default([])
+          | selectattr('serialNumber', 'equalto', refresh_pair_context.replacement_serial_number | default(''))
+          | list
+          | first
+        )
+        if refresh_pair_context.replacement_onboarding_method == 'lan_automation'
+        else refresh_pair_context.replacement_resolved_device
+      }}
+
+- name: Validate replacement device was resolved for current refresh pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_context.pair_display_name }}' could not
+      resolve the replacement device in inventory after onboarding validation.
+  when: refresh_pair_final_replacement_device == {}
+
+- name: Validate LAN automation replacement management IP matches requested input
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_context.pair_display_name }}' resolved the
+      replacement device to management IP
+      {{ refresh_pair_final_replacement_device.managementIpAddress | default('unknown') }},
+      which does not match the requested replacement management IP
+      {{ refresh_pair_context.effective_replacement_management_ip }}.
+  when:
+    - refresh_pair_context.replacement_onboarding_method == 'lan_automation'
+    - refresh_pair_context.effective_replacement_management_ip | length > 0
+    - refresh_pair_final_replacement_device.managementIpAddress | default('') != refresh_pair_context.effective_replacement_management_ip
+
+- name: Validate source and replacement are different devices for current refresh pair
+  ansible.builtin.fail:
+    msg: >-
+      Refresh pair '{{ refresh_pair_context.pair_display_name }}' resolved the
+      source and replacement to the same management IP
+      {{ refresh_pair_context.source_management_ip_address }}.
+  when:
+    - refresh_pair_context.source_management_ip_address | default('') != ''
+    - refresh_pair_context.source_management_ip_address == refresh_pair_final_replacement_device.managementIpAddress | default('')
+
+- name: Record final pair context
+  ansible.builtin.set_fact:
+    refresh_job_pair_contexts_final: >-
+      {{
+        (refresh_job_pair_contexts_final | default([])) + [
+          refresh_pair_context | combine(
+            {
+              'replacement_resolved_device': refresh_pair_final_replacement_device,
+              'effective_replacement_management_ip': refresh_pair_final_replacement_device.managementIpAddress | default(refresh_pair_context.effective_replacement_management_ip, true),
+              'effective_replacement_hostname': refresh_pair_context.effective_replacement_hostname | default(refresh_pair_final_replacement_device.hostname | default(''), true)
+            }
+          )
+        ]
+      }}
