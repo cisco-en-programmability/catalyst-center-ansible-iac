@@ -113,7 +113,18 @@
 
     - name: Export source provision configuration for all source devices in the job
       cisco.catalystcenter.provision_playbook_config_generator:
-        <<: *catalyst_center_login
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
+        catalystcenter_log: "{{ catalyst_center_login.catalystcenter_log }}"
+        catalystcenter_log_level: "{{ catalyst_center_login.catalystcenter_log_level }}"
+        catalystcenter_log_file_path: "{{ catalyst_center_login.catalystcenter_log_file_path }}"
+        catalystcenter_log_append: "{{ catalyst_center_login.catalystcenter_log_append }}"
+        catalystcenter_api_task_timeout: "{{ catalyst_center_login.catalystcenter_api_task_timeout }}"
         state: gathered
         file_path: "{{ refresh_source_provision_export_path }}"
         file_mode: overwrite
@@ -149,7 +160,18 @@
 
     - name: Export source fabric configuration for all source devices in the job
       cisco.catalystcenter.sda_fabric_devices_playbook_config_generator:
-        <<: *catalyst_center_login
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
+        catalystcenter_log: "{{ catalyst_center_login.catalystcenter_log }}"
+        catalystcenter_log_level: "{{ catalyst_center_login.catalystcenter_log_level }}"
+        catalystcenter_log_file_path: "{{ catalyst_center_login.catalystcenter_log_file_path }}"
+        catalystcenter_log_append: "{{ catalyst_center_login.catalystcenter_log_append }}"
+        catalystcenter_api_task_timeout: "{{ catalyst_center_login.catalystcenter_api_task_timeout }}"
         state: gathered
         file_path: "{{ refresh_source_fabric_export_path }}"
         file_mode: overwrite
@@ -197,6 +219,30 @@
         loop_var: refresh_pair_context
         label: "{{ refresh_pair_context.pair_display_name }}"
 
+    - name: Print device refresh plan (plan_only mode)
+      ansible.builtin.debug:
+        msg: |
+          PLAN ONLY - No changes will be applied.
+
+          Refresh Job  : {{ refresh_job_display_name }}
+          Fabric Site  : {{ refresh_job.fabric_site_name_hierarchy }}
+          Pairs planned: {{ refresh_job_pair_contexts_enriched | length }}
+
+          {% for ctx in refresh_job_pair_contexts_enriched %}
+          --- Pair: {{ ctx.pair_display_name }} ---
+            Source IP          : {{ ctx.source_management_ip_address }}
+            Source hostname    : {{ ctx.source_hostname }}
+            Source serial      : {{ ctx.source_serial_number }}
+            Replacement method : {{ ctx.replacement_onboarding_method }}
+            Replacement serial : {{ ctx.replacement_serial_number }}
+            Replacement mgmt IP: {{ ctx.replacement_management_ip_candidate }}
+            Effective site     : {{ ctx.effective_site_name_hierarchy }}
+            Effective inv role : {{ ctx.effective_inventory_role }}
+            Effective dev roles: {{ ctx.effective_device_roles | join(', ') }}
+            Cleanup source     : {{ ctx.cleanup_source_device }}
+          {% endfor %}
+      when: plan_only | default(false) | bool
+
     - name: Build LAN automation target lists for the job
       ansible.builtin.set_fact:
         refresh_job_lan_auto_pair_contexts: >-
@@ -242,7 +288,13 @@
 
     - name: Check which LAN automation replacement devices are already managed in inventory
       cisco.catalystcenter.network_device_info:
-        <<: *catalyst_center_login
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
         serialNumber: "{{ refresh_job_lan_auto_serial_numbers }}"
         limit: "{{ (refresh_job_lan_auto_serial_numbers | length) + 1 }}"
       register: refresh_lan_auto_inventory_precheck
@@ -277,7 +329,18 @@
 
     - name: Run shared LAN automation for all replacement devices in the job
       cisco.catalystcenter.lan_automation_workflow_manager:
-        <<: *catalyst_center_login
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
+        catalystcenter_log: "{{ catalyst_center_login.catalystcenter_log }}"
+        catalystcenter_log_level: "{{ catalyst_center_login.catalystcenter_log_level }}"
+        catalystcenter_log_file_path: "{{ catalyst_center_login.catalystcenter_log_file_path }}"
+        catalystcenter_log_append: "{{ catalyst_center_login.catalystcenter_log_append }}"
+        catalystcenter_api_task_timeout: "{{ catalyst_center_login.catalystcenter_api_task_timeout }}"
         config:
           - lan_automation:
               discovered_device_site_name_hierarchy: "{{ refresh_job_lan_auto_site_name }}"
@@ -303,11 +366,23 @@
               discovery_devices: "{{ refresh_job_lan_auto_discovery_devices }}"
       register: refresh_lan_automation_result
       when:
+        - not (plan_only | default(false) | bool)
         - refresh_job_lan_auto_discovery_devices | default([]) | length > 0
 
     - name: Wait for LAN-automated replacement devices to become managed in inventory
       cisco.catalystcenter.network_devices_info_workflow_manager:
-        <<: *catalyst_center_login
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
+        catalystcenter_log: "{{ catalyst_center_login.catalystcenter_log }}"
+        catalystcenter_log_level: "{{ catalyst_center_login.catalystcenter_log_level }}"
+        catalystcenter_log_file_path: "{{ catalyst_center_login.catalystcenter_log_file_path }}"
+        catalystcenter_log_append: "{{ catalyst_center_login.catalystcenter_log_append }}"
+        catalystcenter_api_task_timeout: "{{ catalyst_center_login.catalystcenter_api_task_timeout }}"
         state: gathered
         config:
           - network_devices:
@@ -329,6 +404,7 @@
                 interval: "{{ inventory_device_ready_retry_interval | default(10) | int }}"
       register: refresh_replacement_inventory_ready_output
       when:
+        - not (plan_only | default(false) | bool)
         - refresh_job_lan_auto_serial_numbers | default([]) | length > 0
 
     - name: Capture LAN automation resolved replacement devices
@@ -346,6 +422,7 @@
             | flatten
           }}
       when:
+        - not (plan_only | default(false) | bool)
         - refresh_job_lan_auto_serial_numbers | default([]) | length > 0
 
     - name: Validate all LAN-automated replacement devices were resolved in inventory
@@ -356,6 +433,7 @@
           Expected serials={{ refresh_job_lan_auto_serial_numbers }}.
           Found serials={{ refresh_job_lan_auto_resolved_devices | default([]) | map(attribute='serialNumber') | list }}.
       when:
+        - not (plan_only | default(false) | bool)
         - refresh_job_lan_auto_serial_numbers | default([]) | length > 0
         - >
           (
@@ -371,6 +449,7 @@
       loop_control:
         loop_var: refresh_pair_context
         label: "{{ refresh_pair_context.pair_display_name }}"
+      when: not (plan_only | default(false) | bool)
 
     - name: Group replacement inventory role updates by role
       ansible.builtin.set_fact:
@@ -407,7 +486,18 @@
 
     - name: Apply replacement inventory roles in bulk
       cisco.catalystcenter.inventory_workflow_manager:
-        <<: *catalyst_center_login
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
+        catalystcenter_log: "{{ catalyst_center_login.catalystcenter_log }}"
+        catalystcenter_log_level: "{{ catalyst_center_login.catalystcenter_log_level }}"
+        catalystcenter_log_file_path: "{{ catalyst_center_login.catalystcenter_log_file_path }}"
+        catalystcenter_log_append: "{{ catalyst_center_login.catalystcenter_log_append }}"
+        catalystcenter_api_task_timeout: "{{ catalyst_center_login.catalystcenter_api_task_timeout }}"
         state: "{{ state | default('merged') }}"
         config: "{{ refresh_job_inventory_role_configs }}"
       register: refresh_inventory_role_result
@@ -452,7 +542,18 @@
 
     - name: Apply replacement provisioning in bulk
       cisco.catalystcenter.provision_workflow_manager:
-        <<: *catalyst_center_login
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
+        catalystcenter_log: "{{ catalyst_center_login.catalystcenter_log }}"
+        catalystcenter_log_level: "{{ catalyst_center_login.catalystcenter_log_level }}"
+        catalystcenter_log_file_path: "{{ catalyst_center_login.catalystcenter_log_file_path }}"
+        catalystcenter_log_append: "{{ catalyst_center_login.catalystcenter_log_append }}"
+        catalystcenter_api_task_timeout: "{{ catalyst_center_login.catalystcenter_api_task_timeout }}"
         state: "{{ state | default('merged') }}"
         config: "{{ refresh_job_provision_configs }}"
       register: refresh_provision_result
@@ -477,7 +578,18 @@
 
     - name: Apply replacement fabric onboarding in bulk
       cisco.catalystcenter.sda_fabric_devices_workflow_manager:
-        <<: *catalyst_center_login
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
+        catalystcenter_log: "{{ catalyst_center_login.catalystcenter_log }}"
+        catalystcenter_log_level: "{{ catalyst_center_login.catalystcenter_log_level }}"
+        catalystcenter_log_file_path: "{{ catalyst_center_login.catalystcenter_log_file_path }}"
+        catalystcenter_log_append: "{{ catalyst_center_login.catalystcenter_log_append }}"
+        catalystcenter_api_task_timeout: "{{ catalyst_center_login.catalystcenter_api_task_timeout }}"
         state: "{{ state | default('merged') }}"
         config:
           - fabric_devices:
@@ -489,7 +601,18 @@
 
     - name: Validate all replacements in fabric after onboarding
       cisco.catalystcenter.fabric_devices_info_workflow_manager:
-        <<: *catalyst_center_login
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
+        catalystcenter_log: "{{ catalyst_center_login.catalystcenter_log }}"
+        catalystcenter_log_level: "{{ catalyst_center_login.catalystcenter_log_level }}"
+        catalystcenter_log_file_path: "{{ catalyst_center_login.catalystcenter_log_file_path }}"
+        catalystcenter_log_append: "{{ catalyst_center_login.catalystcenter_log_append }}"
+        catalystcenter_api_task_timeout: "{{ catalyst_center_login.catalystcenter_api_task_timeout }}"
         state: gathered
         config:
           - fabric_devices:

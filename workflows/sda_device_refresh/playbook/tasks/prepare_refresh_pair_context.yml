@@ -113,7 +113,13 @@
 
 - name: Resolve source device in inventory for current refresh pair
   cisco.catalystcenter.network_device_info:
-    <<: *catalyst_center_login
+    catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+    catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+    catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+    catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+    catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+    catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+    catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
     managementIpAddress: "{{ [refresh_pair.source_device.ip_address] if refresh_pair_source_identifier_type == 'ip_address' else omit }}"
     serialNumber: "{{ [refresh_pair.source_device.serial_number] if refresh_pair_source_identifier_type == 'serial_number' else omit }}"
     hostname: "{{ [refresh_pair.source_device.hostname] if refresh_pair_source_identifier_type == 'hostname' else omit }}"
@@ -165,7 +171,13 @@
 
 - name: Resolve managed replacement device in inventory for current refresh pair
   cisco.catalystcenter.network_device_info:
-    <<: *catalyst_center_login
+    catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+    catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+    catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+    catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+    catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+    catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+    catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
     managementIpAddress: "{{ [refresh_pair.replacement_device.ip_address] if refresh_pair_replacement_identifier_type == 'ip_address' else omit }}"
     serialNumber: "{{ [refresh_pair.replacement_device.serial_number] if refresh_pair_replacement_identifier_type == 'serial_number' else omit }}"
     hostname: "{{ [refresh_pair.replacement_device.hostname] if refresh_pair_replacement_identifier_type == 'hostname' else omit }}"

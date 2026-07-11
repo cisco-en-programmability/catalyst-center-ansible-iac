@@ -1,0 +1,44 @@
+---
+# Plan-only test vars: BLD23 edge device refresh
+# Source : 204.101.64.2 (ISBTE-TB1-9500-1.cisco.com, serial CAT2340L1JV)
+# Replacement: serial F23456XS (not yet in inventory; LAN automation will discover it)
+#
+# Run with:
+#   HOSTIP=10.195.243.38 \
+#   CATALYST_CENTER_USERNAME=admin \
+#   CATALYST_CENTER_PASSWORD='P@ssword9' \
+#   ansible-playbook -i inventory/demo_lab/hosts.yaml \
+#     workflows/sda_device_refresh/playbook/sda_device_refresh_playbook.yml \
+#     -e "VARS_FILE_PATH=$(pwd)/workflows/sda_device_refresh/vars/bld23_plan_test.yml" \
+#     -e "plan_only=true"
+
+catalyst_center_version: 2.3.7.9
+generated_config_dir: "/tmp/sda_device_refresh_plan"
+cleanup_generated_files: false
+
+sda_device_refresh:
+  jobs:
+    - job_name: "bld23_plan_test"
+      fabric_site_name_hierarchy: "Global/USA/SAN JOSE/BLD23"
+      lan_automation:
+        # NOTE: seed device details below are placeholders for plan_only mode.
+        # LAN automation will NOT execute when plan_only=true; update these
+        # with real values before running a full (non-plan) workflow.
+        seed_device_management_ip_address: "0.0.0.0"
+        seed_device_interface_names:
+          - "GigabitEthernet1/0/1"
+        ip_pools:
+          - ip_pool_name: "LAN_POOL_BLD23"
+            ip_pool_role: "MAIN_POOL"
+        launch_and_wait: true
+      device_refreshes:
+        - refresh_name: "bld23_edge_replace_CAT2340L1JV"
+          source_device:
+            ip_address: "204.101.64.2"
+          replacement_device:
+            onboarding_method: "lan_automation"
+            serial_number: "F23456XS"
+            # management_ip_address is the IP LAN automation will assign.
+            # Set to a real pool address before running non-plan mode.
+            management_ip_address: "0.0.0.0"
+          cleanup_source_device: false
