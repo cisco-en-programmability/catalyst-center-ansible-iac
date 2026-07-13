@@ -230,7 +230,7 @@ git pull origin master
 Build and install a collection from source
 ```bash
 ansible-galaxy collection build --force
-ansible-galaxy collection install cisco-catalystcenter-* --force
+ansible-galaxy collection install cisco.catalystcenter --force
 ```
 
 ## Install or Update the catalystcentersdk:
