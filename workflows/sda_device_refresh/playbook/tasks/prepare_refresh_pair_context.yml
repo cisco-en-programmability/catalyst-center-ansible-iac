@@ -268,7 +268,9 @@
             'port_migration': refresh_pair.port_migration | default({}),
             'overrides': refresh_pair.overrides | default({}),
             'cleanup_source_device': refresh_pair.cleanup_source_device | default(true),
-            'device_collection_status_check': refresh_pair.device_collection_status_check | default(None)
+            'device_collection_status_check': refresh_pair.device_collection_status_check | default(None),
+            'rename_to_source_identity': refresh_pair.rename_to_source_identity | default(false),
+            'target_loopback_ip': refresh_pair.replacement_device.target_loopback_ip | default('')
           }
         ]
       }}

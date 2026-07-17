@@ -47,6 +47,7 @@ refresh_pair_type:
   overrides: include('override_type', required=False)
   cleanup_source_device: bool(required=False)
   device_collection_status_check: bool(required=False)
+  rename_to_source_identity: bool(required=False)
 
 device_identifier_type:
   ip_address: str(required=False)
@@ -60,6 +61,7 @@ replacement_device_type:
   hostname: str(required=False)
   management_ip_address: str(required=False)
   expected_hostname: str(required=False)
+  target_loopback_ip: str(required=False)
 
 refresh_lan_automation_type:
   seed_device_management_ip_address: str(required=True)

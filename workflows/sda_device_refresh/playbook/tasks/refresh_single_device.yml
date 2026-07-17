@@ -730,6 +730,19 @@
         loop_var: refresh_pair_result
         label: "{{ refresh_pair_result.pair_display_name }}"
 
+    - name: Rename replacement devices to source identity after cleanup
+      ansible.builtin.include_tasks: ./rename_replacement_device.yml
+      loop: >-
+        {{
+          refresh_job_pair_results
+          | selectattr('cleanup_status', 'equalto', 'success')
+          | selectattr('rename_to_source_identity', 'equalto', true)
+          | list
+        }}
+      loop_control:
+        loop_var: refresh_pair_result
+        label: "{{ refresh_pair_result.pair_display_name }}"
+
     - name: Build current refresh job result
       ansible.builtin.set_fact:
         refresh_job_result:
@@ -746,6 +759,8 @@
           interfaces_moved_count: "{{ refresh_job_pair_results | map(attribute='interfaces_moved_count') | list | sum(start=0) }}"
           cleanup_requested_count: "{{ refresh_job_pair_results | selectattr('cleanup_requested', 'equalto', true) | list | length }}"
           cleanup_success_count: "{{ refresh_job_pair_results | selectattr('cleanup_status', 'equalto', 'success') | list | length }}"
+          rename_requested_count: "{{ refresh_job_pair_results | selectattr('rename_to_source_identity', 'equalto', true) | list | length }}"
+          rename_success_count: "{{ refresh_job_pair_results | selectattr('rename_status', 'equalto', 'success') | list | length }}"
           pair_results: "{{ refresh_job_pair_results }}"
           status: >-
             {{
@@ -782,6 +797,8 @@
                 'interfaces_moved_count': 0,
                 'cleanup_requested_count': 0,
                 'cleanup_success_count': 0,
+                'rename_requested_count': 0,
+                'rename_success_count': 0,
                 'pair_results': refresh_job_pair_results | default([]),
                 'status': 'failed',
                 'failed_task': ansible_failed_task.name | default('unknown'),

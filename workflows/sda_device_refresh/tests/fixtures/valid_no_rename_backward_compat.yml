@@ -1,0 +1,33 @@
+---
+# Fixture: existing-style input without rename_to_source_identity
+# Verifies backward compatibility: all new fields are optional
+catalyst_center_version: "2.3.7.9"
+
+sda_device_refresh:
+  jobs:
+    - job_name: "test_backward_compat"
+      fabric_site_name_hierarchy: "Global/USA/SAN JOSE/SJ_BLD23"
+      lan_automation:
+        seed_device_management_ip_address: "204.1.1.6"
+        seed_device_interface_names:
+          - "TenGigabitEthernet1/1/1"
+        ip_pools:
+          - ip_pool_name: "LAN_POOL_SJ_BLD23"
+            ip_pool_role: "MAIN_POOL"
+        launch_and_wait: true
+      device_refreshes:
+        - refresh_name: "edge_no_rename"
+          source_device:
+            serial_number: "FJC27172JDX"
+          replacement_device:
+            onboarding_method: "lan_automation"
+            serial_number: "FDO1234ABCD"
+            management_ip_address: "204.1.2.110"
+          cleanup_source_device: true
+        - refresh_name: "edge_managed_no_rename"
+          source_device:
+            ip_address: "204.1.2.71"
+          replacement_device:
+            onboarding_method: "managed"
+            hostname: "SJ-ACCESS-9350-3"
+          cleanup_source_device: true

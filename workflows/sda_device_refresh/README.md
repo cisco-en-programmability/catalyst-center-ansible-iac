@@ -7,6 +7,7 @@ It composes the existing brownfield building blocks:
 - `sda_fabric_discover_and_onboard_fabric_devices`
 - `sda_port_assignment_migration`
 - `sda_device_removal_and_unprovision`
+- `lan_automation_workflow_manager` (device update — hostname and loopback rename)
 
 ## What Runs in Bulk Per Job
 
@@ -26,6 +27,7 @@ Stages that remain per pair:
 
 1. Host port migration from source to replacement.
 2. Source cleanup after successful migration.
+3. Rename replacement device to source identity (hostname + loopback0 IP) after successful cleanup, when `rename_to_source_identity: true`.
 
 ## Data Model
 
@@ -55,6 +57,7 @@ sda_device_refresh:
             serial_number: "FDO1234ABCD"
             management_ip_address: "204.1.2.110"
             expected_hostname: "SJ-ACCESS-9350-1"
+            target_loopback_ip: "204.1.1.50"  # optional; defaults to source management IP
           port_migration:
             interface_mappings:
               - source_interface_name: "GigabitEthernet1/0/1"
@@ -64,6 +67,7 @@ sda_device_refresh:
             device_roles:
               - "EDGE_NODE"
           cleanup_source_device: true
+          rename_to_source_identity: true  # after cleanup: set hostname and loopback0 to source values
 ```
 
 ## Pair Rules
@@ -171,6 +175,7 @@ sda_device_refresh:
 - `playbook/tasks/finalize_refresh_pair_context.yml`
 - `playbook/tasks/migrate_refresh_pair.yml`
 - `playbook/tasks/cleanup_refresh_pair.yml`
+- `playbook/tasks/rename_replacement_device.yml`
 - `schema/sda_device_refresh_schema.yml`
 - `vars/sda_device_refresh_input.yml`
 
@@ -205,4 +210,20 @@ ansible-playbook -i ./inventory/demo_lab/hosts.yaml \
 - Bulk onboarding failures fail the whole job before migration starts.
 - Migration failures are isolated to the affected pair.
 - Source cleanup runs only for pairs whose migration succeeded and whose `cleanup_source_device` flag is `true`.
+- Rename runs only for pairs whose cleanup succeeded and whose `rename_to_source_identity` flag is `true`. Rename failures are isolated per pair and do not fail the overall job.
 - The summary does not include skipped counters.
+
+## Rename to Source Identity
+
+When `rename_to_source_identity: true` is set on a refresh pair, after the source device is successfully deleted the workflow uses `cisco.catalystcenter.lan_automation_workflow_manager` (`lan_automated_device_update`) to:
+
+1. Update the replacement device hostname to match the source device hostname.
+2. Update the replacement device loopback0 IP to match the source device management IP (which is the loopback0 address for SDA LAN-automated devices).
+
+An optional `replacement_device.target_loopback_ip` field overrides the loopback IP when the desired address differs from the source management IP.
+
+**Prerequisites for rename:**
+- Source device must be fully deleted from Catalyst Center (`cleanup_source_device: true` and cleanup succeeded).
+- Replacement device must be in Managed state in Catalyst Center inventory.
+- The replacement device must have been onboarded via LAN automation (`onboarding_method: lan_automation`).
+- The new loopback IP must be available in the LAN IP pool.

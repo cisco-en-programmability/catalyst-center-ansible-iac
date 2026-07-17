@@ -43,6 +43,9 @@
                 'cleanup_requested': refresh_pair_context.cleanup_source_device | bool,
                 'cleanup_status': 'pending' if (refresh_pair_context.cleanup_source_device | bool) else 'skipped',
                 'device_collection_status_check': refresh_pair_context.device_collection_status_check,
+                'rename_to_source_identity': refresh_pair_context.rename_to_source_identity | default(false),
+                'effective_target_loopback_ip': refresh_pair_context.effective_target_loopback_ip | default(''),
+                'rename_status': 'pending' if (refresh_pair_context.rename_to_source_identity | default(false)) else 'skipped',
                 'status': 'success' if not (refresh_pair_context.cleanup_source_device | bool) else 'cleanup_pending'
               }
             ]
@@ -70,6 +73,9 @@
                 'cleanup_requested': refresh_pair_context.cleanup_source_device | bool,
                 'cleanup_status': 'not_started',
                 'device_collection_status_check': refresh_pair_context.device_collection_status_check,
+                'rename_to_source_identity': refresh_pair_context.rename_to_source_identity | default(false),
+                'effective_target_loopback_ip': refresh_pair_context.effective_target_loopback_ip | default(''),
+                'rename_status': 'skipped',
                 'status': 'failed',
                 'failed_task': ansible_failed_task.name | default('unknown'),
                 'error_message': ansible_failed_result.msg | default(ansible_failed_result | string)

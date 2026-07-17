@@ -39,6 +39,7 @@ sda_device_refresh:
               - source_interface_name: "GigabitEthernet1/0/1"
                 destination_interface_name: "GigabitEthernet1/0/25"
           cleanup_source_device: true
+          rename_to_source_identity: true
 
         - refresh_name: "edge_2"
           source_device:
@@ -49,6 +50,7 @@ sda_device_refresh:
             management_ip_address: "204.1.2.111"
             expected_hostname: "SJ-ACCESS-9350-2"
           cleanup_source_device: true
+          rename_to_source_identity: true
 
         - refresh_name: "edge_3_managed"
           source_device:

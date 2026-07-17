@@ -92,6 +92,8 @@
           interfaces_moved: "{{ sda_device_refresh_results | default([]) | map(attribute='interfaces_moved_count') | list | sum(start=0) }}"
           cleanup_requested_pairs: "{{ sda_device_refresh_results | default([]) | map(attribute='cleanup_requested_count') | list | sum(start=0) }}"
           cleanup_success_pairs: "{{ sda_device_refresh_results | default([]) | map(attribute='cleanup_success_count') | list | sum(start=0) }}"
+          rename_requested_pairs: "{{ sda_device_refresh_results | default([]) | map(attribute='rename_requested_count') | list | sum(start=0) }}"
+          rename_success_pairs: "{{ sda_device_refresh_results | default([]) | map(attribute='rename_success_count') | list | sum(start=0) }}"
 
     - name: Print refresh workflow summary
       ansible.builtin.debug:
@@ -111,6 +113,8 @@
           - Interfaces migrated: {{ sda_device_refresh_totals.interfaces_moved }}
           - Cleanup requested pairs: {{ sda_device_refresh_totals.cleanup_requested_pairs }}
           - Cleanup successful pairs: {{ sda_device_refresh_totals.cleanup_success_pairs }}
+          - Rename requested pairs: {{ sda_device_refresh_totals.rename_requested_pairs }}
+          - Rename successful pairs: {{ sda_device_refresh_totals.rename_success_pairs }}
 
     - name: Print per-job refresh summary
       ansible.builtin.debug:
@@ -127,6 +131,8 @@
           Interfaces Migrated    : {{ item.interfaces_moved_count | default(0) }}
           Cleanup Requested      : {{ item.cleanup_requested_count | default(0) }}
           Cleanup Successful     : {{ item.cleanup_success_count | default(0) }}
+          Rename Requested       : {{ item.rename_requested_count | default(0) }}
+          Rename Successful      : {{ item.rename_success_count | default(0) }}
           Final Status           : {{ item.status }}
       loop: "{{ sda_device_refresh_results | default([]) }}"
       loop_control:

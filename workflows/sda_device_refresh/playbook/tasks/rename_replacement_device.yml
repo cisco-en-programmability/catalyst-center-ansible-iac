@@ -1,0 +1,81 @@
+---
+- block:
+    - name: Update hostname of replacement device to match source device for current refresh pair
+      cisco.catalystcenter.lan_automation_workflow_manager:
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
+        catalystcenter_log: "{{ catalyst_center_login.catalystcenter_log }}"
+        catalystcenter_log_level: "{{ catalyst_center_login.catalystcenter_log_level }}"
+        catalystcenter_log_file_path: "{{ catalyst_center_login.catalystcenter_log_file_path }}"
+        catalystcenter_log_append: "{{ catalyst_center_login.catalystcenter_log_append }}"
+        catalystcenter_api_task_timeout: "{{ catalyst_center_login.catalystcenter_api_task_timeout }}"
+        config:
+          - lan_automated_device_update:
+              hostname_update_devices:
+                - device_management_ip_address: "{{ refresh_pair_result.replacement_device_ip }}"
+                  new_host_name: "{{ refresh_pair_result.source_device_hostname }}"
+      register: refresh_rename_hostname_result
+      when: refresh_pair_result.source_device_hostname | default('') | length > 0
+
+    - name: Update loopback0 IP of replacement device to match source device for current refresh pair
+      cisco.catalystcenter.lan_automation_workflow_manager:
+        catalystcenter_host: "{{ catalyst_center_login.catalystcenter_host }}"
+        catalystcenter_username: "{{ catalyst_center_login.catalystcenter_username }}"
+        catalystcenter_password: "{{ catalyst_center_login.catalystcenter_password }}"
+        catalystcenter_version: "{{ catalyst_center_login.catalystcenter_version }}"
+        catalystcenter_port: "{{ catalyst_center_login.catalystcenter_port }}"
+        catalystcenter_verify: "{{ catalyst_center_login.catalystcenter_verify }}"
+        catalystcenter_debug: "{{ catalyst_center_login.catalystcenter_debug }}"
+        catalystcenter_log: "{{ catalyst_center_login.catalystcenter_log }}"
+        catalystcenter_log_level: "{{ catalyst_center_login.catalystcenter_log_level }}"
+        catalystcenter_log_file_path: "{{ catalyst_center_login.catalystcenter_log_file_path }}"
+        catalystcenter_log_append: "{{ catalyst_center_login.catalystcenter_log_append }}"
+        catalystcenter_api_task_timeout: "{{ catalyst_center_login.catalystcenter_api_task_timeout }}"
+        config:
+          - lan_automated_device_update:
+              loopback_update_device_list:
+                - device_management_ip_address: "{{ refresh_pair_result.replacement_device_ip }}"
+                  new_loopback0_ip_address: "{{ refresh_pair_result.effective_target_loopback_ip }}"
+      register: refresh_rename_loopback_result
+      when: refresh_pair_result.effective_target_loopback_ip | default('') | length > 0
+
+    - name: Record successful rename result for current refresh pair
+      ansible.builtin.set_fact:
+        refresh_job_pair_results: >-
+          {%- set ns = namespace(results=[]) -%}
+          {%- for result in refresh_job_pair_results | default([]) -%}
+          {%- if result.pair_key == refresh_pair_result.pair_key -%}
+          {%- set ns.results = ns.results + [
+            result | combine({'rename_status': 'success'})
+          ] -%}
+          {%- else -%}
+          {%- set ns.results = ns.results + [result] -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {{ ns.results }}
+  rescue:
+    - name: Record failed rename result for current refresh pair
+      ansible.builtin.set_fact:
+        refresh_job_pair_results: >-
+          {%- set ns = namespace(results=[]) -%}
+          {%- for result in refresh_job_pair_results | default([]) -%}
+          {%- if result.pair_key == refresh_pair_result.pair_key -%}
+          {%- set ns.results = ns.results + [
+            result | combine(
+              {
+                'rename_status': 'failed',
+                'rename_failed_task': ansible_failed_task.name | default('unknown'),
+                'rename_error_message': ansible_failed_result.msg | default(ansible_failed_result | string)
+              }
+            )
+          ] -%}
+          {%- else -%}
+          {%- set ns.results = ns.results + [result] -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {{ ns.results }}

@@ -1,0 +1,28 @@
+---
+# Fixture: LAN automation pair with rename_to_source_identity=true
+# and an explicit target_loopback_ip override (differs from source management IP)
+catalyst_center_version: "2.3.7.9"
+
+sda_device_refresh:
+  jobs:
+    - job_name: "test_rename_loopback_override"
+      fabric_site_name_hierarchy: "Global/USA/SAN JOSE/SJ_BLD23"
+      lan_automation:
+        seed_device_management_ip_address: "204.1.1.6"
+        seed_device_interface_names:
+          - "TenGigabitEthernet1/1/1"
+        ip_pools:
+          - ip_pool_name: "LAN_POOL_SJ_BLD23"
+            ip_pool_role: "MAIN_POOL"
+        launch_and_wait: true
+      device_refreshes:
+        - refresh_name: "edge_rename_loopback_override"
+          source_device:
+            hostname: "SJ-ACCESS-9300-1"
+          replacement_device:
+            onboarding_method: "lan_automation"
+            serial_number: "FDO1234ABCD"
+            management_ip_address: "204.1.2.110"
+            target_loopback_ip: "204.1.1.50"
+          cleanup_source_device: true
+          rename_to_source_identity: true

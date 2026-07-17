@@ -70,6 +70,12 @@
             true
           )
       }}
+    refresh_pair_effective_target_loopback_ip: >-
+      {{
+        refresh_pair_context.target_loopback_ip
+        if (refresh_pair_context.target_loopback_ip | default('') | length) > 0
+        else refresh_pair_context.source_management_ip_address
+      }}
 
 - name: Validate effective replacement roles for current refresh pair
   ansible.builtin.fail:
@@ -103,6 +109,8 @@
               'effective_borders_settings': refresh_pair_effective_borders_settings,
               'effective_replacement_management_ip': refresh_pair_effective_replacement_management_ip,
               'effective_replacement_hostname': refresh_pair_effective_replacement_hostname,
+              'effective_target_loopback_ip': refresh_pair_effective_target_loopback_ip,
+              'rename_to_source_identity': refresh_pair_context.rename_to_source_identity | default(false),
               'lan_auto_discovery_device': {
                 'device_serial_number': refresh_pair_context.replacement_serial_number,
                 'device_site_name_hierarchy': refresh_pair_effective_site_name_hierarchy,
